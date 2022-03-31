@@ -1,0 +1,46 @@
+/* Containers */
+
+.flex-wrap {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* Building Blocks */
+
+.spacer {
+  padding: 0.5rem;
+}
+
+.body {
+  padding: 50px 100px;
+}
+
+.card {
+  width: fit-content;
+  padding: 10px 20px;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 2px 2px 4px rgb(83, 83, 83);
+}
+
+/* Font Styles */
+
+.h600 {
+  font-size: 25px;
+  font-weight: 600;
+}
+
+.h400 {
+  font-size: 25px;
+  font-weight: 400;
+}
+
+.p600 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.p400 {
+  font-size: 20px;
+  font-weight: 400;
+}
