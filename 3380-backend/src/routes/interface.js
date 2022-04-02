@@ -39,17 +39,28 @@ router.get('/fields', async (req, res) => {
 router.get('/query', async (req, res) => {
     console.log('GET /interface/query');
 
-    const { table } = req.query;
-    if (!table) return res.status(400).json({ message: 'Missing `table` in query parameters' });
+    return res.status(503).json({ message: 'Not implemented' });
+});
 
-    try {
-        const fields = await SQLManager.getTableFields(table);
-        return res.status(200).json({ fields });
-    } catch (err) {
-        console.log(err);
-    }
+/* POST /interface/ */
+router.get('/', async (req, res) => {
+    console.log('GET /interface/query');
 
-    return res.status(500).json({ message: 'Failed to load table fields' });
+    return res.status(503).json({ message: 'Not implemented' });
+});
+
+/* DELETE /interface/ */
+router.get('/', async (req, res) => {
+    console.log('GET /interface/');
+
+    return res.status(503).json({ message: 'Not implemented' });
+});
+
+/* PUT /interface/ */
+router.get('/', async (req, res) => {
+    console.log('GET /interface/');
+
+    return res.status(503).json({ message: 'Not implemented' });
 });
 
 module.exports = router;

@@ -3,6 +3,7 @@ const express = require('express');
 
 const indexRouter = require('./routes/index');
 const interfaceRouter = require('./routes/interface');
+const userRoute = require('./routes/user');
 
 const app = express();
 
@@ -11,6 +12,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use('/', indexRouter);
 app.use('/interface', interfaceRouter);
+app.use('/user', userRoute);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
