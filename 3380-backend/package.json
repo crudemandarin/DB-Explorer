@@ -9,6 +9,7 @@
     "prettier-fix": "prettier --write src/"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "eslint-config-airbnb": "^19.0.4",
     "express": "~4.16.1",
     "http-errors": "~1.6.3",

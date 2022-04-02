@@ -1,14 +1,17 @@
 import React from 'react';
 
-import '../App.css';
+// Uncomment these lines to use/modify user object globally
+
+// import { useGlobal } from '../util/GlobalContext';
 
 function UserCard() {
+  // const { user, setUser } = useGlobal();
+
   return (
     <div className="card">
-      <div className="h600">Project Management System</div>
-      <div className="h400">Database Front-End</div>
+      <div className="h600">LOGIN COMPONENT</div>
       <div className="spacer" />
-      <div className="p400">COSC 3380 T/Th Team 9</div>
+      <div className="p400">Beep boop. I&apos;m placeholder text</div>
     </div>
   );
 }

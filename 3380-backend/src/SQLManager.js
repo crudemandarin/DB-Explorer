@@ -33,6 +33,15 @@ class SQLManager {
         console.log('SQLManager.getTableFields: Fields = ', fields);
         return fields;
     }
+
+    static async getSelectQuery(table, fields) {
+        console.log(`SQLManager.getSelectQuery invoked! Table = ${table}, Fields =`, fields);
+        const SQL = `SELECT * FROM ${table}`;
+        const output = await this.query(SQL);
+        const rows = output.map((row) => ({ name: row.Field, type: row.Type }));
+        console.log('SQLManager.getSelectQuery: Rows = ', rows);
+        return rows;
+    }
 }
 
 module.exports = SQLManager;

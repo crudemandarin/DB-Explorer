@@ -1,7 +1,5 @@
 import React from 'react';
 
-import '../App.css';
-
 function TitleCard() {
   return (
     <div className="card">

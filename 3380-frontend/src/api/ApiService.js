@@ -1,21 +1,26 @@
-import data from './data.json';
+import axios from 'axios';
+
+const SERVICE_URL = 'http://localhost:5050';
 
 class ApiService {
+  static async ping() {
+    return axios.get(SERVICE_URL);
+  }
+
+  static async login(params) {
+    return axios.post(`${SERVICE_URL}/user/login`, params);
+  }
+
   static async getTables() {
-    const { tables } = data;
-    return tables;
+    return axios.get(`${SERVICE_URL}/interface/tables`);
   }
 
   static async getTableFields(table) {
-    const fields = data['table-fields'][table];
-    return fields;
+    return axios.get(`${SERVICE_URL}/interface/fields?table=${table}`);
   }
 
-  static async query(params) {
-    const { table } = params;
-    console.log(data, table);
-    const res = data[table];
-    return res;
+  static async getSelectQuery(params) {
+    return axios.post(`${SERVICE_URL}/interface/query/select`, params);
   }
 }
 

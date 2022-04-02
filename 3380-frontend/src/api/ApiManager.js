@@ -3,7 +3,8 @@ import ApiService from './ApiService';
 class ApiManager {
   static async getTables() {
     try {
-      const tables = await ApiService.getTables();
+      const response = await ApiService.getTables();
+      const { tables } = response.data;
       console.log('ApiManager.getTables: Successful! Tables =', tables);
       return tables;
     } catch (err) {
@@ -14,7 +15,8 @@ class ApiManager {
 
   static async getTableFields(table) {
     try {
-      const fields = await ApiService.getTableFields(table);
+      const response = await ApiService.getTableFields(table);
+      const { fields } = response.data;
       console.log('ApiManager.getTableFields: Successful! Fields =', fields);
       return fields;
     } catch (err) {
@@ -23,13 +25,14 @@ class ApiManager {
     }
   }
 
-  static async query(params) {
+  static async getSelectQuery(params) {
     try {
-      const data = await ApiService.query(params);
-      console.log('ApiManager.query: Successful! Data =', data);
-      return data;
+      const response = await ApiService.getSelectQuery(params);
+      const { rows } = response.data;
+      console.log('ApiManager.getSelectQuery: Successful! Rows =', rows);
+      return rows;
     } catch (err) {
-      console.error('ApiManager.query: Could not load data. Error =', err);
+      console.error('ApiManager.getSelectQuery: Could not load data. Error =', err);
       return [];
     }
   }

@@ -35,32 +35,42 @@ router.get('/fields', async (req, res) => {
     return res.status(500).json({ message: 'Failed to load table fields' });
 });
 
-/* GET /interface/query */
-router.get('/query', async (req, res) => {
-    console.log('GET /interface/query');
+/* POST /interface/query/select */
+router.post('/query/select', async (req, res) => {
+    console.log('POST /interface/query/select');
 
-    return res.status(503).json({ message: 'Not implemented' });
+    const { table, fields } = req.body;
+    if (!table) return res.status(400).json({ message: 'Missing `table` in body' });
+
+    try {
+        const rows = await SQLManager.getSelectQuery(table, fields);
+        return res.status(200).json({ rows });
+    } catch (err) {
+        console.log(err);
+    }
+
+    return res.status(500).json({ message: 'Failed to load query result' });
 });
 
-/* POST /interface/ */
-router.get('/', async (req, res) => {
-    console.log('GET /interface/query');
+/* POST /interface */
+router.post('/', async (req, res) => {
+    console.log('POST /interface');
 
-    return res.status(503).json({ message: 'Not implemented' });
+    return res.status(501).json({ message: 'Not implemented' });
 });
 
-/* DELETE /interface/ */
-router.get('/', async (req, res) => {
-    console.log('GET /interface/');
+/* DELETE /interface */
+router.delete('/', async (req, res) => {
+    console.log('DELETE /interface');
 
-    return res.status(503).json({ message: 'Not implemented' });
+    return res.status(501).json({ message: 'Not implemented' });
 });
 
-/* PUT /interface/ */
-router.get('/', async (req, res) => {
-    console.log('GET /interface/');
+/* PUT /interface */
+router.put('/', async (req, res) => {
+    console.log('PUT /interface');
 
-    return res.status(503).json({ message: 'Not implemented' });
+    return res.status(501).json({ message: 'Not implemented' });
 });
 
 module.exports = router;
