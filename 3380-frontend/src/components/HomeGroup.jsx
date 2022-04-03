@@ -20,7 +20,7 @@ function HomeGroup() {
         const tablesData = await ApiManager.getTables();
         setTables(tablesData);
       } catch (err) {
-        console.error('ControlCard.getTables() failed! Error =', err);
+        console.error('HomeGroup.getTables() failed! Error =', err);
         setTables([]);
       }
     };
@@ -35,7 +35,7 @@ function HomeGroup() {
         const fieldsData = await ApiManager.getTableFields(table);
         setFields(fieldsData);
       } catch (err) {
-        console.error('ControlCard.getFields() failed! Error =', err);
+        console.error('HomeGroup.getFields() failed! Error =', err);
         setFields([]);
       }
     };
@@ -47,13 +47,19 @@ function HomeGroup() {
     setResults([result, ...results])
   }
 
+  const onTableCardRemove = (id) => {
+    // console.log('HomeGroup.onTableCardRemove invoked! ID =', id);
+    const temp = results.filter(el => el.id !== id);
+    setResults(temp);
+  }
+
   const controlProps = { table, setTable, tables, fields, results, onSelectQuery };
 
   return (
     <>
       <ControlCard {...controlProps} />
       {Array.isArray(results) ? (
-        results.map(result => <TableCard key={result.id} result={result} />)
+        results.map(result => <TableCard key={result.id} result={result} onRemove={onTableCardRemove} />)
       ) : (
         // eslint-disable-next-line react/jsx-no-useless-fragment
         <></>

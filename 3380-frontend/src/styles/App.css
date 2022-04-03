@@ -5,6 +5,14 @@
   flex-wrap: wrap;
 }
 
+.flex {
+  display: flex;
+}
+
+.space-between {
+  justify-content: space-between;
+}
+
 /* Building Blocks */
 
 .spacer {
@@ -12,6 +20,7 @@
 }
 
 .body {
+  min-height: 100vh;
   padding: 50px 100px;
 }
 
@@ -44,4 +53,11 @@
 .p400 {
   font-size: 20px;
   font-weight: 400;
+}
+
+.truncated {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
