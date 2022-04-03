@@ -36,11 +36,41 @@ class SQLManager {
 
     static async getSelectQuery(table, fields) {
         console.log(`SQLManager.getSelectQuery invoked! Table = ${table}, Fields =`, fields);
-        const SQL = `SELECT * FROM ${table}`;
+        let columns = [];
+        fields.forEach((column) => columns.push(column)); 
+        const SQL = `SELECT ${columns.toString()} FROM ${table}`;
         const output = await this.query(SQL);
-        const rows = output.map((row) => ({ name: row.Field, type: row.Type }));
-        console.log('SQLManager.getSelectQuery: Rows = ', rows);
-        return rows;
+        
+        // Parse RowDataPackets into array of objects
+        const result = Object.values(JSON.parse(JSON.stringify(output)));
+        return result;
+    }
+
+    static async performInsert(table, fields) {
+        let keys = [];
+        let vals = [];
+        fields.forEach((field) => { 
+            keys.push(field.name);
+            vals.push(field.value);
+        });
+        
+        // Convert array into SQL string and wrap string values in quotes
+        vals = vals.map(val => {
+            if (typeof val === "string") {
+                return `'${val}'`
+            } else {
+                return val;
+            }
+        }).join(',');
+        const SQL = `INSERT INTO ${table} (${keys.join(',')}) VALUES (${vals})`;
+        console.log(`SQLManager.performInsert invoked! Table = ${table}, Fields =`, fields);
+        const output = await this.query(SQL);
+        return output;
+    }
+
+    static async performDelete(table, id) {
+
+        
     }
 }
 

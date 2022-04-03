@@ -41,10 +41,11 @@ router.post('/query/select', async (req, res) => {
 
     const { table, fields } = req.body;
     if (!table) return res.status(400).json({ message: 'Missing `table` in body' });
+    console.log(fields);
 
     try {
         const rows = await SQLManager.getSelectQuery(table, fields);
-        return res.status(200).json({ rows });
+        return res.status(200).json(rows);
     } catch (err) {
         console.log(err);
     }
@@ -52,24 +53,52 @@ router.post('/query/select', async (req, res) => {
     return res.status(500).json({ message: 'Failed to load query result' });
 });
 
-/* POST /interface */
-router.post('/', async (req, res) => {
+/* POST /interface/query/insert */
+router.post('/query/insert', async (req, res) => {
     console.log('POST /interface');
+    console.log(req.body);
+    const { table, fields } = req.body;
+    if (!table) return res.status(400).json({ message: 'Missing `table` in body' });
+
+    try {
+        const rows = await SQLManager.performInsert(table, fields);
+        return res.status(200).json({ rows });
+    } catch (err) {
+        console.log(err);
+    }
 
     return res.status(501).json({ message: 'Not implemented' });
 });
 
 /* DELETE /interface */
-router.delete('/', async (req, res) => {
-    console.log('DELETE /interface');
+router.delete('/query/delete', async (req, res) => {
+    console.log('DELETE /interface/query/delete');
+    const { table, id } = req.body;
 
+    if (!table) return res.status(400).json({ message: 'Missing `table` in body' });
+
+    try {
+        const rows = await SQLManager.performDelete(table, id);
+        return res.status(200).json({ rows });
+    } catch (err) {
+        console.log(err);
+    }
     return res.status(501).json({ message: 'Not implemented' });
 });
 
 /* PUT /interface */
 router.put('/', async (req, res) => {
     console.log('PUT /interface');
+    const { table, id, fields } = req.body;
 
+    if (!table) return res.status(400).json({ message: 'Missing `table` in body' });
+
+    try {
+        const rows = await SQLManager.performUpdate(table, id);
+        return res.status(200).json({ rows });
+    } catch (err) {
+        console.log(err);
+    }
     return res.status(501).json({ message: 'Not implemented' });
 });
 
