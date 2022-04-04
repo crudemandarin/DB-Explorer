@@ -87,34 +87,5 @@ function UserCard() {
 //  });
 //}
 
-/*************************
-* SUBMIT FUNCTION
-*************************/
-submit = () => {
-  const { context } = this.props;
-  const { from } = this.props.location.state || { from: { pathname: '/' } };
-  const { emailAddress, password} = this.state;
-  context.actions.signIn(emailAddress, password)
-  .then( user => {
-    //if user doesn't exist
-    if (user === null) {
-      this.setState(() => {
-        //UNSUCCESSFUL
-        return { errors: [ 'Sign-in was unsuccessful' ] }
-      })
-    //if user does exist
-    } else {
-      //SUCCESSFUL
-      this.props.history.push(from)
-      console.log(`${emailAddress} is now signed in!`)
-    }
-  })
-  .catch( err => {
-    console.log(err);
-    this.props.history.push('/error')
-  })
-}
-
-
 
   export default UserCard;
