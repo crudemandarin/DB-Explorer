@@ -20,16 +20,16 @@ function UserCard() {
       password,
       //errors,
     } = this.state;
-  
-  const handleSubmit = (event) => {
+
+    const handleSubmit = (event) => {
       event.preventDefault();
       submit();
-    }
+    };
 
     const handleCancel = (event) => {
       event.preventDefault();
       cancel();
-    }
+    };
 
   return (
     <div className="card">
@@ -50,18 +50,10 @@ function UserCard() {
                   value={emailAddress} 
                   onChange={this.change} 
                   placeholder="Email Address" />
-                <input 
-                  id="password" 
-                  name="password"
-                  type="password"
-                  value={password} 
-                  onChange={this.change} 
-                  placeholder="Password" /> 
-                <Button className="button" type="submit" onClick={handleSubmit}>{submitButtonText}</Button>
-                <Button className="button button-secondary" onClick={handleCancel}>Cancel</Button>               
+                <Button className="p-button-rounded p-button-outlined" type="submit" onClick={handleSubmit}>{submitButtonText}</Button>
+                <Button className="p-button-rounded p-button-secondary p-button-outlined" onClick={handleCancel}>Cancel</Button>               
               </React.Fragment>
-            )} />
-            
+            )} /> 
       </div>
     </div>
   );
