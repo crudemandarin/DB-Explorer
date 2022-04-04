@@ -26,7 +26,7 @@ function UserCard() {
     state = {
       emailAddress: '',
       password: '',
-      errors: [],
+      //errors: [],
     };
 
     //THIS.STATE SET
@@ -34,7 +34,7 @@ function UserCard() {
     const {
       emailAddress,
       password,
-      errors,
+      //errors,
     } = this.state;
 
   return (
@@ -44,7 +44,7 @@ function UserCard() {
       <div className="p400">
           <form 
             cancel={this.cancel}
-            errors={errors}
+            //errors={errors}
             submit={this.submit}
             submitButtonText="Sign In"
             elements={() => (
