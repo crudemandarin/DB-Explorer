@@ -62,15 +62,12 @@ function UserCard() {
                   type="password"
                   value={password} 
                   onChange={this.change} 
-                  placeholder="Password" />                
+                  placeholder="Password" /> 
+                <button className="button" type="submit" onClick={handleSubmit}>{submitButtonText}</button>
+                <button className="button button-secondary" onClick={handleCancel}>Cancel</button>               
               </React.Fragment>
             )} />
-            <form onSubmit={handleSubmit}>
-              <div className="grid-100 pad-bottom">
-                <button className="button" type="submit">{submitButtonText}</button>
-                <button className="button button-secondary" onClick={handleCancel}>Cancel</button>
-              </div>
-            </form>
+            
       </div>
     </div>
   );
@@ -78,17 +75,17 @@ function UserCard() {
 }
 
 
-change = (event) => {
-  const name = event.target.name;
-  const value = event.target.value;
+//change = (event) => {
+//  const name = event.target.name;
+//  const value = event.target.value;
 
   //changes old value to new 
-  this.setState(() => {
-    return {
-      [name]: value
-    };
-  });
-}
+ // this.setState(() => {
+//    return {
+//      [name]: value
+//    };
+//  });
+//}
 
 /*************************
 * SUBMIT FUNCTION
