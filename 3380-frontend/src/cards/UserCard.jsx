@@ -1,25 +1,9 @@
 import React from 'react';
-//import { Button } from 'primereact/button';
+import { Button } from 'primereact/button';
 
 // Uncomment these lines to use/modify user object globally
 
 // import { useGlobal } from '../util/GlobalContext';
-
-/*************************
-   * HANDLE SUBMIT
-   *************************/
- function handleSubmit(event) {
-  event.preventDefault();
-  submit();
-}
-
-/*************************
- * HANDLE CANCEL
- *************************/
- function handleCancel(event) {
-  event.preventDefault();
-  cancel();
-}
 
 function UserCard() {
   // const { user, setUser } = useGlobal();
@@ -36,6 +20,16 @@ function UserCard() {
       password,
       //errors,
     } = this.state;
+  
+  const handleSubmit = (event) => {
+      event.preventDefault();
+      submit();
+    }
+
+    const handleCancel = (event) => {
+      event.preventDefault();
+      cancel();
+    }
 
   return (
     <div className="card">
@@ -63,8 +57,8 @@ function UserCard() {
                   value={password} 
                   onChange={this.change} 
                   placeholder="Password" /> 
-                <button className="button" type="submit" onClick={handleSubmit}>{submitButtonText}</button>
-                <button className="button button-secondary" onClick={handleCancel}>Cancel</button>               
+                <Button className="button" type="submit" onClick={handleSubmit}>{submitButtonText}</Button>
+                <Button className="button button-secondary" onClick={handleCancel}>Cancel</Button>               
               </React.Fragment>
             )} />
             
