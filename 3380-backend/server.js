@@ -10,8 +10,7 @@ const LAMBDA = !!process.env.LAMBDA_TASK_ROOT;
 const app = require('./src/app');
 
 if (LAMBDA) {
-    const server = serverlessExpress.createServer(app);
-    module.exports.handler = (event, context) => serverlessExpress.proxy(server, event, context);
+    module.exports.handler = serverlessExpress({ app });
 } else {
     app.listen(APP_PORT, () => {
         console.log('\n-- API is NOT running on AWS Lambda');

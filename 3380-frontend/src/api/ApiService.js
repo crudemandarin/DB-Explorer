@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const SERVICE_URL = 'http://localhost:5050';
+const SERVICE_URL = 'https://qjisgkaetc.execute-api.us-east-1.amazonaws.com/dev';
 
 class ApiService {
   static async ping() {

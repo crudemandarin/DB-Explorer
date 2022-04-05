@@ -27,7 +27,7 @@ class SQLManager {
         console.log('SQLManager.getTables invoked!');
         const SQL = 'SHOW TABLES';
         const output = await this.query(SQL);
-        const tables = output.map((row) => row.Tables_in_pms);
+        const tables = output.map((row) => row.Tables_in_PMS);
         console.log('SQLManager.getTables: Tables = ', tables);
         return tables;
     }
