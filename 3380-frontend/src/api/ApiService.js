@@ -20,7 +20,7 @@ class ApiService {
   }
 
   static async getSelectQuery(params) {
-    return axios.post(`${SERVICE_URL}/interface/query/select`, params);
+    return axios.post(`${SERVICE_URL}/interface/query`, params);
   }
 }
 

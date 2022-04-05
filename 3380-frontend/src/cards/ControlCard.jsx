@@ -42,11 +42,11 @@ function ControlCard({ table, setTable, tables, fields, onSelectQuery }) {
   };
 
   const handleQueryClick = async () => {
-    console.log('ControlCard.handleQueryClick invoked', );
+    const formParams = getFormParams();
+    console.log('ControlCard.handleQueryClick invoked. Form Params =', formParams);
 
     try {
-      const formParams = getFormParams();
-      const params = { table, fields: formParams };
+      const params = { table, select: [], where: formParams };
       const rows = await ApiManager.getSelectQuery(params);
       const id = crypto.randomUUID().substring(0, 6);
       const result = { id, table, formParams, fields, rows };
