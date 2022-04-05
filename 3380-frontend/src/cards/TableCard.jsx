@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useRef, useMemo } from 'react';
 
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
@@ -7,10 +7,14 @@ import { Column } from 'primereact/column';
 import '../styles/TableCard.css';
 
 function TableCard({ result, onRemove }) {
-  console.log("result = ", result)
-  
+  const dt = useRef(null);
+
   const onRemoveClick = () => {
     onRemove(result.id);
+  }
+
+  const onExportClick = () => {
+    dt.current.exportCSV();
   }
 
   const title = useMemo(() => {
@@ -42,12 +46,12 @@ function TableCard({ result, onRemove }) {
       <div>
         <Button label="Modify" className="p-button-warning" style={{ marginRight: '10px' }} />
         <Button label="Delete" className="p-button-danger" style={{ marginRight: '10px' }} />
-        <Button label="Export" />
+        <Button onClick={onExportClick} label="Export" />
       </div>
 
       <div className="spacer" />
 
-      <DataTable value={result.rows} responsiveLayout="scroll">
+      <DataTable ref={dt} value={result.rows} responsiveLayout="scroll">
         {fieldsIsValid ? (
           result.fields.map((field) => <Column field={field.name} header={field.name} key={field.name} />)
         ) : (

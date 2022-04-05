@@ -3,21 +3,34 @@ import React, { useState, useEffect } from 'react';
 import { AutoComplete } from 'primereact/autocomplete';
 import { Button } from 'primereact/button';
 
-import ControlForm from '../components/ControlForm';
+import ControlFieldInput from '../components/ControlFieldInput';
 
 import ApiManager from '../api/ApiManager';
+import Utils from '../util/Utils';
 
 function ControlCard({ table, setTable, tables, fields, onSelectQuery }) {
   const [ tableOptions, setTableOptions ] = useState([]); // Option[]
   const [ tableValue, setTableValue ] = useState(undefined); // Option
   const [ tableForm, setTableForm ] = useState({});
+  const [ formIsValid, setFormIsValid ] = useState(false);
+  const [ resetFlag, setResetFlag ] = useState(false);
 
   useEffect(() => {
     const options = tables.map(el => ({ name: el }));
     setTableOptions(options);
   }, [tables]);
 
-  const getFormParams = () => Object.keys(tableForm).map(key => ({ name: key, value: tableForm[key].value })).filter(el => !!el.value);
+  useEffect(() => {
+    setTableForm(Utils.getEmptyForm(fields));
+    setResetFlag(false);
+    setFormIsValid(true);
+}, [fields, setTableForm, setResetFlag]);
+
+  const validateForm = () => {
+    const [validatedForm, isValid] = Utils.validateForm(tableForm);
+    setTableForm(validatedForm);
+    setFormIsValid(isValid);
+  }
 
   const searchTable = () => {
     let filteredTables = [...tables];
@@ -26,23 +39,16 @@ function ControlCard({ table, setTable, tables, fields, onSelectQuery }) {
     setTableOptions(filteredOptions);
   };
 
-  const handleTableInputChange = async (e) => {
-    // console.log('ControlCard.handleTableInputChange Event =', e);
-
+  const handleTableInputChange = (e) => {
     let { value } = e;
     if (typeof value === "string") value = value.toLowerCase();
     if (typeof value !== "string") value = value.name;
-
     setTableValue({ name: value });
-
-    if (tables.includes(value)) {
-      // console.log('ControlCard.handleTableInputChange: Valid table entered!');
-      setTable(value);
-    }
+    if (tables.includes(value)) setTable(value);
   };
 
   const handleQueryClick = async () => {
-    const formParams = getFormParams();
+    const formParams = Utils.getFormParams(tableForm);
     console.log('ControlCard.handleQueryClick invoked. Form Params =', formParams);
 
     try {
@@ -56,7 +62,13 @@ function ControlCard({ table, setTable, tables, fields, onSelectQuery }) {
     }
   };
 
-  const formProps = { fields, tableForm, setTableForm };
+  const handleAddClick = () => {
+    validateForm();
+  }
+
+  const handleResetClick = () => {
+    setTableForm(Utils.getEmptyForm(fields));
+  }
 
   return (
     <div className="card" style={{ width: '100%' }}>
@@ -79,7 +91,14 @@ function ControlCard({ table, setTable, tables, fields, onSelectQuery }) {
 
       {
         Array.isArray(fields) ? (
-          <ControlForm {...formProps} />
+          <form className="flex-wrap">
+            {
+                fields.map((field) => {
+                const props = { name: field.name, tableForm, setTableForm, validateForm, setResetFlag };
+                return <ControlFieldInput {...props} key={field.name} />;
+                })
+            }
+        </form>
         ) : (
           // eslint-disable-next-line react/jsx-no-useless-fragment
           <></>
@@ -98,8 +117,16 @@ function ControlCard({ table, setTable, tables, fields, onSelectQuery }) {
         />
         <Button
           label="Add"
+          onClick={handleAddClick}
           style={{ marginRight: '10px' }}
-          disabled={!table}  
+          disabled={!formIsValid}  
+        />
+        <Button
+          label="Reset"
+          onClick={handleResetClick}
+          className="p-button-secondary"
+          style={{ marginRight: '10px' }}
+          disabled={!resetFlag}  
         />
       </div>
     </div>
