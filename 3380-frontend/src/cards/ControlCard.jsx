@@ -68,6 +68,7 @@ function ControlCard({ table, setTable, tables, fields, onSelectQuery }) {
 
   const handleResetClick = () => {
     setTableForm(Utils.getEmptyForm(fields));
+    setResetFlag(false);
   }
 
   return (
