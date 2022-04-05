@@ -34,11 +34,20 @@ class SQLManager {
         return fields;
     }
 
-    static async getSelectQuery(table, fields) {
-        console.log(`SQLManager.getSelectQuery invoked! Table = ${table}, Fields =`, fields);
-        let columns = [];
-        fields.forEach((column) => columns.push(column)); 
-        const SQL = `SELECT ${columns.toString()} FROM ${table}`;
+    static async getSelectQuery(table, fieldsSelect, fieldsWhere) {
+        console.log(`SQLManager.getSelectQuery invoked! Table = ${table}, Fields = ${fieldsSelect}, Where = ${fieldsWhere}`);
+        // let values = fields.map(field => field.value);
+        // If columns is empty SELECT * by default
+        if (!fieldsSelect.length) {
+            fieldsSelect.push('*');
+        }
+
+        let SQL = `SELECT ${fieldsSelect.toString()} FROM ${table}`;
+        // Specify WHERE clause if applicable
+        if (fieldsWhere.length) {
+            let whereSQL = this.convertArrayToSQLConditional(fieldsWhere)
+            SQL += ` WHERE ${whereSQL}`;
+        }
         const output = await this.query(SQL);
         
         // Parse RowDataPackets into array of objects
@@ -47,12 +56,14 @@ class SQLManager {
     }
 
     static async performInsert(table, fields) {
-        let keys = [];
-        let vals = [];
-        fields.forEach((field) => { 
-            keys.push(field.name);
-            vals.push(field.value);
-        });
+        // Check if fields is empty 
+        if (!fields.length) {
+            console.log("User tried to insert empty field!");
+            return;
+        }    
+
+        let keys = fields.map(field => field.name);
+        let vals = fields.map(field => field.value);
         
         // Convert array into SQL string and wrap string values in quotes
         vals = vals.map(val => {
@@ -67,10 +78,59 @@ class SQLManager {
         const output = await this.query(SQL);
         return output;
     }
+    
+    static async performUpdate(table, fieldsUpdate, fieldsWhere) {
+        // Stop if no fields specified to update or no WHERE clause
+        if (!fieldsUpdate.length || !fieldsWhere.length) {
+            return;
+        }
+
+        let whereSQL = this.convertArrayToSQLConditional(fieldsWhere);
+        let setSQL = this.convertArrayToSQLEquals(fieldsUpdate);
+
+        // Generate SQL code for SET clause
+        // SQL for WHERE clause
+        const SQL = `UPDATE ${table} SET ${setSQL} WHERE ${whereSQL}`;
+        console.log(SQL);
+        const output = await this.query(SQL);
+        console.log(output);
+        return output
+        
+    }
 
     static async performDelete(table, id) {
 
         
+    }
+
+    // Generate SQL code for SET clause
+    static convertArrayToSQLEquals(arr) {
+        let res = arr.map(field => {
+            let updateField = `${field.name} = `;
+            // Put quotes around string data types to be inserted
+            if (typeof field.value === "string") {
+                updateField += `'${field.value}'`;
+            } else {
+                updateField += `${field.value}`;
+            }
+            return updateField;
+        }).join(',');
+        return res;
+    }
+
+    // Generate SQL code for WHERE clause
+    static convertArrayToSQLConditional(arr) {
+        let res = arr.map(field => {
+            let updateField = `${field.name} = `;
+            // Put quotes around string data types to be inserted
+            if (typeof field.value === "string") {
+                updateField += `'${field.value}'`;
+            } else {
+                updateField += `${field.value}`;
+            }
+            return updateField;
+        }).join(' AND ');
+        return res;
     }
 }
 

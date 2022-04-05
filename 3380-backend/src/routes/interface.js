@@ -39,13 +39,13 @@ router.get('/fields', async (req, res) => {
 router.post('/query/select', async (req, res) => {
     console.log('POST /interface/query/select');
 
-    const { table, fields } = req.body;
+    const { table, fieldsSelect, fieldsWhere } = req.body;
     if (!table) return res.status(400).json({ message: 'Missing `table` in body' });
-    console.log(fields);
+    console.log(fieldsSelect);
 
     try {
-        const rows = await SQLManager.getSelectQuery(table, fields);
-        return res.status(200).json(rows);
+        const rows = await SQLManager.getSelectQuery(table, fieldsSelect, fieldsWhere);
+        return res.status(200).json({ rows });
     } catch (err) {
         console.log(err);
     }
@@ -87,14 +87,14 @@ router.delete('/query/delete', async (req, res) => {
 });
 
 /* PUT /interface */
-router.put('/', async (req, res) => {
+router.put('/query/update', async (req, res) => {
     console.log('PUT /interface');
-    const { table, id, fields } = req.body;
+    const { table, fieldsUpdate, fieldsWhere } = req.body;
 
     if (!table) return res.status(400).json({ message: 'Missing `table` in body' });
 
     try {
-        const rows = await SQLManager.performUpdate(table, id);
+        const rows = await SQLManager.performUpdate(table, fieldsUpdate, fieldsWhere);
         return res.status(200).json({ rows });
     } catch (err) {
         console.log(err);
