@@ -40,9 +40,9 @@ class Utils {
   }
 
   static validate(formData) {
-    const { value, type, nullable, isPrimaryKey } = formData;
+    const { value, type, nullable } = formData;
 
-    if (isPrimaryKey) return true;
+    // if (isPrimaryKey) return true;
 
     let result = true;
 
@@ -54,7 +54,7 @@ class Utils {
     } else if (type.includes('float')) {
       result = floatRG.test(value);
     } else {
-      console.log('Utils.validate: Unrecognized type. type =', type);
+      console.warn('Utils.validate: Unrecognized type. type =', type);
     }
 
     if (!nullable && (!value || value.length === 0)) result = false;

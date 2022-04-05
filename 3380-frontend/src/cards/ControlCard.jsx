@@ -10,39 +10,34 @@ import Utils from '../util/Utils';
 import ConfirmAddDialog from '../components/ConfirmAddDialog';
 
 function ControlCard({ table, setTable, tables, fields, onSelectQuery }) {
-  const [ tableOptions, setTableOptions ] = useState([]); // Option[]
-  const [ tableValue, setTableValue ] = useState(undefined); // Option
-  const [ tableForm, setTableForm ] = useState({});
-  const [ resetFlag, setResetFlag ] = useState(false);
-  const [ addIsVisible, setAddIsVisible ] = useState(false);
+  const [tableOptions, setTableOptions] = useState([]); // Option[]
+  const [tableValue, setTableValue] = useState(undefined); // Option
+  const [tableForm, setTableForm] = useState({});
+  const [resetFlag, setResetFlag] = useState(false);
+  const [addIsVisible, setAddIsVisible] = useState(false);
 
   useEffect(() => {
-    const options = tables.map(el => ({ name: el }));
+    const options = tables.map((el) => ({ name: el }));
     setTableOptions(options);
   }, [tables]);
 
   useEffect(() => {
     setTableForm(Utils.getEmptyForm(fields));
     setResetFlag(false);
-}, [fields, setTableForm, setResetFlag]);
-
-  const validateForm = () => {
-    const [validatedForm, isValid] = Utils.validateForm(tableForm);
-    setTableForm(validatedForm);
-    return isValid;
-  }
+  }, [fields, setTableForm, setResetFlag]);
 
   const searchTable = () => {
     let filteredTables = [...tables];
-    if (tableValue && tableValue.name.trim()) filteredTables = tables.filter(el => el.includes(tableValue.name));
-    const filteredOptions = filteredTables.map(el => ({ name: el }));
+    if (tableValue && tableValue.name)
+      filteredTables = tables.filter((el) => el.includes(tableValue.name));
+    const filteredOptions = filteredTables.map((el) => ({ name: el }));
     setTableOptions(filteredOptions);
   };
 
   const handleTableInputChange = (e) => {
     let { value } = e;
-    if (typeof value === "string") value = value.toLowerCase();
-    if (typeof value !== "string") value = value.name;
+    if (typeof value === 'string') value = value.toLowerCase().trim();
+    if (typeof value !== 'string') value = value.name;
     setTableValue({ name: value });
     if (tables.includes(value)) setTable(value);
   };
@@ -63,14 +58,15 @@ function ControlCard({ table, setTable, tables, fields, onSelectQuery }) {
   };
 
   const handleAddClick = () => {
-    const isValid = validateForm();
+    const [validatedForm, isValid] = Utils.validateForm(tableForm);
+    setTableForm(validatedForm);
     if (isValid) setAddIsVisible(true);
-  }
+  };
 
   const handleResetClick = () => {
     setTableForm(Utils.getEmptyForm(fields));
     setResetFlag(false);
-  }
+  };
 
   const addDialogProps = { addIsVisible, setAddIsVisible, table, tableForm, fields };
 
@@ -87,27 +83,27 @@ function ControlCard({ table, setTable, tables, fields, onSelectQuery }) {
 
       <div className="spacer" />
 
-      {
-        table ?
-        <div className='p400' style={{ marginBottom: '15px' }}>Showing controls for <span className='p600'>{table}</span> table</div>
-        : <div className='p400' style={{ margin: '0.5rem 0'}}>Welcome. Select a table from above.</div>
-      }
+      {table ? (
+        <div className="p400" style={{ marginBottom: '15px' }}>
+          Showing controls for <span className="p600">{table}</span> table
+        </div>
+      ) : (
+        <div className="p400" style={{ margin: '0.5rem 0' }}>
+          Welcome. Select a table from above.
+        </div>
+      )}
 
-      {
-        Array.isArray(fields) ? (
-          <form className="flex-wrap">
-            {
-                fields.map((field) => {
-                  const props = { name: field.name, tableForm, setTableForm, setResetFlag };
-                  return <ControlFieldInput {...props} key={field.name} />;
-                })
-            }
+      {Array.isArray(fields) ? (
+        <form className="flex-wrap">
+          {fields.map((field) => {
+            const props = { name: field.name, tableForm, setTableForm, setResetFlag };
+            return <ControlFieldInput {...props} key={field.name} />;
+          })}
         </form>
-        ) : (
-          // eslint-disable-next-line react/jsx-no-useless-fragment
-          <></>
-        )
-      }
+      ) : (
+        // eslint-disable-next-line react/jsx-no-useless-fragment
+        <></>
+      )}
 
       <div className="spacer" />
 
@@ -123,14 +119,14 @@ function ControlCard({ table, setTable, tables, fields, onSelectQuery }) {
           label="Add"
           onClick={handleAddClick}
           style={{ marginRight: '10px' }}
-          disabled={!table}  
+          disabled={!table}
         />
         <Button
           label="Reset"
           onClick={handleResetClick}
           className="p-button-secondary"
           style={{ marginRight: '10px' }}
-          disabled={!resetFlag}  
+          disabled={!resetFlag}
         />
       </div>
 

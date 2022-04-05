@@ -12,13 +12,12 @@ import UserCard from './cards/UserCard';
 import HomeGroup from './components/HomeGroup';
 
 function App() {
-
   return (
     <GlobalContext>
       <div className="body">
-        <div className='flex-wrap'>
+        <div className="flex-wrap">
           <TitleCard />
-          <div className='spacer' />
+          <div className="spacer" />
           <UserCard />
         </div>
         <div className="spacer" />

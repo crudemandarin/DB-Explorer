@@ -10,10 +10,7 @@ export default function GlobalContext({ children }) {
   const [user, setUser] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
-  const value = useMemo(
-    () => ({ user, setUser, isLoading, setIsLoading }),
-    [user, isLoading]
-  );
+  const value = useMemo(() => ({ user, setUser, isLoading, setIsLoading }), [user, isLoading]);
 
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }

@@ -44,14 +44,13 @@ function HomeGroup() {
   }, [table]);
 
   const onSelectQuery = (result) => {
-    setResults([result, ...results])
-  }
+    setResults([result, ...results]);
+  };
 
   const onTableCardRemove = (id) => {
-    // console.log('HomeGroup.onTableCardRemove invoked! ID =', id);
-    const temp = results.filter(el => el.id !== id);
+    const temp = results.filter((el) => el.id !== id);
     setResults(temp);
-  }
+  };
 
   const controlProps = { table, setTable, tables, fields, results, onSelectQuery };
 
@@ -59,7 +58,9 @@ function HomeGroup() {
     <>
       <ControlCard {...controlProps} />
       {Array.isArray(results) ? (
-        results.map(result => <TableCard key={result.id} result={result} onRemove={onTableCardRemove} />)
+        results.map((result) => (
+          <TableCard key={result.id} result={result} onRemove={onTableCardRemove} />
+        ))
       ) : (
         // eslint-disable-next-line react/jsx-no-useless-fragment
         <></>

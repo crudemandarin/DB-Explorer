@@ -11,19 +11,19 @@ function TableCard({ result, onRemove }) {
 
   const onRemoveClick = () => {
     onRemove(result.id);
-  }
+  };
 
   const onExportClick = () => {
     dt.current.exportCSV();
-  }
+  };
 
   const title = useMemo(() => {
     let output = `Table ${result.table}`;
     if (Array.isArray(result.formParams) && result.formParams.length > 0) {
       let suffix = '';
-      result.formParams.forEach(param => {
-        suffix += `, ${param.name}=${param.value}`
-      })
+      result.formParams.forEach((param) => {
+        suffix += `, ${param.name}=${param.value}`;
+      });
       output += suffix;
     }
     return output;
@@ -33,14 +33,19 @@ function TableCard({ result, onRemove }) {
 
   return (
     <div className="card" style={{ width: '100%', maxHeight: '500px', marginTop: '1rem' }}>
-
-      <div className='flex space-between'>
-        <div className='truncated' style={{ maxWidth: '80%' }}>
-          <span className='h600'>Query {result.id} {" | "}</span>
-          <span className='p400'>{title}</span>
+      <div className="flex space-between">
+        <div className="truncated" style={{ maxWidth: '80%' }}>
+          <span className="h600">
+            Query {result.id} {' | '}
+          </span>
+          <span className="p400">{title}</span>
         </div>
 
-        <Button onClick={onRemoveClick} icon="pi pi-times" className="p-button-rounded p-button-secondary p-button-outlined" />
+        <Button
+          onClick={onRemoveClick}
+          icon="pi pi-times"
+          className="p-button-rounded p-button-secondary p-button-outlined"
+        />
       </div>
 
       <div>
@@ -53,7 +58,9 @@ function TableCard({ result, onRemove }) {
 
       <DataTable ref={dt} value={result.rows} responsiveLayout="scroll">
         {fieldsIsValid ? (
-          result.fields.map((field) => <Column field={field.name} header={field.name} key={field.name} />)
+          result.fields.map((field) => (
+            <Column field={field.name} header={field.name} key={field.name} />
+          ))
         ) : (
           // eslint-disable-next-line react/jsx-no-useless-fragment
           <></>
