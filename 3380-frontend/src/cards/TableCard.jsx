@@ -1,13 +1,20 @@
-import React, { useMemo } from 'react';
+import React, { useRef, useMemo } from 'react';
 
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 
-function TableCard({ result, fields, onRemove }) {
-  
+import '../styles/TableCard.css';
+
+function TableCard({ result, onRemove }) {
+  const dt = useRef(null);
+
   const onRemoveClick = () => {
     onRemove(result.id);
+  }
+
+  const onExportClick = () => {
+    dt.current.exportCSV();
   }
 
   const title = useMemo(() => {
@@ -22,8 +29,10 @@ function TableCard({ result, fields, onRemove }) {
     return output;
   }, [result]);
 
+  const fieldsIsValid = Array.isArray(result.fields) && result.fields.length !== 0;
+
   return (
-    <div className="card" style={{ width: '100%', marginTop: '1rem' }}>
+    <div className="card" style={{ width: '100%', maxHeight: '500px', marginTop: '1rem' }}>
 
       <div className='flex space-between'>
         <div className='truncated' style={{ maxWidth: '80%' }}>
@@ -37,14 +46,14 @@ function TableCard({ result, fields, onRemove }) {
       <div>
         <Button label="Modify" className="p-button-warning" style={{ marginRight: '10px' }} />
         <Button label="Delete" className="p-button-danger" style={{ marginRight: '10px' }} />
-        <Button label="Export" />
+        <Button onClick={onExportClick} label="Export" />
       </div>
 
       <div className="spacer" />
 
-      <DataTable value={result.rows}>
-        {Array.isArray(fields) ? (
-          fields.map((field) => <Column field={field.name} header={field.name} key={field.name} />)
+      <DataTable ref={dt} value={result.rows} responsiveLayout="scroll">
+        {fieldsIsValid ? (
+          result.fields.map((field) => <Column field={field.name} header={field.name} key={field.name} />)
         ) : (
           // eslint-disable-next-line react/jsx-no-useless-fragment
           <></>

@@ -7,7 +7,7 @@ const Context = createContext({});
 // { user: User, setUser: fn, isLoading: boolean, setIsLoading: fn }
 
 export default function GlobalContext({ children }) {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
   const value = useMemo(
