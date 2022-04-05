@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Button } from 'primereact/button';
 
 import { InputText } from 'primereact/inputtext';
+import { Button } from 'primereact/button';
 
 import { useGlobal } from '../util/GlobalContext';
 
@@ -50,7 +50,7 @@ function UserCard() {
 
   return (
     <div className="card">
-      <div className="h600">Welcome back, {user.FirstName}</div>
+      <div className="h400"> Signed in as <span className="h600"> {user.FirstName} </span></div>
     </div>
   );
 

@@ -19,8 +19,20 @@ class ApiService {
     return axios.get(`${SERVICE_URL}/interface/fields?table=${table}`);
   }
 
-  static async getSelectQuery(params) {
+  static async select(params) {
     return axios.post(`${SERVICE_URL}/interface/query`, params);
+  }
+
+  static async insert(params) {
+    return axios.post(`${SERVICE_URL}/interface/query/data`, params);
+  }
+
+  static async delete(params) {
+    return axios.delete(`${SERVICE_URL}/interface/query/data`, params);
+  }
+
+  static async update(params) {
+    return axios.put(`${SERVICE_URL}/interface/query/data`, params);
   }
 }
 

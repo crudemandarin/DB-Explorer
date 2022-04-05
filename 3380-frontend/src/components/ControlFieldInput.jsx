@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 
 import { InputText } from 'primereact/inputtext';
 
-function ControlFieldInput({ name, tableForm, setTableForm, validateForm, setResetFlag }) {
+function ControlFieldInput({ name, tableForm, setTableForm, setResetFlag }) {
   const onChange = (e) => {
     let { value } = e.target;
     value = value.toLowerCase().trim();
@@ -10,7 +10,6 @@ function ControlFieldInput({ name, tableForm, setTableForm, validateForm, setRes
     form[name].value = value;
     setTableForm(form);
     setResetFlag(true);
-    validateForm();
   }
 
   const value = name in tableForm ? tableForm[name].value : '';

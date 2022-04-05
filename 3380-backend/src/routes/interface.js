@@ -74,10 +74,10 @@ router.post('/query/data', async (req, res) => {
         console.log(err);
     }
 
-    return res.status(501).json({ message: 'Failed to post data' });
+    return res.status(500).json({ message: 'Failed to post data' });
 });
 
-/* DELETE /interface */
+/* DELETE /interface/query/data */
 router.delete('/query/data', async (req, res) => {
     console.log('DELETE /interface/query/data');
     const { table, id } = req.body;
@@ -93,7 +93,7 @@ router.delete('/query/data', async (req, res) => {
     return res.status(500).json({ message: 'Failed to delete data' });
 });
 
-/* PUT /interface */
+/* PUT /interface/query/data */
 router.put('/query/data', async (req, res) => {
     console.log('PUT /interface/query/data');
 

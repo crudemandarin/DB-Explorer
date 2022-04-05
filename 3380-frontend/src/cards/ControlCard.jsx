@@ -7,13 +7,14 @@ import ControlFieldInput from '../components/ControlFieldInput';
 
 import ApiManager from '../api/ApiManager';
 import Utils from '../util/Utils';
+import ConfirmAddDialog from '../components/ConfirmAddDialog';
 
 function ControlCard({ table, setTable, tables, fields, onSelectQuery }) {
   const [ tableOptions, setTableOptions ] = useState([]); // Option[]
   const [ tableValue, setTableValue ] = useState(undefined); // Option
   const [ tableForm, setTableForm ] = useState({});
-  const [ formIsValid, setFormIsValid ] = useState(false);
   const [ resetFlag, setResetFlag ] = useState(false);
+  const [ addIsVisible, setAddIsVisible ] = useState(false);
 
   useEffect(() => {
     const options = tables.map(el => ({ name: el }));
@@ -23,13 +24,12 @@ function ControlCard({ table, setTable, tables, fields, onSelectQuery }) {
   useEffect(() => {
     setTableForm(Utils.getEmptyForm(fields));
     setResetFlag(false);
-    setFormIsValid(true);
 }, [fields, setTableForm, setResetFlag]);
 
   const validateForm = () => {
     const [validatedForm, isValid] = Utils.validateForm(tableForm);
     setTableForm(validatedForm);
-    setFormIsValid(isValid);
+    return isValid;
   }
 
   const searchTable = () => {
@@ -53,23 +53,26 @@ function ControlCard({ table, setTable, tables, fields, onSelectQuery }) {
 
     try {
       const params = { table, select: [], where: formParams };
-      const rows = await ApiManager.getSelectQuery(params);
-      const id = crypto.randomUUID().substring(0, 6);
+      const rows = await ApiManager.select(params);
+      const id = Utils.getNewQueryID();
       const result = { id, table, formParams, fields, rows };
       onSelectQuery(result);
     } catch (err) {
-      console.error('ControlCard.handleQueryClick: getSelectQuery failed! Error =', err);
+      console.error('ControlCard.handleQueryClick: select failed! Error =', err);
     }
   };
 
   const handleAddClick = () => {
-    validateForm();
+    const isValid = validateForm();
+    if (isValid) setAddIsVisible(true);
   }
 
   const handleResetClick = () => {
     setTableForm(Utils.getEmptyForm(fields));
     setResetFlag(false);
   }
+
+  const addDialogProps = { addIsVisible, setAddIsVisible, table, tableForm, fields };
 
   return (
     <div className="card" style={{ width: '100%' }}>
@@ -86,8 +89,8 @@ function ControlCard({ table, setTable, tables, fields, onSelectQuery }) {
 
       {
         table ?
-        <div className='p400' style={{ marginBottom: '0.5rem' }}>Showing controls for <span className='p600'>{table}</span> table</div>
-        : <div className='p400'>No table selected</div>
+        <div className='p400' style={{ marginBottom: '15px' }}>Showing controls for <span className='p600'>{table}</span> table</div>
+        : <div className='p400' style={{ margin: '0.5rem 0'}}>Welcome. Select a table from above.</div>
       }
 
       {
@@ -95,8 +98,8 @@ function ControlCard({ table, setTable, tables, fields, onSelectQuery }) {
           <form className="flex-wrap">
             {
                 fields.map((field) => {
-                const props = { name: field.name, tableForm, setTableForm, validateForm, setResetFlag };
-                return <ControlFieldInput {...props} key={field.name} />;
+                  const props = { name: field.name, tableForm, setTableForm, setResetFlag };
+                  return <ControlFieldInput {...props} key={field.name} />;
                 })
             }
         </form>
@@ -120,7 +123,7 @@ function ControlCard({ table, setTable, tables, fields, onSelectQuery }) {
           label="Add"
           onClick={handleAddClick}
           style={{ marginRight: '10px' }}
-          disabled={!formIsValid}  
+          disabled={!table}  
         />
         <Button
           label="Reset"
@@ -130,6 +133,8 @@ function ControlCard({ table, setTable, tables, fields, onSelectQuery }) {
           disabled={!resetFlag}  
         />
       </div>
+
+      <ConfirmAddDialog {...addDialogProps} />
     </div>
   );
 }

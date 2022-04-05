@@ -36,7 +36,15 @@ class SQLManager {
         console.log('SQLManager.getTableFields invoked! Table =', table);
         const SQL = `SHOW COLUMNS FROM ${table};`;
         const output = await this.query(SQL);
-        const fields = output.map((row) => ({ name: row.Field, type: row.Type }));
+        console.log(output);
+        const fields = output.map((row) => ({
+            name: row.Field,
+            type: row.Type,
+            nullable: row.Null === 'YES',
+            isPrimaryKey: row.Key === 'PRI',
+            isForeignKey: row.Key === 'MUL',
+            default: row.Default ? row.Default : '',
+        }));
         console.log('SQLManager.getTableFields: Fields = ', fields);
         return fields;
     }
