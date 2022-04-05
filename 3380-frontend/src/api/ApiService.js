@@ -4,6 +4,7 @@ const SERVICE_URL = 'https://qjisgkaetc.execute-api.us-east-1.amazonaws.com/dev'
 
 class ApiService {
   static async ping() {
+    console.log('ApiService.ping:', SERVICE_URL);
     return axios.get(SERVICE_URL);
   }
 
