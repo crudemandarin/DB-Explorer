@@ -93,7 +93,7 @@ class SQLManager {
         return result;
     }
 
-    static async delete(table, id) {}
+    // static async delete(table, id) {}
 }
 
 module.exports = SQLManager;

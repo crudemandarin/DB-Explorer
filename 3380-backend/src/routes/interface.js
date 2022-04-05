@@ -80,17 +80,18 @@ router.post('/query/data', async (req, res) => {
 /* DELETE /interface/query/data */
 router.delete('/query/data', async (req, res) => {
     console.log('DELETE /interface/query/data');
-    const { table, id } = req.body;
+    // const { table, id } = req.body;
 
-    if (!table) return res.status(400).json({ message: 'Missing `table` in body' });
+    // if (!table) return res.status(400).json({ message: 'Missing `table` in body' });
 
-    try {
-        const rows = await SQLManager.delete(table, id);
-        return res.status(200).json({ rows });
-    } catch (err) {
-        console.log(err);
-    }
-    return res.status(500).json({ message: 'Failed to delete data' });
+    // try {
+    //     const rows = await SQLManager.delete(table, id);
+    //     return res.status(200).json({ rows });
+    // } catch (err) {
+    //     console.log(err);
+    // }
+
+    return res.status(501).json({ message: 'Not implemented' });
 });
 
 /* PUT /interface/query/data */
