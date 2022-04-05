@@ -1,19 +1,35 @@
 import React from 'react';
+import { Button } from 'primereact/button';
 
 // Uncomment these lines to use/modify user object globally
 
 // import { useGlobal } from '../util/GlobalContext';
+const handleSubmit = (event) => {
+  event.preventDefault();
+  submit();
+};
+
 
 function UserCard() {
-  // const { user, setUser } = useGlobal();
-
   return (
     <div className="card">
-      <div className="h600">LOGIN COMPONENT</div>
+      <div className="h600">Sign In</div>
+      <div className="h400">
+        <label>
+          Email:
+          <input/>
+        </label>
+        <label>
+          Password:
+          <input/>
+        </label>
+      </div>
       <div className="spacer" />
-      <div className="p400">Beep boop. I&apos;m placeholder text</div>
+      <div className="p400">
+        <Button onClick={handleSubmit}>Sign In</Button>
+      </div>
     </div>
   );
 }
 
-export default UserCard;
+  export default UserCard;
