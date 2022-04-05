@@ -27,12 +27,9 @@ function ControlCard({ table, setTable, tables, fields, onSelectQuery }) {
   }, [fields, setTableForm, setResetFlag]);
 
   const searchTable = () => {
-    console.log('ControlCard.searchTable: tableValue', tableValue)
     let filteredTables = [...tables];
-    console.log('ControlCard.searchTable: filteredTables 1', filteredTables)
     if (tableValue && tableValue.name)
-      filteredTables = tables.filter((el) => el.includes(tableValue.name));
-    console.log('ControlCard.searchTable: filteredTables 2', filteredTables)
+      filteredTables = tables.filter((el) => el.toLowerCase().includes(tableValue.name));
     const filteredOptions = filteredTables.map((el) => ({ name: el }));
     setTableOptions(filteredOptions);
   };
