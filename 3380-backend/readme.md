@@ -11,10 +11,10 @@ npm install
 2. Start application
 
 ```
-npm start
+node .
 ```
 
-3. Navigate to http://localhost:3000/
+3. Navigate to http://localhost:5050/
 
 ## Deployment Instructions
 
@@ -30,7 +30,7 @@ npm install
 
 ## Useful Commands
 
-Start Server: `npm start`
+Start Server: `node .`
 
 Run ESLint Check: `npm run eslint-check`
 
