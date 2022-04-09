@@ -1,4 +1,4 @@
-DROP DATABASE pms;
+DROP DATABASE PMS;
 
 CREATE DATABASE PMS;
 
@@ -61,6 +61,7 @@ Budget,Effort,TotalCost,TotalEffort fields now have a default value of 0.*/
 CREATE TABLE Project (
     ID varchar(64) NOT NULL PRIMARY KEY,
     WorkspaceID varchar(64) NOT NULL,
+    DepartmentID varchar(64),
     CreatedAt bigint NOT NULL,
     CreatedBy varchar(64) NOT NULL,
     LastUpdated bigint NOT NULL,
@@ -71,6 +72,7 @@ CREATE TABLE Project (
     ActualCost float DEFAULT 0,
     ActualEffort float DEFAULT 0,
     FOREIGN KEY (WorkspaceID) REFERENCES Workspace(ID),
+    FOREIGN KEY (DepartmentID) REFERENCES Department(ID),
     FOREIGN KEY (CreatedBy) REFERENCES WorkspaceUser(ID),
     FOREIGN KEY (UpdatedBy) REFERENCES WorkspaceUser(ID)
 ) ENGINE=INNODB;
@@ -114,6 +116,7 @@ CREATE TABLE Tag (
     WorkspaceID varchar(64) NOT NULL,
     ProjectID varchar(64) NOT NULL,
     TaskID varchar(64),
+    Message varchar(256),
     FOREIGN KEY (TaskID) REFERENCES Task(ID),
     FOREIGN KEY (ProjectID) REFERENCES Project(ID),
     FOREIGN KEY (WorkspaceID) REFERENCES Workspace(ID)

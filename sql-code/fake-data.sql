@@ -105,7 +105,7 @@ VALUES
 
 /*creatign workspaceUsers and giving them roles. All role 100. Note: roles
 can be changed to job titles but I thought we could assign a job title to a number if needed*/
-Insert INTO WorkspaceUser(ID,UserID,Role,WorkspaceID)
+Insert INTO WorkspaceUser(ID,UserID,`Role`,WorkspaceID)
 VALUES
   (1,1,100,1),
   (2,2,100,1),
@@ -153,7 +153,7 @@ VALUES
   (44,44,100,3),
   (45,45,100,3);
 /*Creating departments 3 for workspace 1 | 2 for workspace 2  | 2 for workspace 3*/
-INSERT INTO Department (ID,WorkspaceID,CreatedAt,CreatedBy,LastUpdated,UpdatedBy,Title,Description)
+INSERT INTO Department (ID,WorkspaceID,CreatedAt,CreatedBy,LastUpdated,UpdatedBy,Title,`Description`)
 VALUES
 	(1,1,20160428,1,20220322,2,"Research","Lorem ipsum"),
     (2,1,20160428,1,20220322,3,"Finance","Lorem ipsum"),
