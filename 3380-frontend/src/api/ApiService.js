@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const SERVICE_URL = 'https://qjisgkaetc.execute-api.us-east-1.amazonaws.com/dev';
+const SERVICE_URL = process.env.REACT_APP_SERVICE_URL;
 
 class ApiService {
   static async ping() {

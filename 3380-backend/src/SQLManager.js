@@ -27,7 +27,7 @@ class SQLManager {
         console.log('SQLManager.getTables invoked!');
         const SQL = 'SHOW TABLES';
         const output = await this.query(SQL);
-        const tables = output.map((row) => row.Tables_in_PMS);
+        const tables = output.map((row) => row[`Tables_in_${process.env.DB_NAME}`]);
         console.log('SQLManager.getTables: Tables = ', tables);
         return tables;
     }
@@ -36,7 +36,6 @@ class SQLManager {
         console.log('SQLManager.getTableFields invoked! Table =', table);
         const SQL = `SHOW COLUMNS FROM ${table};`;
         const output = await this.query(SQL);
-        console.log(output);
         const fields = output.map((row) => ({
             name: row.Field,
             type: row.Type,
@@ -54,15 +53,12 @@ class SQLManager {
             `SQLManager.select invoked! Table = ${table}, Fields = ${select}, Where =`,
             where
         );
-
         let selectParams = '*';
         if (Array.isArray(select) && select.length !== 0) {
             selectParams = select.join(',');
         }
-
         let whereParams = this.nameValueArrToString(where).join(' AND ');
         if (whereParams) whereParams = ` WHERE ${whereParams}`;
-
         const SQL = `SELECT ${selectParams} FROM ${table}${whereParams};`;
         const rows = await this.query(SQL);
         console.log('SQLManager.select: rows =', rows);
@@ -71,13 +67,11 @@ class SQLManager {
 
     static async insert(table, fields) {
         console.log(`SQLManager.insert invoked! Table = ${table}, Fields =`, fields);
-
         const keys = fields.map((field) => field.name).join(',');
         const values = fields
             .map((field) => field.value)
             .map((value) => (typeof value === 'string' ? `'${value}'` : value))
             .join(',');
-
         const SQL = `INSERT INTO ${table} (${keys}) VALUES (${values})`;
         const result = await this.query(SQL);
         console.log('SQLManager.insert: result =', result);
