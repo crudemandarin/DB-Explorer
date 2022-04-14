@@ -29,7 +29,7 @@ router.get('/fields', async (req, res) => {
         const fields = await SQLManager.getTableFields(table);
         return res.status(200).json({ fields });
     } catch (err) {
-        console.log(err);
+        console.error(err);
     }
 
     return res.status(500).json({ message: 'Failed to load table fields' });
@@ -48,7 +48,7 @@ router.post('/query', async (req, res) => {
         const rows = await SQLManager.select(table, select, where);
         return res.status(200).json({ rows });
     } catch (err) {
-        console.log(err);
+        console.error(err);
     }
 
     return res.status(500).json({ message: 'Failed to load query' });
@@ -71,7 +71,7 @@ router.post('/query/data', async (req, res) => {
         const rows = await SQLManager.insert(table, fields);
         return res.status(200).json({ rows });
     } catch (err) {
-        console.log(err);
+        console.error(err);
     }
 
     return res.status(500).json({ message: 'Failed to post data' });
@@ -90,7 +90,7 @@ router.delete('/query/data', async (req, res) => {
         const rows = await SQLManager.delete(table, fieldsObj);
         return res.status(200).json({ rows });
     } catch (err) {
-        console.log(err);
+        console.error(err);
     }
 
     return res.status(501).json({ message: 'Not implemented' });
@@ -115,7 +115,7 @@ router.put('/query/data', async (req, res) => {
         const result = await SQLManager.update(table, fields, where);
         return res.status(200).json({ result });
     } catch (err) {
-        console.log(err);
+        console.error(err);
     }
 
     return res.status(500).json({ message: 'Failed to update data' });

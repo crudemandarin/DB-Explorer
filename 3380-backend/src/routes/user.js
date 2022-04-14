@@ -1,25 +1,26 @@
 const express = require('express');
-const { select } = require('../SQLManager');
 
 const router = express.Router();
-const USER_TABLE_NAME = 'User';
-const USER_TABLE_EMAIL_FIELD = 'Email';
 
 const SQLManager = require('../SQLManager');
 
 /* POST /user/login */
-router.get('/login', async (req, res) => {
+router.post('/login', async (req, res) => {
     console.log('POST /user/login');
+
     const { email } = req.body;
-    if (!email) {
-        return res.status(400).json({ message: `Bad input - missing email` })
+    if (!email) return res.status(400).json({ message: 'Missing `email` in body' });
+
+    try {
+        const where = [{ name: 'Email', value: email }];
+        const user = await SQLManager.select('User', '*', where);
+        if (!user.length) return res.status(404).json({ message: `User doesn't exist` });
+        return res.status(200).json({ user: user[0] });
+    } catch (err) {
+        console.error(err);
     }
-    const where = { 'name': USER_TABLE_EMAIL_FIELD, 'value': email };
-    const user = await SQLManager.select(USER_TABLE_NAME, '*', [where]);
-    if (!user) {
-        return res.status(404).json({ message: `User doesn't exist` })
-    }
-    return res.status(200).json({ user });
+
+    return res.status(500).json({ message: 'Internal Server Error' });
 });
 
 module.exports = router;
