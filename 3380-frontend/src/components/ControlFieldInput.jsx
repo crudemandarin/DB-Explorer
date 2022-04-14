@@ -13,19 +13,24 @@ function ControlFieldInput({ name, tableForm, setTableForm, setResetFlag }) {
   };
 
   const value = name in tableForm ? tableForm[name].value : '';
-  const inputClassName = useMemo(() => {
-    const isInvalid = name in tableForm ? tableForm[name].isInvalid : false;
-    let className = 'p-inputtext-sm';
-    if (isInvalid) className += ' p-invalid';
-    return className;
+  const [inputClassName, errorMsg] = useMemo(() => {
+    const baseClassName = 'p-inputtext-sm';
+    if (name in tableForm) {
+      const { isInvalid, error } = tableForm[name];
+      if (isInvalid) return [`${baseClassName} p-invalid`, error];
+    }
+    return [baseClassName, ""];
   }, [name, tableForm]);
+
+  const errorMsgId = `${name}-help`;
 
   return (
     <div style={{ margin: '12px 10px' }}>
       <span className="p-float-label">
-        <InputText id={name} className={inputClassName} value={value} onChange={onChange} />
+        <InputText id={name} aria-describedby={errorMsgId} className={inputClassName} value={value} onChange={onChange} />
         <label htmlFor={name}>{name}</label>
       </span>
+      { errorMsg ? <small id={errorMsgId} className="p-error block">{errorMsg}</small> : <></> }
     </div>
   );
 }

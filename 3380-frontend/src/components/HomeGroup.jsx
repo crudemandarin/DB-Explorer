@@ -62,7 +62,6 @@ function HomeGroup() {
           <TableCard key={result.id} result={result} onRemove={onTableCardRemove} />
         ))
       ) : (
-        // eslint-disable-next-line react/jsx-no-useless-fragment
         <></>
       )}
     </>

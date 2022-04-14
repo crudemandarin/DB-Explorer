@@ -101,7 +101,6 @@ function ControlCard({ table, setTable, tables, fields, onSelectQuery }) {
           })}
         </form>
       ) : (
-        // eslint-disable-next-line react/jsx-no-useless-fragment
         <></>
       )}
 

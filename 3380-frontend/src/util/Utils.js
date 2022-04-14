@@ -14,6 +14,7 @@ class Utils {
           type: item.type,
           value: '',
           isInvalid: false,
+          error: '',
           nullable: item.nullable,
           isPrimaryKey: item.isPrimaryKey,
           isForeignKey: item.isForeignKey,
@@ -31,12 +32,14 @@ class Utils {
 
   static validateForm(tableForm) {
     const form = { ...tableForm };
-    let isValid = true;
+    let formIsValid = true;
     Object.keys(form).forEach((key) => {
-      form[key].isInvalid = !Utils.validate(form[key]);
-      if (form[key].isInvalid) isValid = false;
+      const [isValid, error] = Utils.validate(form[key]);
+      form[key].isInvalid = !isValid;
+      form[key].error = error;
+      if (!isValid) formIsValid = false;
     });
-    return [form, isValid];
+    return [form, formIsValid];
   }
 
   static validate(formData) {
@@ -44,22 +47,29 @@ class Utils {
 
     // if (isPrimaryKey) return true;
 
-    let result = true;
+    let isValid = true;
+    let error = '';
 
     if (type.includes('varchar')) {
       const length = parseInt(type.substring(type.indexOf('(') + 1, type.indexOf(')')), 10);
-      result = value.length <= length;
+      isValid = value.length <= length;
+      if (!isValid) error = `Length must be less than ${length}`;
     } else if (type.includes('bigint') || type.includes('smallint')) {
-      result = integerRG.test(value);
+      isValid = integerRG.test(value);
+      if (!isValid) error = `Must be integer`;
     } else if (type.includes('float')) {
-      result = floatRG.test(value);
+      isValid = floatRG.test(value);
+      if (!isValid) error = `Must be float`;
     } else {
       console.warn('Utils.validate: Unrecognized type. type =', type);
     }
 
-    if (!nullable && (!value || value.length === 0)) result = false;
+    if (!nullable && (!value || value.length === 0)) {
+      isValid = false;
+      error = 'Cannot be empty';
+    }
 
-    return result;
+    return [isValid, error];
   }
 }
 
