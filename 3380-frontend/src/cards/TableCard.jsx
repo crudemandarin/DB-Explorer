@@ -62,7 +62,6 @@ function TableCard({ result, onRemove }) {
             <Column field={field.name} header={field.name} key={field.name} />
           ))
         ) : (
-          // eslint-disable-next-line react/jsx-no-useless-fragment
           <></>
         )}
       </DataTable>

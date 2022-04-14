@@ -87,15 +87,6 @@ class SQLManager {
         return result;
     }
 
-    static async update(table, fields) {
-        const whereParams = this.nameValueArrToString(where).join(' AND ');
-        const updateParams = this.nameValueArrToString(fields).join(',');
-        const SQL = `UPDATE ${table} SET ${updateParams} WHERE ${whereParams}`;
-        const result = await this.query(SQL);
-        console.log('SQLManager.insert: result =', result);
-        return result;
-    }
-
     static async delete(table, fields) {
         const whereParams = this.nameValueArrToString(fields).join(' OR ');
         const SQL = `DELETE FROM ${table} WHERE ${whereParams}`;
@@ -103,7 +94,6 @@ class SQLManager {
         console.log('SQLManager.insert: result =', result);
         return result;
     }
-
 }
 
 module.exports = SQLManager;
