@@ -95,7 +95,9 @@ CREATE TABLE Task (
     UpdatedBy varchar(64) NOT NULL,
     Title varchar(128) NOT NULL,
     `Description` varchar(512),
-    `Status` smallint,
+    `Status` smallint NOT NULL, -- '0: Not started, 1: In progress, 2: Needs Review, 3: Completed'
+    AssignedTo varchar(64),
+    TimeClosed DATETIME(6),
     EstimatedCost float,
     EstimatedEffort float,
     ActualCost float DEFAULT 0,
@@ -108,7 +110,8 @@ CREATE TABLE Task (
     FOREIGN KEY (WorkspaceID) REFERENCES Workspace(ID) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (ParentTaskID) REFERENCES Task(ID) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (CreatedBy) REFERENCES WorkspaceUser(ID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (UpdatedBy) REFERENCES WorkspaceUser(ID)ON DELETE CASCADE ON UPDATE CASCADE 
+    FOREIGN KEY (UpdatedBy) REFERENCES WorkspaceUser(ID)ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (AssignedTo) REFERENCES WorkspaceUser(ID) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=INNODB;
 
 CREATE TABLE Tag (
@@ -155,7 +158,7 @@ delimiter ;
 
 /*Trigger activated on row update of Task Table: updates project total effort*/
 delimiter |
-Create Trigger bef_insert_ProjEffort_update BEFORE Update ON Task
+Create Trigger bef_update_ProjEffort_update BEFORE Update ON Task
 	FOR EACH ROW
 	BEGIN
 		UPDATE Project SET Project.ActualEffort = Project.ActualEffort + (New.ActualEffort - Old.ActualEffort) WHERE New.ProjectID = Project.ID;
@@ -163,5 +166,20 @@ Create Trigger bef_insert_ProjEffort_update BEFORE Update ON Task
 |
 delimiter ;
 
+/*When status of task is set to 3 (Complete), TimeClosed field will be updated to NOW()*/
+delimiter |
+Create Trigger bef_update_TimeClosed BEFORE Update ON Task
+	FOR EACH ROW
+	BEGIN
+		IF NEW.`Status` = 3 THEN
+		SET NEW.TimeClosed = NOW();
+        END IF;
+	END;
+|
+delimiter ;
+
+/*
 show triggers;
 show tables;
+select * from task;
+*/
