@@ -21,7 +21,7 @@ function AddControlCard({ table, setTable, tables, fields }) {
   }, [tables]);
 
   useEffect(() => {
-    setTableForm(Utils.getEmptyForm(fields));
+    setTableForm(Utils.getEmptyForm(fields, 'add'));
     setResetFlag(false);
   }, [fields, setTableForm, setResetFlag]);
 
@@ -49,7 +49,7 @@ function AddControlCard({ table, setTable, tables, fields }) {
   };
 
   const handleResetClick = () => {
-    setTableForm(Utils.getEmptyForm(fields));
+    setTableForm(Utils.getEmptyForm(fields, 'add'));
     setResetFlag(false);
   };
 
@@ -64,7 +64,7 @@ function AddControlCard({ table, setTable, tables, fields }) {
   };
 
   const renderControlFieldForm = () => {
-    if (!Array.isArray(fields) || !fields.length) return null;
+    if (!Array.isArray(fields) || !fields.length || !Object.keys(tableForm).length) return null;
     return (
       <>
         <div className="flex-wrap">
