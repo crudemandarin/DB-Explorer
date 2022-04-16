@@ -1,34 +1,54 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 
-import Utils from '../util/Utils';
 import ApiManager from '../api/ApiManager';
+import Utils from '../util/Utils';
 
-function ConfirmAddDialog({ addIsVisible, setAddIsVisible, table, tableForm, fields }) {
+import ResultsDialog from './ResultsDialog';
+
+function ConfirmAddDialog({ isVisible, setIsVisible, table, tableForm, fields }) {
+  const [results, setResults] = useState(undefined);
+  const [resultsIsVisible, setResultsIsVisible] = useState(false);
+
+  const add = (formParams) => {
+    console.log('HomeGroup.add invoked! formParams =', formParams);
+    const params = { table, fields: formParams };
+    return ApiManager.insert(params);
+  };
+
   const onHide = () => {
-    setAddIsVisible(false);
+    setIsVisible(false);
+    setResults(undefined);
+    setResultsIsVisible(false);
   };
 
   const handleAddClick = async () => {
     const formParams = Utils.getFormParams(tableForm);
-    console.log('ConfirmAddDialog.handleAddClick invoked! formParams =', formParams);
-    const params = { table, fields: formParams };
-    await ApiManager.insert(params);
-    onHide();
+    const data = await add(formParams);
+    setResults(data);
+    setResultsIsVisible(true);
   };
 
-  const rows = useMemo(() => {
-    if (!addIsVisible) return [];
+  const renderedTable = useMemo(() => {
+    if (!isVisible) return null;
     const row = {};
     fields.forEach((field) => {
       row[field.name] = tableForm[field.name].value;
     });
-    return [row];
-  }, [addIsVisible, fields, tableForm]);
+    const rows = [row];
+    const render = (
+      <DataTable value={rows} responsiveLayout="scroll">
+        {fields.map((field) => (
+          <Column field={field.name} header={field.name} key={field.name} />
+        ))}
+      </DataTable>
+    );
+    return render;
+  }, [isVisible, fields, tableForm]);
 
   const footer = (
     <div>
@@ -37,21 +57,28 @@ function ConfirmAddDialog({ addIsVisible, setAddIsVisible, table, tableForm, fie
     </div>
   );
 
+  const resultsDialogProps = {
+    isVisible: resultsIsVisible,
+    setIsVisible: setResultsIsVisible,
+    setParentIsVisible: setIsVisible,
+    results,
+    table,
+  };
+
   return (
-    <Dialog
-      header={`Add to ${table} table`}
-      footer={footer}
-      visible={addIsVisible}
-      style={{ width: '50vw' }}
-      modal
-      onHide={onHide}
-    >
-      <DataTable value={rows} responsiveLayout="scroll">
-        {fields.map((field) => (
-          <Column field={field.name} header={field.name} key={field.name} />
-        ))}
-      </DataTable>
-    </Dialog>
+    <>
+      <Dialog
+        header={`Add to ${table} table`}
+        footer={footer}
+        visible={isVisible}
+        style={{ width: '50vw' }}
+        modal
+        onHide={onHide}
+      >
+        {renderedTable}
+      </Dialog>
+      <ResultsDialog {...resultsDialogProps} />
+    </>
   );
 }
 

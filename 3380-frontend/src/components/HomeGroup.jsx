@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 
 import ApiManager from '../api/ApiManager';
-import Utils from '../util/Utils';
 
 import QueryControlCard from '../cards/QueryControlCard';
 import AddControlCard from '../cards/AddControlCard';
@@ -47,12 +46,7 @@ function HomeGroup() {
     if (table) getFields();
   }, [table]);
 
-  const query = async (formParams) => {
-    console.log('HomeGroup.query invoked. Form Params =', formParams);
-    const params = { table, select: [], where: formParams };
-    const rows = await ApiManager.select(params);
-    const id = Utils.getNewQueryID();
-    const result = { id, table, formParams, fields, rows };
+  const onQuery = (result) => {
     setResults([result, ...results]);
   };
 
@@ -68,11 +62,11 @@ function HomeGroup() {
       <nav className="flex-wrap">
         {nav.map((title, index) => (
           <div
+            key={`nav-${title}`}
             className={index === navigation ? 'nav nav-active' : 'nav'}
             onClick={() => onClick(index)}
           >
-            {' '}
-            {title}{' '}
+            {title}
           </div>
         ))}
       </nav>
@@ -81,16 +75,16 @@ function HomeGroup() {
 
   const renderController = () => {
     if (navigation === 0) {
-      const controlProps = { table, setTable, tables, fields, results, query };
+      const controlProps = { table, setTable, tables, fields, results, onQuery };
       return <QueryControlCard {...controlProps} />;
     }
 
     if (navigation === 1) {
-      const controlProps = { table, setTable, tables, fields, results, query };
+      const controlProps = { table, setTable, tables, fields, results };
       return <AddControlCard {...controlProps} />;
     }
 
-    const controlProps = { table, setTable, tables, fields, results, query };
+    const controlProps = {};
     return <ReportControlCard {...controlProps} />;
   };
 

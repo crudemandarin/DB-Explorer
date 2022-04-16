@@ -13,7 +13,7 @@ function AddControlCard({ table, setTable, tables, fields }) {
   const [tableValue, setTableValue] = useState(undefined); // Option
   const [tableForm, setTableForm] = useState({});
   const [resetFlag, setResetFlag] = useState(false);
-  const [addIsVisible, setAddIsVisible] = useState(false);
+  const [addDialogIsVisible, setAddDialogIsVisible] = useState(false);
 
   useEffect(() => {
     const options = tables.map((el) => ({ name: el }));
@@ -43,9 +43,9 @@ function AddControlCard({ table, setTable, tables, fields }) {
   };
 
   const handleAddClick = () => {
-    const [validatedForm, isValid] = Utils.validateForm(tableForm);
+    const [validatedForm, isValid] = Utils.validateForm(tableForm, 'add');
     setTableForm(validatedForm);
-    if (isValid) setAddIsVisible(true);
+    if (isValid) setAddDialogIsVisible(true);
   };
 
   const handleResetClick = () => {
@@ -64,21 +64,27 @@ function AddControlCard({ table, setTable, tables, fields }) {
   };
 
   const renderControlFieldForm = () => {
-    if (!Array.isArray(fields)) return null;
+    if (!Array.isArray(fields) || !fields.length) return null;
     return (
       <>
-        <div className="spacer" />
         <div className="flex-wrap">
           {fields.map((field) => {
             const props = { name: field.name, tableForm, setTableForm, setResetFlag };
             return <ControlFieldInput {...props} key={field.name} />;
           })}
         </div>
+        <div className="spacer" />
       </>
     );
   };
 
-  const addDialogProps = { addIsVisible, setAddIsVisible, table, tableForm, fields };
+  const addDialogProps = {
+    isVisible: addDialogIsVisible,
+    setIsVisible: setAddDialogIsVisible,
+    table,
+    tableForm,
+    fields,
+  };
 
   return (
     <div className="card" style={{ width: '100%' }}>
@@ -102,9 +108,9 @@ function AddControlCard({ table, setTable, tables, fields }) {
         {renderStatusMessage()}
       </div>
 
-      {renderControlFieldForm()}
-
       <div className="spacer" />
+
+      {renderControlFieldForm()}
 
       <div>
         <Button

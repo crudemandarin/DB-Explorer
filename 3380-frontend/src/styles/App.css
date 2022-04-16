@@ -54,6 +54,13 @@
   background-color: #585aec;
 }
 
+.textbox {
+  padding: 0.5rem;
+  border-radius: 10px;
+  background-color: rgb(234, 234, 234);
+  border: 1px dashed rgb(92, 92, 92);
+}
+
 /* Font Styles */
 
 .h600 {

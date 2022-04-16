@@ -3,11 +3,12 @@ import React, { useState, useEffect } from 'react';
 import { AutoComplete } from 'primereact/autocomplete';
 import { Button } from 'primereact/button';
 
+import ApiManager from '../api/ApiManager';
 import Utils from '../util/Utils';
 
 import ControlFieldInput from '../components/ControlFieldInput';
 
-function QueryControlCard({ table, setTable, tables, fields, query }) {
+function QueryControlCard({ table, setTable, tables, fields, onQuery }) {
   const [tableOptions, setTableOptions] = useState([]); // Option[]
   const [tableValue, setTableValue] = useState(undefined); // Option
   const [tableForm, setTableForm] = useState({});
@@ -22,6 +23,15 @@ function QueryControlCard({ table, setTable, tables, fields, query }) {
     setTableForm(Utils.getEmptyForm(fields));
     setResetFlag(false);
   }, [fields, setTableForm, setResetFlag]);
+
+  const query = async (formParams) => {
+    console.log('HomeGroup.query invoked. Form Params =', formParams);
+    const params = { table, select: [], where: formParams };
+    const rows = await ApiManager.select(params);
+    const id = Utils.getNewQueryID();
+    const result = { id, table, formParams, fields, rows };
+    onQuery(result);
+  };
 
   const searchTable = () => {
     let filteredTables = [...tables];
@@ -41,8 +51,12 @@ function QueryControlCard({ table, setTable, tables, fields, query }) {
   };
 
   const handleQueryClick = async () => {
-    const formParams = Utils.getFormParams(tableForm);
-    query(formParams);
+    const [validatedForm, isValid] = Utils.validateForm(tableForm, 'query');
+    setTableForm(validatedForm);
+    if (isValid) {
+      const formParams = Utils.getFormParams(tableForm);
+      query(formParams);
+    }
   };
 
   const handleResetClick = () => {
@@ -61,16 +75,16 @@ function QueryControlCard({ table, setTable, tables, fields, query }) {
   };
 
   const renderControlFieldForm = () => {
-    if (!Array.isArray(fields)) return null;
+    if (!Array.isArray(fields) || !fields.length) return null;
     return (
       <>
-        <div className="spacer" />
         <div className="flex-wrap">
           {fields.map((field) => {
             const props = { name: field.name, tableForm, setTableForm, setResetFlag };
             return <ControlFieldInput {...props} key={field.name} />;
           })}
         </div>
+        <div className="spacer" />
       </>
     );
   };
@@ -96,9 +110,9 @@ function QueryControlCard({ table, setTable, tables, fields, query }) {
         {renderStatusMessage()}
       </div>
 
-      {renderControlFieldForm()}
-
       <div className="spacer" />
+
+      {renderControlFieldForm()}
 
       <div>
         <Button

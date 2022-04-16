@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
@@ -7,6 +7,7 @@ import { Column } from 'primereact/column';
 import '../styles/TableCard.css';
 
 function TableCard({ result, onRemove }) {
+  const [selectedRows, setSelectedRows] = useState([]);
   const dt = useRef(null);
 
   const onRemoveClick = () => {
@@ -15,6 +16,14 @@ function TableCard({ result, onRemove }) {
 
   const onExportClick = () => {
     dt.current.exportCSV();
+  };
+
+  const handleModifyOnClick = () => {
+    console.log('Modify Clicked. Selected Rows =', selectedRows);
+  };
+
+  const handleDeleteOnClick = () => {
+    console.log('Delete Clicked. Selected Rows =', selectedRows);
   };
 
   const title = useMemo(() => {
@@ -49,14 +58,33 @@ function TableCard({ result, onRemove }) {
       </div>
 
       <div>
-        <Button label="Modify" className="p-button-warning" style={{ marginRight: '10px' }} />
-        <Button label="Delete" className="p-button-danger" style={{ marginRight: '10px' }} />
+        <Button
+          onClick={handleModifyOnClick}
+          label="Modify"
+          disabled={!selectedRows.length}
+          className="p-button-warning"
+          style={{ marginRight: '10px' }}
+        />
+        <Button
+          onClick={handleDeleteOnClick}
+          label="Delete"
+          disabled={!selectedRows.length}
+          className="p-button-danger"
+          style={{ marginRight: '10px' }}
+        />
         <Button onClick={onExportClick} label="Export" />
       </div>
 
       <div className="spacer" />
 
-      <DataTable ref={dt} value={result.rows} responsiveLayout="scroll">
+      <DataTable
+        ref={dt}
+        value={result.rows}
+        responsiveLayout="scroll"
+        selection={selectedRows}
+        onSelectionChange={(e) => setSelectedRows(e.value)}
+      >
+        <Column selectionMode="multiple" headerStyle={{ width: '2rem' }} />
         {fieldsIsValid ? (
           result.fields.map((field) => (
             <Column field={field.name} header={field.name} key={field.name} />
