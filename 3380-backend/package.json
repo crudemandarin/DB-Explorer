@@ -16,7 +16,8 @@
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
     "mysql": "^2.18.1",
-    "prettier": "^2.6.1"
+    "prettier": "^2.6.1",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "eslint": "^8.12.0",
