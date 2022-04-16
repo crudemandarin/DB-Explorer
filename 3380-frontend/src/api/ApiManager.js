@@ -42,9 +42,9 @@ class ApiManager {
     console.log('ApiManager.insert invoked! params =', params);
     try {
       const response = await ApiService.insert(params);
-      const result = response.data;
-      console.log('ApiManager.insert: Successful! Result =', result);
-      return result;
+      const { message, results } = response.data;
+      console.log('ApiManager.insert: Successful! message =', message, ' Results =', results);
+      return results;
     } catch (err) {
       const error = err?.response?.data;
       console.error('ApiManager.insert: Could not insert. Error =', error);
@@ -56,9 +56,9 @@ class ApiManager {
     console.log('ApiManager.delete invoked! params =', params);
     try {
       const response = await ApiService.delete(params);
-      const result = response.data;
-      console.log('ApiManager.delete: Successful! Result =', result);
-      return result;
+      const { message, results } = response.data;
+      console.log('ApiManager.delete: Successful! message =', message, ' Results =', results);
+      return results;
     } catch (err) {
       const error = err?.response?.data;
       console.error('ApiManager.delete: Could not delete. Error =', error);
@@ -70,9 +70,9 @@ class ApiManager {
     console.log('ApiManager.update invoked! params =', params);
     try {
       const response = await ApiService.update(params);
-      const result = response.data;
-      console.log('ApiManager.update: Successful! Result =', result);
-      return result;
+      const { message, results } = response.data;
+      console.log('ApiManager.update: Successful! message =', message, ' Results =', results);
+      return results;
     } catch (err) {
       const error = err?.response?.data;
       console.error('ApiManager.update: Could not update. Error =', error);

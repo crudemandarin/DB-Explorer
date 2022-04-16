@@ -38,10 +38,10 @@ function ResultsDialog({ isVisible, setIsVisible, setParentIsVisible, results, t
           <div className="p400">Code {results.code}</div>
         </>
       );
-    } else if ('rows' in results) {
+    } else if ('affectedRows' in results) {
       headerText = 'Action Successful';
       bodyJsx = (
-        <div className="p400">{`${results.rows.affectedRows} row(s) affected in ${table} table`}</div>
+        <div className="p400">{`${results.affectedRows} row(s) affected in ${table} table`}</div>
       );
     } else {
       console.error('Unrecognized results schema');
