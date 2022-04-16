@@ -12,7 +12,10 @@ router.get('/tables', async (req, res) => {
         const tables = await SQLManager.getTables();
         return res.status(200).json({ tables });
     } catch (err) {
-        console.log(err);
+        console.error('SQLManager.getTables failed. err =', err);
+        if ('code' in err && 'sqlMessage' in err && 'sql' in err) {
+            return res.status(400).json({ code: err.code, message: err.sqlMessage, sql: err.sql });
+        }
     }
 
     return res.status(500).json({ message: 'Failed to load tables' });
@@ -29,7 +32,10 @@ router.get('/fields', async (req, res) => {
         const fields = await SQLManager.getTableFields(table);
         return res.status(200).json({ fields });
     } catch (err) {
-        console.error(err);
+        console.error('SQLManager.getTableFields failed. err =', err);
+        if ('code' in err && 'sqlMessage' in err && 'sql' in err) {
+            return res.status(400).json({ code: err.code, message: err.sqlMessage, sql: err.sql });
+        }
     }
 
     return res.status(500).json({ message: 'Failed to load table fields' });
@@ -42,13 +48,14 @@ router.post('/query', async (req, res) => {
     const { table, select, where } = req.body;
     if (!table) return res.status(400).json({ message: 'Missing `table` in body' });
 
-    console.log(table, select, where);
-
     try {
         const rows = await SQLManager.select(table, select, where);
         return res.status(200).json({ rows });
     } catch (err) {
-        console.error(err);
+        console.error('SQLManager.select failed. err =', err);
+        if ('code' in err && 'sqlMessage' in err && 'sql' in err) {
+            return res.status(400).json({ code: err.code, message: err.sqlMessage, sql: err.sql });
+        }
     }
 
     return res.status(500).json({ message: 'Failed to load query' });
@@ -58,7 +65,6 @@ router.post('/query', async (req, res) => {
 router.post('/query/data', async (req, res) => {
     console.log('POST /interface/query/data');
 
-    console.log(req.body);
     const { table, fields } = req.body;
 
     if (!table) return res.status(400).json({ message: 'Missing `table` in body' });
@@ -71,7 +77,10 @@ router.post('/query/data', async (req, res) => {
         const rows = await SQLManager.insert(table, fields);
         return res.status(200).json({ rows });
     } catch (err) {
-        console.error(err);
+        console.error('SQLManager.insert failed. err =', err);
+        if ('code' in err && 'sqlMessage' in err && 'sql' in err) {
+            return res.status(400).json({ code: err.code, message: err.sqlMessage, sql: err.sql });
+        }
     }
 
     return res.status(500).json({ message: 'Failed to post data' });
@@ -80,20 +89,23 @@ router.post('/query/data', async (req, res) => {
 /* DELETE /interface/query/data */
 router.delete('/query/data', async (req, res) => {
     console.log('DELETE /interface/query/data');
-    console.log(req.query);
+
     const { table, fields } = req.query;
     const fieldsObj = JSON.parse(fields);
-    console.log(fieldsObj);
+
     if (!table) return res.status(400).json({ message: 'Missing `table` in body' });
 
     try {
         const rows = await SQLManager.delete(table, fieldsObj);
         return res.status(200).json({ rows });
     } catch (err) {
-        console.error(err);
+        console.error('SQLManager.delete failed. err =', err);
+        if ('code' in err && 'sqlMessage' in err && 'sql' in err) {
+            return res.status(400).json({ code: err.code, message: err.sqlMessage, sql: err.sql });
+        }
     }
 
-    return res.status(501).json({ message: 'Not implemented' });
+    return res.status(500).json({ message: 'Delete failed' });
 });
 
 /* PUT /interface/query/data */
@@ -115,7 +127,10 @@ router.put('/query/data', async (req, res) => {
         const result = await SQLManager.update(table, fields, where);
         return res.status(200).json({ result });
     } catch (err) {
-        console.error(err);
+        console.error('SQLManager.update failed. err =', err);
+        if ('code' in err && 'sqlMessage' in err && 'sql' in err) {
+            return res.status(400).json({ code: err.code, message: err.sqlMessage, sql: err.sql });
+        }
     }
 
     return res.status(500).json({ message: 'Failed to update data' });
