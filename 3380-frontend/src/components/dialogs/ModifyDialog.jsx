@@ -5,20 +5,20 @@ import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 
-import ApiManager from '../api/ApiManager';
-import Utils from '../util/Utils';
+// import ApiManager from '../../api/ApiManager';
+// import Utils from '../../util/Utils';
 
 import ResultsDialog from './ResultsDialog';
 
-function ConfirmAddDialog({ isVisible, setIsVisible, table, tableForm, fields }) {
+function ModifyDialog({ isVisible, setIsVisible, table, fields, selectedRows }) {
   const [results, setResults] = useState(undefined);
   const [resultsIsVisible, setResultsIsVisible] = useState(false);
 
-  const add = (formParams) => {
-    console.log('HomeGroup.add invoked! formParams =', formParams);
-    const params = { table, fields: formParams };
-    return ApiManager.insert(params);
-  };
+  //   const deleteRows = (formParams) => {
+  //     console.log('HomeGroup.add invoked! formParams =', formParams);
+  //     const params = { table, fields: formParams };
+  //     return ApiManager.delete(params);
+  //   };
 
   const onHide = () => {
     setIsVisible(false);
@@ -26,34 +26,35 @@ function ConfirmAddDialog({ isVisible, setIsVisible, table, tableForm, fields })
     setResultsIsVisible(false);
   };
 
-  const handleAddClick = async () => {
-    const formParams = Utils.getFormParams(tableForm);
-    const data = await add(formParams);
-    setResults(data);
-    setResultsIsVisible(true);
+  const handleDeleteClick = async () => {
+    console.log('Delete Clicked!');
+    onHide();
+    // const data = await deleteRows();
+    // setResults(data);
+    // setResultsIsVisible(true);
   };
 
   const renderedTable = useMemo(() => {
     if (!isVisible) return null;
-    const row = {};
-    fields.forEach((field) => {
-      row[field.name] = tableForm[field.name].value;
-    });
-    const rows = [row];
     const render = (
-      <DataTable value={rows} responsiveLayout="scroll">
+      <DataTable value={selectedRows} responsiveLayout="scroll">
         {fields.map((field) => (
           <Column field={field.name} header={field.name} key={field.name} />
         ))}
       </DataTable>
     );
     return render;
-  }, [isVisible, fields, tableForm]);
+  }, [isVisible, fields, selectedRows]);
 
   const footer = (
     <div>
       <Button label="Cancel" icon="pi pi-times" className="p-button-secondary" onClick={onHide} />
-      <Button label="Add" icon="pi pi-plus" onClick={handleAddClick} />
+      <Button
+        label="Modify"
+        icon="pi pi-cog"
+        className="p-button-warning"
+        onClick={handleDeleteClick}
+      />
     </div>
   );
 
@@ -68,7 +69,7 @@ function ConfirmAddDialog({ isVisible, setIsVisible, table, tableForm, fields })
   return (
     <>
       <Dialog
-        header={`Add to ${table} table`}
+        header={`Modify ${table} table`}
         footer={footer}
         visible={isVisible}
         style={{ width: '50vw' }}
@@ -76,10 +77,12 @@ function ConfirmAddDialog({ isVisible, setIsVisible, table, tableForm, fields })
         onHide={onHide}
       >
         {renderedTable}
+        <div className="spacer" />
+        <div>Are you sure you would like to modify the selected row(s)?</div>
       </Dialog>
       <ResultsDialog {...resultsDialogProps} />
     </>
   );
 }
 
-export default ConfirmAddDialog;
+export default ModifyDialog;

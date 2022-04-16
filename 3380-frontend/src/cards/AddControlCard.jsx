@@ -6,7 +6,7 @@ import { Button } from 'primereact/button';
 import Utils from '../util/Utils';
 
 import ControlFieldInput from '../components/ControlFieldInput';
-import ConfirmAddDialog from '../components/ConfirmAddDialog';
+import ConfirmAddDialog from '../components/dialogs/ConfirmAddDialog';
 
 function AddControlCard({ table, setTable, tables, fields }) {
   const [tableOptions, setTableOptions] = useState([]); // Option[]
