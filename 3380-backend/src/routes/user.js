@@ -12,9 +12,11 @@ router.post('/login', async (req, res) => {
     if (!email) return res.status(400).json({ message: 'Missing `email` in body' });
 
     try {
+        const table = 'User';
+        const select = '*';
         const where = [{ name: 'Email', value: email }];
-        const user = await SQLManager.select('User', '*', where);
-        if (!user.length) return res.status(404).json({ message: `User doesn't exist` });
+        const user = await SQLManager.select(table, select, where);
+        if (!user.length) return res.status(404).json({ message: `User does not exist` });
         return res.status(200).json({ user: user[0] });
     } catch (err) {
         console.error(err);
