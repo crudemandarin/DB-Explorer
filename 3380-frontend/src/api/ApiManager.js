@@ -29,11 +29,12 @@ class ApiManager {
     console.log('ApiManager.select invoked! params =', params);
     try {
       const response = await ApiService.select(params);
-      const { rows } = response.data;
-      console.log('ApiManager.select: Successful! Rows =', rows);
+      const { rows, SQL } = response.data;
+      console.log('ApiManager.select: Successful! Rows =', rows, 'SQL =', SQL);
       return this.getFormattedRows(rows);
     } catch (err) {
-      console.error('ApiManager.select: Could not load data. Error =', err);
+      const error = err?.response?.data;
+      console.error('ApiManager.select: Could not select. Error =', error);
       return [];
     }
   }
@@ -42,8 +43,8 @@ class ApiManager {
     console.log('ApiManager.insert invoked! params =', params);
     try {
       const response = await ApiService.insert(params);
-      const { message, results } = response.data;
-      console.log('ApiManager.insert: Successful! message =', message, ' Results =', results);
+      const { results, SQL } = response.data;
+      console.log('ApiManager.insert: Successful! Results =', results, 'SQL =', SQL);
       return results;
     } catch (err) {
       const error = err?.response?.data;
@@ -56,8 +57,8 @@ class ApiManager {
     console.log('ApiManager.delete invoked! params =', params);
     try {
       const response = await ApiService.delete(params);
-      const { message, results } = response.data;
-      console.log('ApiManager.delete: Successful! message =', message, ' Results =', results);
+      const { results, SQL } = response.data;
+      console.log('ApiManager.delete: Successful! Results =', results, 'SQL =', SQL);
       return results;
     } catch (err) {
       const error = err?.response?.data;
@@ -70,8 +71,8 @@ class ApiManager {
     console.log('ApiManager.update invoked! params =', params);
     try {
       const response = await ApiService.update(params);
-      const { message, results } = response.data;
-      console.log('ApiManager.update: Successful! message =', message, ' Results =', results);
+      const { results, SQL } = response.data;
+      console.log('ApiManager.update: Successful! Results =', results, 'SQL =', SQL);
       return results;
     } catch (err) {
       const error = err?.response?.data;

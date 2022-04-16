@@ -2,13 +2,27 @@ const integerRG = /^$|^[+-]?\d+$/;
 const floatRG = /^$|^[+-]?\d+(\.\d+)?$/;
 
 class Utils {
+  static getProtectedRows() {
+    return [
+      'ID',
+      'CreatedBy',
+      'UpdatedBy',
+      'CreatedAt',
+      'LastUpdated',
+      'ActualCost',
+      'ActualEffort',
+      'TimeClosed',
+    ];
+  }
+
   static getNewQueryID() {
     return crypto.randomUUID().substring(0, 6);
   }
 
-  static getEmptyForm(fields) {
-    return fields.reduce(
-      (obj, item) => ({
+  static getEmptyForm(fields, opt) {
+    return fields.reduce((obj, item) => {
+      if (opt === 'add' && Utils.getProtectedRows().includes(item.name)) return obj;
+      return {
         ...obj,
         [item.name]: {
           type: item.type,
@@ -19,9 +33,8 @@ class Utils {
           isPrimaryKey: item.isPrimaryKey,
           isForeignKey: item.isForeignKey,
         },
-      }),
-      {}
-    );
+      };
+    }, {});
   }
 
   static getFormParams(tableForm) {
@@ -92,6 +105,8 @@ class Utils {
     } else if (type.includes('float')) {
       isValid = floatRG.test(value);
       if (!isValid) error = `Must be float`;
+    } else if (type.includes('datetime')) {
+      isValid = true;
     } else {
       console.warn('Utils.validate: Unrecognized type. type =', type);
     }

@@ -98,6 +98,7 @@ function QueryControlCard({ table, setTable, tables, fields, onQuery }) {
       <div className="flex-wrap" style={{ alignItems: 'center' }}>
         <AutoComplete
           dropdown
+          className="p-inputtext-sm"
           value={tableValue}
           suggestions={tableOptions}
           field="name"
