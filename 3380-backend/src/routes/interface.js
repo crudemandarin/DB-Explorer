@@ -74,8 +74,8 @@ router.post('/query/data', async (req, res) => {
     if (fields.length === 0) return res.status(400).json({ message: '`fields` is empty' });
 
     try {
-        const rows = await SQLManager.insert(table, fields);
-        return res.status(200).json({ rows });
+        await SQLManager.insert(table, fields);
+        return res.status(200).json({ message: 'Insertion successful' });
     } catch (err) {
         console.error('SQLManager.insert failed. err =', err);
         if ('code' in err && 'sqlMessage' in err && 'sql' in err) {
@@ -96,8 +96,8 @@ router.delete('/query/data', async (req, res) => {
     if (!table) return res.status(400).json({ message: 'Missing `table` in body' });
 
     try {
-        const rows = await SQLManager.delete(table, fieldsObj);
-        return res.status(200).json({ rows });
+        await SQLManager.delete(table, fieldsObj);
+        return res.status(200).json({ message: 'Deletion successful' });
     } catch (err) {
         console.error('SQLManager.delete failed. err =', err);
         if ('code' in err && 'sqlMessage' in err && 'sql' in err) {
@@ -124,8 +124,8 @@ router.put('/query/data', async (req, res) => {
     if (where.length === 0) return res.status(400).json({ message: '`where` is empty' });
 
     try {
-        const result = await SQLManager.update(table, fields, where);
-        return res.status(200).json({ result });
+        await SQLManager.update(table, fields, where);
+        return res.status(200).json({ message: 'Update successful' });
     } catch (err) {
         console.error('SQLManager.update failed. err =', err);
         if ('code' in err && 'sqlMessage' in err && 'sql' in err) {
