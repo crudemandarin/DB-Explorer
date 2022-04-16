@@ -3,13 +3,12 @@ import React, { useState, useEffect } from 'react';
 import { AutoComplete } from 'primereact/autocomplete';
 import { Button } from 'primereact/button';
 
-import ControlFieldInput from '../components/ControlFieldInput';
-
-import ApiManager from '../api/ApiManager';
 import Utils from '../util/Utils';
+
+import ControlFieldInput from '../components/ControlFieldInput';
 import ConfirmAddDialog from '../components/ConfirmAddDialog';
 
-function ControlCard({ table, setTable, tables, fields, onSelectQuery }) {
+function AddControlCard({ table, setTable, tables, fields }) {
   const [tableOptions, setTableOptions] = useState([]); // Option[]
   const [tableValue, setTableValue] = useState(undefined); // Option
   const [tableForm, setTableForm] = useState({});
@@ -29,32 +28,16 @@ function ControlCard({ table, setTable, tables, fields, onSelectQuery }) {
   const searchTable = () => {
     let filteredTables = [...tables];
     if (tableValue && tableValue.name)
-      filteredTables = tables.filter((el) => el.toLowerCase().includes(tableValue.name));
+      filteredTables = tables.filter((el) => el.toLowerCase().includes(tableValue.name.trim().toLowerCase()));
     const filteredOptions = filteredTables.map((el) => ({ name: el }));
     setTableOptions(filteredOptions);
   };
 
   const handleTableInputChange = (e) => {
     let { value } = e;
-    if (typeof value === 'string') value = value.toLowerCase().trim();
-    if (typeof value !== 'string') value = value.name;
+    if (typeof value !== 'string' && 'name' in value) value = value.name;
     setTableValue({ name: value });
     if (tables.includes(value)) setTable(value);
-  };
-
-  const handleQueryClick = async () => {
-    const formParams = Utils.getFormParams(tableForm);
-    console.log('ControlCard.handleQueryClick invoked. Form Params =', formParams);
-
-    try {
-      const params = { table, select: [], where: formParams };
-      const rows = await ApiManager.select(params);
-      const id = Utils.getNewQueryID();
-      const result = { id, table, formParams, fields, rows };
-      onSelectQuery(result);
-    } catch (err) {
-      console.error('ControlCard.handleQueryClick: select failed! Error =', err);
-    }
   };
 
   const handleAddClick = () => {
@@ -68,52 +51,63 @@ function ControlCard({ table, setTable, tables, fields, onSelectQuery }) {
     setResetFlag(false);
   };
 
-  const addDialogProps = { addIsVisible, setAddIsVisible, table, tableForm, fields };
-
-  return (
-    <div className="card" style={{ width: '100%' }}>
-      <AutoComplete
-        dropdown
-        value={tableValue}
-        suggestions={tableOptions}
-        field="name"
-        onChange={handleTableInputChange}
-        completeMethod={searchTable}
-      />
-
-      <div className="spacer" />
-
-      {table ? (
-        <div className="p400" style={{ marginBottom: '15px' }}>
+  const renderStatusMessage = () => {
+    if (table) return (
+      <div className="p400">
           Showing controls for <span className="p600">{table}</span> table
         </div>
-      ) : (
-        <div className="p400" style={{ margin: '0.5rem 0' }}>
-          Welcome. Select a table from above.
-        </div>
-      )}
+    )
+    return (
+      <div className="p400">
+        Welcome. Select a table from above.
+      </div>
+    )
+  };
 
-      {Array.isArray(fields) ? (
-        <form className="flex-wrap">
+  const renderControlFieldForm = () => {
+    if (!Array.isArray(fields)) return null;
+    return (
+      <>
+        <div className="spacer" />
+        <div className="flex-wrap">
           {fields.map((field) => {
             const props = { name: field.name, tableForm, setTableForm, setResetFlag };
             return <ControlFieldInput {...props} key={field.name} />;
           })}
-        </form>
-      ) : (
-        <></>
-      )}
+        </div>
+      </>
+    );
+  };
+
+  const addDialogProps = { addIsVisible, setAddIsVisible, table, tableForm, fields };
+
+  return (
+    <div className="card" style={{ width: '100%' }}>
+      <div className='h600'>Data Entry Control</div>
+
+      <div className="spacer" />
+
+      <div className='flex-wrap' style={{ alignItems: 'center' }}>
+        <AutoComplete
+          dropdown
+          className='p-inputtext-sm'
+          value={tableValue}
+          suggestions={tableOptions}
+          field="name"
+          onChange={handleTableInputChange}
+          completeMethod={searchTable}
+        />
+
+        <div className="spacer" />
+
+        {renderStatusMessage()}
+      </div>
+
+      {renderControlFieldForm()}
 
       <div className="spacer" />
 
       <div>
-        <Button
-          label="Query"
-          onClick={handleQueryClick}
-          disabled={!table}
-          className="p-button-success"
-          style={{ marginRight: '10px' }}
-        />
         <Button
           label="Add"
           onClick={handleAddClick}
@@ -134,4 +128,4 @@ function ControlCard({ table, setTable, tables, fields, onSelectQuery }) {
   );
 }
 
-export default ControlCard;
+export default AddControlCard;

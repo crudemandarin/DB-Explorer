@@ -4,8 +4,7 @@ import { InputText } from 'primereact/inputtext';
 
 function ControlFieldInput({ name, tableForm, setTableForm, setResetFlag }) {
   const onChange = (e) => {
-    let { value } = e.target;
-    value = value.toLowerCase().trim();
+    const { value } = e.target;
     const form = { ...tableForm };
     form[name].value = value;
     setTableForm(form);
