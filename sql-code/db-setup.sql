@@ -31,7 +31,7 @@ CREATE TABLE UserWorkspaceRelation (
 CREATE TABLE WorkspaceUser (
     ID varchar(64) NOT NULL PRIMARY KEY,
     UserID varchar(64) NOT NULL,
-    `Role` smallint NOT NULL,
+    `Role` smallint NOT NULL DEFAULT 0,
     WorkspaceID varchar(64) NOT NULL,
     DepartmentID varchar(64),
     FOREIGN KEY (UserID) REFERENCES `User`(ID) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -95,7 +95,7 @@ CREATE TABLE Task (
     UpdatedBy varchar(64) NOT NULL,
     Title varchar(128) NOT NULL,
     `Description` varchar(512),
-    `Status` smallint NOT NULL, -- '0: Not started, 1: In progress, 2: Needs Review, 3: Completed'
+    `Status` smallint NOT NULL DEFAULT 0,
     AssignedTo varchar(64),
     TimeClosed DATETIME(6),
     EstimatedCost float,
