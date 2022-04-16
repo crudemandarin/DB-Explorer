@@ -28,7 +28,9 @@ function AddControlCard({ table, setTable, tables, fields }) {
   const searchTable = () => {
     let filteredTables = [...tables];
     if (tableValue && tableValue.name)
-      filteredTables = tables.filter((el) => el.toLowerCase().includes(tableValue.name.trim().toLowerCase()));
+      filteredTables = tables.filter((el) =>
+        el.toLowerCase().includes(tableValue.name.trim().toLowerCase())
+      );
     const filteredOptions = filteredTables.map((el) => ({ name: el }));
     setTableOptions(filteredOptions);
   };
@@ -52,16 +54,13 @@ function AddControlCard({ table, setTable, tables, fields }) {
   };
 
   const renderStatusMessage = () => {
-    if (table) return (
-      <div className="p400">
+    if (table)
+      return (
+        <div className="p400">
           Showing controls for <span className="p600">{table}</span> table
         </div>
-    )
-    return (
-      <div className="p400">
-        Welcome. Select a table from above.
-      </div>
-    )
+      );
+    return <div className="p400">Welcome. Select a table from above.</div>;
   };
 
   const renderControlFieldForm = () => {
@@ -83,14 +82,14 @@ function AddControlCard({ table, setTable, tables, fields }) {
 
   return (
     <div className="card" style={{ width: '100%' }}>
-      <div className='h600'>Data Entry Control</div>
+      <div className="h600">Data Entry Control</div>
 
       <div className="spacer" />
 
-      <div className='flex-wrap' style={{ alignItems: 'center' }}>
+      <div className="flex-wrap" style={{ alignItems: 'center' }}>
         <AutoComplete
           dropdown
-          className='p-inputtext-sm'
+          className="p-inputtext-sm"
           value={tableValue}
           suggestions={tableOptions}
           field="name"

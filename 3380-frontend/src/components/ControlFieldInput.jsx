@@ -18,7 +18,7 @@ function ControlFieldInput({ name, tableForm, setTableForm, setResetFlag }) {
       const { isInvalid, error } = tableForm[name];
       if (isInvalid) return [`${baseClassName} p-invalid`, error];
     }
-    return [baseClassName, ""];
+    return [baseClassName, ''];
   }, [name, tableForm]);
 
   const errorMsgId = `${name}-help`;
@@ -26,10 +26,22 @@ function ControlFieldInput({ name, tableForm, setTableForm, setResetFlag }) {
   return (
     <div style={{ margin: '12px 10px' }}>
       <span className="p-float-label">
-        <InputText id={name} aria-describedby={errorMsgId} className={inputClassName} value={value} onChange={onChange} />
+        <InputText
+          id={name}
+          aria-describedby={errorMsgId}
+          className={inputClassName}
+          value={value}
+          onChange={onChange}
+        />
         <label htmlFor={name}>{name}</label>
       </span>
-      { errorMsg ? <small id={errorMsgId} className="p-error block">{errorMsg}</small> : <></> }
+      {errorMsg ? (
+        <small id={errorMsgId} className="p-error block">
+          {errorMsg}
+        </small>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }

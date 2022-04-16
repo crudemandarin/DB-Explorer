@@ -54,7 +54,7 @@ function HomeGroup() {
     const id = Utils.getNewQueryID();
     const result = { id, table, formParams, fields, rows };
     setResults([result, ...results]);
-  }
+  };
 
   const onTableCardRemove = (id) => {
     const temp = results.filter((el) => el.id !== id);
@@ -65,31 +65,41 @@ function HomeGroup() {
     const nav = ['SEARCH', 'ENTRY', 'REPORT'];
     const onClick = (index) => setNavigation(index);
     return (
-      <nav className='flex-wrap'>
-        {nav.map((title, index) => <div className={(index === navigation) ? 'nav nav-active': 'nav'} onClick={()=>onClick(index)}> {title} </div>)}
+      <nav className="flex-wrap">
+        {nav.map((title, index) => (
+          <div
+            className={index === navigation ? 'nav nav-active' : 'nav'}
+            onClick={() => onClick(index)}
+          >
+            {' '}
+            {title}{' '}
+          </div>
+        ))}
       </nav>
-    )
-  }
+    );
+  };
 
   const renderController = () => {
     if (navigation === 0) {
       const controlProps = { table, setTable, tables, fields, results, query };
       return <QueryControlCard {...controlProps} />;
     }
-    
+
     if (navigation === 1) {
       const controlProps = { table, setTable, tables, fields, results, query };
       return <AddControlCard {...controlProps} />;
     }
-    
+
     const controlProps = { table, setTable, tables, fields, results, query };
     return <ReportControlCard {...controlProps} />;
-  }
+  };
 
   const renderResults = () => {
     if (!Array.isArray(results)) return null;
-    return results.map((result) => <TableCard key={result.id} result={result} onRemove={onTableCardRemove} />);
-  }
+    return results.map((result) => (
+      <TableCard key={result.id} result={result} onRemove={onTableCardRemove} />
+    ));
+  };
 
   return (
     <>
