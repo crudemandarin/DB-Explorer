@@ -43,13 +43,13 @@ class ApiManager {
     console.log('ApiManager.insert invoked! params =', params);
     try {
       const response = await ApiService.insert(params);
-      const { results, SQL } = response.data;
-      console.log('ApiManager.insert: Successful! Results =', results, 'SQL =', SQL);
-      return results;
+      const { result, SQL } = response.data;
+      console.log('ApiManager.insert: Successful! Result =', result, 'SQL =', SQL);
+      return { result, SQL };
     } catch (err) {
       const error = err?.response?.data;
       console.error('ApiManager.insert: Could not insert. Error =', error);
-      return error;
+      return { result: error, SQL: error.sql };
     }
   }
 
@@ -57,13 +57,13 @@ class ApiManager {
     console.log('ApiManager.delete invoked! params =', params);
     try {
       const response = await ApiService.delete(params);
-      const { results, SQL } = response.data;
-      console.log('ApiManager.delete: Successful! Results =', results, 'SQL =', SQL);
-      return results;
+      const { result, SQL } = response.data;
+      console.log('ApiManager.delete: Successful! Result =', result, 'SQL =', SQL);
+      return { result, SQL };
     } catch (err) {
       const error = err?.response?.data;
       console.error('ApiManager.delete: Could not delete. Error =', error);
-      return error;
+      return { result: error, SQL: error.sql };
     }
   }
 
@@ -71,13 +71,13 @@ class ApiManager {
     console.log('ApiManager.update invoked! params =', params);
     try {
       const response = await ApiService.update(params);
-      const { results, SQL } = response.data;
-      console.log('ApiManager.update: Successful! Results =', results, 'SQL =', SQL);
-      return results;
+      const { result, SQL } = response.data;
+      console.log('ApiManager.update: Successful! Result =', result, 'SQL =', SQL);
+      return { result, SQL };
     } catch (err) {
       const error = err?.response?.data;
       console.error('ApiManager.update: Could not update. Error =', error);
-      return error;
+      return { result: error, SQL: error.sql };
     }
   }
 

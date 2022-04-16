@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 
-function ResultsDialog({ isVisible, setIsVisible, setParentIsVisible, results, table }) {
+function ResultsDialog({ isVisible, setIsVisible, setParentIsVisible, data, table }) {
   const onHide = () => {
     setIsVisible(false);
     setParentIsVisible(false);
@@ -16,48 +16,55 @@ function ResultsDialog({ isVisible, setIsVisible, setParentIsVisible, results, t
   );
 
   const [header, body] = useMemo(() => {
-    if (!isVisible || !results) return [null, null];
-
+    if (!isVisible || !data || !('result' in data)) return [null, null];
+    
+    const { result, SQL } = data;
     let headerText = '';
     let bodyJsx = null;
 
-    if ('code' in results) {
+    if ('code' in result) {
       headerText = 'Action Failed';
       bodyJsx = (
         <>
           <div className="p400" style={{ marginBottom: '0.5rem' }}>
             Message
           </div>
-          <div className="textbox">{results.message}</div>
+          <div className="textbox">{result.message}</div>
           <div className="spacer" />
           <div className="p400" style={{ marginBottom: '0.5rem' }}>
             SQL
           </div>
-          <div className="textbox">{results.sql}</div>
+          <div className="textbox">{SQL}</div>
           <div className="spacer" />
-          <div className="p400">Code {results.code}</div>
+          <div className="p400">Code {result.code}</div>
         </>
       );
-    } else if ('affectedRows' in results) {
+    } else if ('affectedRows' in result) {
       headerText = 'Action Successful';
       bodyJsx = (
-        <div className="p400">{`${results.affectedRows} row(s) affected in ${table} table`}</div>
+        <>
+          <div className="p400" style={{ marginBottom: '0.5rem' }}>{`${result.affectedRows} row(s) affected in ${table} table`}</div>
+          <div className="p400" style={{ marginBottom: '0.5rem' }}>
+            SQL
+          </div>
+          <div className="textbox">{SQL}</div>
+        </>
       );
     } else {
-      console.error('Unrecognized results schema');
+      console.error('Unrecognized result schema');
       headerText = 'Error';
       bodyJsx = <div className="p400">Error</div>;
     }
 
     return [headerText, bodyJsx];
-  }, [isVisible, results, table]);
+  }, [isVisible, data, table]);
 
   return (
     <Dialog
       header={header}
       footer={footer}
       visible={isVisible}
-      style={{ width: '70vw' }}
+      style={{ width: '60vw' }}
       modal
       onHide={onHide}
     >

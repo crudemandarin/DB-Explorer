@@ -62,7 +62,7 @@ function ConfirmAddDialog({ isVisible, setIsVisible, table, tableForm, fields })
     isVisible: resultsIsVisible,
     setIsVisible: setResultsIsVisible,
     setParentIsVisible: setIsVisible,
-    results,
+    data: results,
     table,
   };
 

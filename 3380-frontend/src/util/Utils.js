@@ -20,13 +20,14 @@ class Utils {
   }
 
   static getEmptyForm(fields, opt) {
+    const addMode = opt === 'add';
     return fields.reduce((obj, item) => {
-      if (opt === 'add' && Utils.getProtectedRows().includes(item.name)) return obj;
+      if (addMode && Utils.getProtectedRows().includes(item.name)) return obj;
       return {
         ...obj,
         [item.name]: {
           type: item.type,
-          value: '',
+          value: addMode ? item.default : '',
           isInvalid: false,
           error: '',
           nullable: item.nullable,
@@ -60,8 +61,6 @@ class Utils {
   static validateAdd(formData) {
     const { value, type, nullable } = formData;
 
-    // if (isPrimaryKey) return true;
-
     let isValid = true;
     let error = '';
 
@@ -89,8 +88,6 @@ class Utils {
 
   static validateQuery(formData) {
     const { value, type } = formData;
-
-    // if (isPrimaryKey) return true;
 
     let isValid = true;
     let error = '';
