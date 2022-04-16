@@ -62,7 +62,7 @@ class SQLManager {
         const SQL = `SELECT ${selectParams} FROM ${table}${whereParams};`;
         const rows = await this.query(SQL);
         console.log('SQLManager.select: rows =', rows);
-        return rows;
+        return [rows, SQL];
     }
 
     static async insert(table, fields) {
@@ -75,7 +75,7 @@ class SQLManager {
         const SQL = `INSERT INTO ${table} (${keys}) VALUES (${values})`;
         const result = await this.query(SQL);
         console.log('SQLManager.insert: result =', result);
-        return result;
+        return [result, SQL];
     }
 
     static async update(table, fields, where) {
@@ -84,7 +84,7 @@ class SQLManager {
         const SQL = `UPDATE ${table} SET ${updateParams} WHERE ${whereParams}`;
         const result = await this.query(SQL);
         console.log('SQLManager.insert: result =', result);
-        return result;
+        return [result, SQL];
     }
 
     static async delete(table, fields) {
@@ -92,7 +92,7 @@ class SQLManager {
         const SQL = `DELETE FROM ${table} WHERE ${whereParams}`;
         const result = await this.query(SQL);
         console.log('SQLManager.insert: result =', result);
-        return result;
+        return [result, SQL];
     }
 }
 
