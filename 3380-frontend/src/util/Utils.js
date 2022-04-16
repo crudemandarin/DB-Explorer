@@ -30,11 +30,13 @@ class Utils {
       .filter((el) => !!el.value);
   }
 
-  static validateForm(tableForm) {
+  static validateForm(tableForm, option) {
     const form = { ...tableForm };
     let formIsValid = true;
     Object.keys(form).forEach((key) => {
-      const [isValid, error] = Utils.validate(form[key]);
+      let [isValid, error] = [undefined, undefined];
+      if (option === 'add') [isValid, error] = Utils.validateAdd(form[key]);
+      else if (option === 'query') [isValid, error] = Utils.validateQuery(form[key]);
       form[key].isInvalid = !isValid;
       form[key].error = error;
       if (!isValid) formIsValid = false;
@@ -42,7 +44,7 @@ class Utils {
     return [form, formIsValid];
   }
 
-  static validate(formData) {
+  static validateAdd(formData) {
     const { value, type, nullable } = formData;
 
     // if (isPrimaryKey) return true;
@@ -67,6 +69,31 @@ class Utils {
     if (!nullable && (!value || value.length === 0)) {
       isValid = false;
       error = 'Cannot be empty';
+    }
+
+    return [isValid, error];
+  }
+
+  static validateQuery(formData) {
+    const { value, type } = formData;
+
+    // if (isPrimaryKey) return true;
+
+    let isValid = true;
+    let error = '';
+
+    if (type.includes('varchar')) {
+      const length = parseInt(type.substring(type.indexOf('(') + 1, type.indexOf(')')), 10);
+      isValid = value.length <= length;
+      if (!isValid) error = `Length must be less than ${length}`;
+    } else if (type.includes('bigint') || type.includes('smallint')) {
+      isValid = integerRG.test(value);
+      if (!isValid) error = `Must be integer`;
+    } else if (type.includes('float')) {
+      isValid = floatRG.test(value);
+      if (!isValid) error = `Must be float`;
+    } else {
+      console.warn('Utils.validate: Unrecognized type. type =', type);
     }
 
     return [isValid, error];

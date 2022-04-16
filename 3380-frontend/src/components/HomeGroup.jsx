@@ -1,13 +1,16 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useState, useEffect } from 'react';
-
-import '../styles/App.css';
 
 import ApiManager from '../api/ApiManager';
 
-import ControlCard from '../cards/ControlCard';
+import QueryControlCard from '../cards/QueryControlCard';
+import AddControlCard from '../cards/AddControlCard';
+import ReportControlCard from '../cards/ReportControlCard';
 import TableCard from '../cards/TableCard';
 
 function HomeGroup() {
+  const [navigation, setNavigation] = useState(0);
   const [tables, setTables] = useState([]); // string[]
   const [table, setTable] = useState(''); // string
   const [fields, setFields] = useState([]); // Field[]
@@ -43,7 +46,7 @@ function HomeGroup() {
     if (table) getFields();
   }, [table]);
 
-  const onSelectQuery = (result) => {
+  const onQuery = (result) => {
     setResults([result, ...results]);
   };
 
@@ -52,18 +55,51 @@ function HomeGroup() {
     setResults(temp);
   };
 
-  const controlProps = { table, setTable, tables, fields, results, onSelectQuery };
+  const renderNavigation = () => {
+    const nav = ['SEARCH', 'ENTRY', 'REPORT'];
+    const onClick = (index) => setNavigation(index);
+    return (
+      <nav className="flex-wrap">
+        {nav.map((title, index) => (
+          <div
+            key={`nav-${title}`}
+            className={index === navigation ? 'nav nav-active' : 'nav'}
+            onClick={() => onClick(index)}
+          >
+            {title}
+          </div>
+        ))}
+      </nav>
+    );
+  };
+
+  const renderController = () => {
+    if (navigation === 0) {
+      const controlProps = { table, setTable, tables, fields, results, onQuery };
+      return <QueryControlCard {...controlProps} />;
+    }
+
+    if (navigation === 1) {
+      const controlProps = { table, setTable, tables, fields, results };
+      return <AddControlCard {...controlProps} />;
+    }
+
+    const controlProps = {};
+    return <ReportControlCard {...controlProps} />;
+  };
+
+  const renderResults = () => {
+    if (!Array.isArray(results)) return null;
+    return results.map((result) => (
+      <TableCard key={result.id} result={result} onRemove={onTableCardRemove} />
+    ));
+  };
 
   return (
     <>
-      <ControlCard {...controlProps} />
-      {Array.isArray(results) ? (
-        results.map((result) => (
-          <TableCard key={result.id} result={result} onRemove={onTableCardRemove} />
-        ))
-      ) : (
-        <></>
-      )}
+      {renderNavigation()}
+      {renderController()}
+      {renderResults()}
     </>
   );
 }

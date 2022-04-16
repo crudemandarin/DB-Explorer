@@ -13,6 +13,7 @@
   },
   "plugins": [],
   "rules": {
-    "camelcase": [2, { "ignoreImports": true }]
+    "camelcase": [2, { "ignoreImports": true }],
+    "no-console": "off"
   }
 }

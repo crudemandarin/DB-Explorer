@@ -33,6 +33,34 @@
   box-shadow: 2px 2px 4px rgb(83, 83, 83);
 }
 
+.nav {
+  width: fit-content;
+  height: fit-content;
+  padding: 0.75rem 2rem;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 2px 2px 4px rgb(83, 83, 83);
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 2px;
+
+  transition: background-color 200ms, text-color 200ms;
+}
+
+.nav-active {
+  color: white;
+  background-color: #585aec;
+}
+
+.textbox {
+  padding: 0.5rem;
+  border-radius: 10px;
+  background-color: rgb(234, 234, 234);
+  border: 1px dashed rgb(92, 92, 92);
+}
+
 /* Font Styles */
 
 .h600 {
