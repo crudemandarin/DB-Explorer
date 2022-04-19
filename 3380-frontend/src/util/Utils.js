@@ -1,5 +1,3 @@
-import { format } from 'sql-formatter';
-
 const integerRG = /^$|^[+-]?\d+$/;
 const floatRG = /^$|^[+-]?\d+(\.\d+)?$/;
 
@@ -22,7 +20,7 @@ class Utils {
   }
 
   static getFormattedSQL(SQL) {
-    return format(SQL, { language: 'mysql' });
+    return SQL;
   }
 
   static getEmptyForm(fields, opt) {
