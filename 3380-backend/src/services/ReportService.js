@@ -38,13 +38,21 @@ class ReportService {
 
         projects = projects.map((project) => {
             const updated = { ...project };
-            updated.tasks = tasks.filter((task) => task.ProjectID === project.ID);
+            const tempTasks = tasks.filter((task) => task.ProjectID === project.ID);
+            updated.tasks = tempTasks;
+            updated.numTasks = tempTasks.length;
             return updated;
         });
 
         workspaces = workspaces.map((workspace) => {
             const updated = { ...workspace };
-            updated.projects = projects.filter((project) => project.WorkspaceID === workspace.ID);
+            const tempProjects = projects.filter((project) => project.WorkspaceID === workspace.ID);
+            updated.projects = tempProjects;
+            updated.numProjects = tempProjects.length;
+            updated.numTasks = tempProjects.reduce(
+                (sumTasks, project) => sumTasks + project.numTasks,
+                0
+            );
             return updated;
         });
 
