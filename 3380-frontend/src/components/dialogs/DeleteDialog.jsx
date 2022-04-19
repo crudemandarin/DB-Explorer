@@ -5,8 +5,8 @@ import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 
-// import ApiManager from '../../api/ApiManager';
-// import Utils from '../../util/Utils';
+import ApiManager from '../../api/ApiManager';
+import Utils from '../../util/Utils';
 
 import ResultsDialog from './ResultsDialog';
 
@@ -14,11 +14,10 @@ function DeleteDialog({ isVisible, setIsVisible, table, fields, selectedRows }) 
   const [results, setResults] = useState(undefined);
   const [resultsIsVisible, setResultsIsVisible] = useState(false);
 
-  //   const deleteRows = (formParams) => {
-  //     console.log('HomeGroup.add invoked! formParams =', formParams);
-  //     const params = { table, fields: formParams };
-  //     return ApiManager.delete(params);
-  //   };
+  const deleteRows = (rowParams) => {
+    const params = { table, rowParams };
+    return ApiManager.delete(params);
+  };
 
   const onHide = () => {
     setIsVisible(false);
@@ -28,10 +27,11 @@ function DeleteDialog({ isVisible, setIsVisible, table, fields, selectedRows }) 
 
   const handleDeleteClick = async () => {
     console.log('Delete Clicked!');
-    onHide();
-    // const data = await deleteRows();
-    // setResults(data);
-    // setResultsIsVisible(true);
+    const whereParams = Utils.getWhereParams(selectedRows, fields);
+    const data = await deleteRows(whereParams);
+    console.log(data);
+    setResults(data);
+    setResultsIsVisible(true);
   };
 
   const renderedTable = useMemo(() => {

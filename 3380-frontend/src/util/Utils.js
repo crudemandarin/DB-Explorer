@@ -116,6 +116,24 @@ class Utils {
 
     return [isValid, error];
   }
+
+  static getSuperKeys(fields) {
+    const primaryKeyField = fields.filter((field) => field.isPrimaryKey);
+    if (primaryKeyField.length) return primaryKeyField.map((field) => field.name);
+    const foreignKeyFields = fields.filter((field) => field.isForeignKey);
+    return foreignKeyFields.map((field) => field.name);
+  }
+
+  static getWhereParams(rows, fields) {
+    const superKeys = Utils.getSuperKeys(fields);
+    return rows.reduce((previous1, row) => {
+      const superKeysOnly = Object.entries(row).reduce((previous2, pair) => {
+        if (superKeys.includes(pair[0])) return [...previous2, { [pair[0]]: pair[1] }];
+        return previous2;
+      }, []);
+      return [...previous1, superKeysOnly];
+    }, []);
+  }
 }
 
 export default Utils;
