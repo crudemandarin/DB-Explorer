@@ -15,9 +15,8 @@ function App() {
   return (
     <GlobalContext>
       <div className="body">
-        <div className="flex-wrap">
+        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
           <TitleCard />
-          <div className="spacer" />
           <UserCard />
         </div>
         <div className="spacer" />

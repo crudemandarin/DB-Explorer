@@ -11,25 +11,25 @@ const connection = mysql.createConnection({
 
 const query = util.promisify(connection.query).bind(connection);
 
-class SQLManager {
+class SQLService {
     static query(SQL) {
-        console.log('SQLManager.query invoked! SQL =', SQL);
+        console.log('SQLService.query invoked! SQL =', SQL);
         return query(SQL);
     }
 
     static async getTables() {
-        console.log('SQLManager.getTables invoked!');
+        console.log('SQLService.getTables invoked!');
         const SQL = 'SHOW TABLES';
-        const output = await SQLManager.query(SQL);
+        const output = await SQLService.query(SQL);
         const tables = output.map((row) => row[`Tables_in_${process.env.DB_NAME}`]);
-        console.log('SQLManager.getTables: Tables = ', tables);
+        // console.log('SQLService.getTables: Tables = ', tables);
         return tables;
     }
 
     static async getTableFields(table) {
-        console.log('SQLManager.getTableFields invoked! Table =', table);
+        console.log('SQLService.getTableFields invoked! Table =', table);
         const SQL = `SHOW COLUMNS FROM ${table};`;
-        const output = await SQLManager.query(SQL);
+        const output = await SQLService.query(SQL);
         const fields = output.map((row) => ({
             name: row.Field,
             type: row.Type,
@@ -38,62 +38,63 @@ class SQLManager {
             isForeignKey: row.Key === 'MUL',
             default: row.Default ? row.Default : '',
         }));
-        console.log('SQLManager.getTableFields: Fields = ', fields);
+        // console.log('SQLService.getTableFields: Fields = ', fields);
         return fields;
     }
 
-    static async select(table, select, where) {
+    static async select(table, select, where, fromSql) {
         console.log(
-            `SQLManager.select invoked! Table = ${table}, Fields = ${select}, Where =`,
-            where
+            `SQLService.select invoked! Table = ${table}, Fields = ${select}, Where =`,
+            where,
+            'fromSql =',
+            fromSql
         );
+
         let selectParams = '*';
         if (Array.isArray(select) && select.length !== 0) {
             selectParams = select.join(',');
         }
         let whereParams = Utils.nameValueArrToString(where).join(' AND ');
         if (whereParams) whereParams = ` WHERE ${whereParams}`;
-        const SQL = `SELECT ${selectParams} FROM ${table}${whereParams};`;
-        const rows = await SQLManager.query(SQL);
-        console.log('SQLManager.select: rows =', rows);
+
+        const from = fromSql || table;
+        const SQL = `SELECT ${selectParams} FROM ${from}${whereParams};`;
+        const rows = await SQLService.query(SQL);
+        // console.log('SQLService.select: rows =', rows);
         return [rows, SQL];
     }
 
     static async insert(table, fields) {
-        console.log(`SQLManager.insert invoked! Table = ${table}, Fields =`, fields);
-
-        const tableFields = await SQLManager.getTableFields(table);
-        const tableHasID = tableFields.filter((field) => field.name === 'ID').length;
-        if (tableHasID) fields.push({ name: 'ID', value: Utils.getTableID() });
-        console.log('Yoyoy - ', tableHasID, fields);
+        console.log(`SQLService.insert invoked! Table = ${table}, Fields =`, fields);
 
         const keys = fields.map((field) => field.name).join(',');
         const values = fields
             .map((field) => field.value)
             .map((value) => (typeof value === 'string' ? `'${value}'` : value))
             .join(',');
+
         const SQL = `INSERT INTO ${table} (${keys}) VALUES (${values})`;
-        const result = await SQLManager.query(SQL);
-        console.log('SQLManager.insert: result =', result);
+        const result = await SQLService.query(SQL);
+        // console.log('SQLService.insert: result =', result);
         return [result, SQL];
     }
 
     static async update(table, fields, where) {
-        const whereParams = SQLManager.nameValueArrToString(where).join(' AND ');
-        const updateParams = SQLManager.nameValueArrToString(fields).join(',');
+        const whereParams = SQLService.nameValueArrToString(where).join(' AND ');
+        const updateParams = SQLService.nameValueArrToString(fields).join(',');
         const SQL = `UPDATE ${table} SET ${updateParams} WHERE ${whereParams}`;
-        const result = await SQLManager.query(SQL);
-        console.log('SQLManager.insert: result =', result);
+        const result = await SQLService.query(SQL);
+        // console.log('SQLService.update: result =', result);
         return [result, SQL];
     }
 
     static async delete(table, fields) {
         const whereParams = Utils.nameValueArrToString(fields).join(' OR ');
         const SQL = `DELETE FROM ${table} WHERE ${whereParams}`;
-        const result = await SQLManager.query(SQL);
-        console.log('SQLManager.insert: result =', result);
+        const result = await SQLService.query(SQL);
+        // console.log('SQLService.delete: result =', result);
         return [result, SQL];
     }
 }
 
-module.exports = SQLManager;
+module.exports = SQLService;

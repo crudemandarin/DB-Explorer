@@ -4,6 +4,7 @@ import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 
 import { useGlobal } from '../util/GlobalContext';
+import ApiManager from '../api/ApiManager';
 
 function UserCard() {
   const { user, setUser } = useGlobal();
@@ -17,43 +18,47 @@ function UserCard() {
     setLoginForm(form);
   };
 
-  const handleSubmit = () => {
-    console.log('UserCard.handleSubmit invoked');
-    // call API login route
-    // API returns user object
-    const userData = { FirstName: 'Nykolas' }; // response from API
-    setUser(userData);
+  const handleSignInClick = async (e) => {
+    e.preventDefault();
+    console.log('UserCard.handleSignInClick invoked');
+    const userData = await ApiManager.login(loginForm.email);
+    if (userData) setUser(userData);
   };
 
-  if (Object.keys(user).length === 0) {
-    return (
-      <form onSubmit={handleSubmit} className="card">
-        <div className="h400">Hello, world!</div>
+  const handleSignOutClick = async (e) => {
+    e.preventDefault();
+    console.log('UserCard.handleSignOutClick invoked');
+    setUser(undefined);
+  };
+
+  const renderUserCard = () => {
+    if (!user) return (
+      <>
+        <InputText
+          placeholder='Email Address'
+          className='p-inputtext-sm'
+          value={loginForm.email}
+          onChange={emailOnChange}
+        />
         <div className="spacer" />
-        <div className="flex-wrap">
-          <span className="p-float-label">
-            <InputText
-              id="emailInput"
-              className="p-inputtext-sm"
-              value={loginForm.email}
-              onChange={emailOnChange}
-            />
-            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-            <label htmlFor="emailInput">Email Address</label>
-          </span>
-          <div className="spacer" />
-          <Button onClick={handleSubmit}>Sign In</Button>
-        </div>
-      </form>
+        <Button onClick={handleSignInClick}>Sign In</Button>
+      </>
     );
+
+    return (
+      <>
+        <div className="h400">
+          Signed in as <span className="h600"> {user.FirstName} </span>
+        </div>
+        <div className="spacer" />
+        <Button onClick={handleSignOutClick} className="p-button-outlined p-button-secondary">Not you?</Button>
+      </>
+    )
   }
 
   return (
-    <div className="card">
-      <div className="h400">
-        {' '}
-        Signed in as <span className="h600"> {user.FirstName} </span>
-      </div>
+    <div className="card" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+      {renderUserCard()}
     </div>
   );
 }
