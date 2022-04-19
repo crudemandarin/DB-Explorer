@@ -100,7 +100,7 @@ CREATE TABLE Task (
     UpdatedBy varchar(64) NOT NULL,
     Title varchar(128) NOT NULL,
     `Description` varchar(512),
-    `Status` smallint NOT NULL, -- '0: Not started, 1: In progress, 2: Needs Review, 3: Completed'
+    `Status` smallint NOT NULL DEFAULT 0,
     AssignedTo varchar(64),
     TimeClosed DATETIME(6),
     EstimatedCost float,
