@@ -8,6 +8,7 @@ import QueryControlCard from '../cards/QueryControlCard';
 import AddControlCard from '../cards/AddControlCard';
 import ReportControlCard from '../cards/ReportControlCard';
 import TableCard from '../cards/TableCard';
+import ReportSummaryCard from '../cards/ReportSummaryCard';
 
 function HomeGroup() {
   const [navigation, setNavigation] = useState(0);
@@ -15,6 +16,7 @@ function HomeGroup() {
   const [table, setTable] = useState(''); // string
   const [fields, setFields] = useState([]); // Field[]
   const [results, setResults] = useState([]); // Result[]
+  const [report, setReport] = useState(undefined);
 
   // Load Tables
   useEffect(() => {
@@ -28,7 +30,14 @@ function HomeGroup() {
       }
     };
 
+    const getReportSummary = async () => {
+      const data = await ApiManager.getReport();
+      setReport(data);
+      console.log('homegroup.getreportsummary', data);
+    }
+
     getTables();
+    getReportSummary();
   }, []);
 
   // Listen to Table, Load Table Fields
@@ -100,6 +109,8 @@ function HomeGroup() {
       {renderNavigation()}
       {renderController()}
       {renderResults()}
+      <div className="spacer" />
+      <ReportSummaryCard report={report} />
     </>
   );
 }

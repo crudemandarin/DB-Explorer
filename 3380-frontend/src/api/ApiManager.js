@@ -81,6 +81,19 @@ class ApiManager {
     }
   }
 
+  static async getReport(params) {
+    console.log('ApiManager.getReport invoked! params =', params);
+    try {
+      const report = await ApiService.getReport(params);
+      console.log('ApiManager.getReport: Successful! Report =', report);
+      return report;
+    } catch (err) {
+      const error = err?.response?.data;
+      console.error('ApiManager.update: Could not update. Error =', error);
+      return { result: error, SQL: error.sql };
+    }
+  }
+
   static getFormattedRows(rows) {
     return rows.map((data) => {
       const ret = { ...data };

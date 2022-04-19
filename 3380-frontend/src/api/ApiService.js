@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import report from './reportdata.json';
+
 const SERVICE_URL = process.env.REACT_APP_SERVICE_URL;
 
 class ApiService {
@@ -33,6 +35,11 @@ class ApiService {
 
   static async update(params) {
     return axios.put(`${SERVICE_URL}/interface/query/data`, params);
+  }
+
+  static async getReport() {
+    return report;
+    // return axios.post(`${SERVICE_URL}/user/report`, params);
   }
 }
 

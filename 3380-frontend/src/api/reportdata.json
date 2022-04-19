@@ -1,0 +1,130 @@
+{
+  "workspaces": [
+    {
+      "id": 1,
+      "title": "Workspace 1",
+      "createdBy": "Courtney",
+      "department": "Research",
+      "actualCost": 13.2,
+      "actualEffort": 14,
+      "projects": [
+        {
+          "id": 2,
+          "title": "Project 1",
+          "createdBy": "Courtney",
+          "actualCost": 13.2,
+          "actualEffort": 14,
+          "tasks": [
+            {
+              "id": 3,
+              "title": "Task 1",
+              "createdBy": "Courtney",
+              "actualCost": 13.2,
+              "actualEffort": 14,
+              "assignedTo": "Jairo"
+            },
+            {
+              "id": 2,
+              "title": "Task 2",
+              "createdBy": "Courtney",
+              "actualCost": 13.2,
+              "actualEffort": 14,
+              "assignedTo": "Jairo"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Project 1",
+          "createdBy": "Courtney",
+          "actualCost": 13.2,
+          "actualEffort": 14,
+          "tasks": [
+            {
+              "id": 3,
+              "title": "Task 1",
+              "createdBy": "Courtney",
+              "actualCost": 13.2,
+              "actualEffort": 14,
+              "assignedTo": "Jairo"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "The Second Workspace",
+      "createdBy": "Courtney",
+      "department": "Research",
+      "actualCost": 13.2,
+      "actualEffort": 14,
+      "projects": [
+        {
+          "id": 2,
+          "title": "Project 1",
+          "createdBy": "Courtney",
+          "actualCost": 13.2,
+          "actualEffort": 14,
+          "tasks": [
+            {
+              "id": 3,
+              "title": "Task 1",
+              "createdBy": "Courtney",
+              "actualCost": 13.2,
+              "actualEffort": 14,
+              "assignedTo": "Jairo"
+            },
+            {
+              "id": 2,
+              "title": "Task 2",
+              "createdBy": "Courtney",
+              "actualCost": 13.2,
+              "actualEffort": 14,
+              "assignedTo": "Jairo"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Project 1",
+          "createdBy": "Courtney",
+          "actualCost": 13.2,
+          "actualEffort": 14,
+          "tasks": [
+            {
+              "id": 3,
+              "title": "Task 1",
+              "createdBy": "Courtney",
+              "actualCost": 13.2,
+              "actualEffort": 14,
+              "assignedTo": "Jairo"
+            },
+            {
+              "id": 7,
+              "title": "Task 1",
+              "createdBy": "Courtney",
+              "actualCost": 13.2,
+              "actualEffort": 14,
+              "assignedTo": "Jairo"
+            },
+            {
+              "id": 14,
+              "title": "Task 2",
+              "createdBy": "Courtney",
+              "actualCost": 13.2,
+              "actualEffort": 14,
+              "assignedTo": "Jairo"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "requestedBy": {
+    "id": 12,
+    "firstname": "Courtney",
+    "lastname": "Berry"
+  },
+  "requestedAt": "4/18/2020"
+}
