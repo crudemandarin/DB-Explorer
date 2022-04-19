@@ -36,7 +36,7 @@ CREATE TABLE UserWorkspaceRelation (
 CREATE TABLE WorkspaceUser (
     ID varchar(64) NOT NULL PRIMARY KEY,
     UserID varchar(64) NOT NULL,
-    `Role` smallint NOT NULL,
+    `Role` smallint NOT NULL DEFAULT 0,
     WorkspaceID varchar(64) NOT NULL,
     DepartmentID varchar(64),
     FOREIGN KEY (UserID) REFERENCES `User`(ID) ON DELETE CASCADE ON UPDATE CASCADE,
