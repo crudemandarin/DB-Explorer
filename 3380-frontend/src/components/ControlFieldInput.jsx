@@ -32,7 +32,7 @@ function ControlFieldInput({ name, tableForm, setTableForm, setResetFlag }) {
             style={{width: '175px', height: '45px'}}
             showIcon 
           />
-          <label htmlFor={name}>{name}</label>
+          <label htmlFor={`${name}-input`}>{name}</label>
         </span>
       )
     }
@@ -61,7 +61,7 @@ function ControlFieldInput({ name, tableForm, setTableForm, setResetFlag }) {
             onChange={onChange}
             style={{width: '175px', height: '45px'}}
           />
-          <label htmlFor={name}>{name}</label>
+          <label htmlFor={`${name}-input`}>{name}</label>
         </span>
         {renderedError}
       </>

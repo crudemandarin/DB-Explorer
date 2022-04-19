@@ -7,8 +7,10 @@ import ApiManager from '../api/ApiManager';
 import Utils from '../util/Utils';
 
 import ControlFieldInput from '../components/ControlFieldInput';
+import { useGlobal } from '../util/GlobalContext';
 
 function QueryControlCard({ table, setTable, tables, fields, onQuery }) {
+  const { user } = useGlobal();
   const [tableOptions, setTableOptions] = useState([]); // Option[]
   const [tableValue, setTableValue] = useState(undefined); // Option
   const [tableForm, setTableForm] = useState({});
@@ -26,10 +28,11 @@ function QueryControlCard({ table, setTable, tables, fields, onQuery }) {
 
   const query = async (formParams) => {
     console.log('HomeGroup.query invoked. Form Params =', formParams);
-    const params = { table, select: [], where: formParams };
-    const rows = await ApiManager.select(params);
+    const params = { userId: user.ID, table, select: [], where: formParams };
+    const [rows, SQL] = await ApiManager.select(params);
     const id = Utils.getNewQueryID();
-    const result = { id, table, formParams, fields, rows };
+    const requestedBy = `${user.FirstName} ${user.LastName}`;
+    const result = { id, table, formParams, fields, rows, SQL, requestedBy };
     onQuery(result);
   };
 

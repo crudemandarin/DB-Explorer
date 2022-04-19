@@ -3,6 +3,8 @@ import React, { useMemo } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 
+import Utils from '../../util/Utils';
+
 function ResultsDialog({ isVisible, setIsVisible, setParentIsVisible, data, table }) {
   const onHide = () => {
     setIsVisible(false);
@@ -34,7 +36,7 @@ function ResultsDialog({ isVisible, setIsVisible, setParentIsVisible, data, tabl
           <div className="p400" style={{ marginBottom: '0.5rem' }}>
             SQL
           </div>
-          <div className="textbox">{SQL}</div>
+          <div className="textbox">{Utils.getFormattedSQL(SQL)}</div>
           <div className="spacer" />
           <div className="p400">Code {result.code}</div>
         </>
@@ -47,7 +49,7 @@ function ResultsDialog({ isVisible, setIsVisible, setParentIsVisible, data, tabl
           <div className="p400" style={{ marginBottom: '0.5rem' }}>
             SQL
           </div>
-          <div className="textbox">{SQL}</div>
+          <div className="textbox">{Utils.getFormattedSQL(SQL)}</div>
         </>
       );
     } else {
