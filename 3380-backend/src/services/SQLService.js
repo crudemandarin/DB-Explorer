@@ -1,6 +1,6 @@
 const mysql = require('mysql');
 const util = require('util');
-const Utils = require('./Utils');
+const Utils = require('../Utils');
 
 const connection = mysql.createConnection({
     host: process.env.DB_SERVICE_URL,
