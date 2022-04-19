@@ -3,8 +3,7 @@ import React from 'react';
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-
-
+import { Chart } from 'primereact/chart';
 
 
 function WorkspaceComponent({ workspace }) {
@@ -60,6 +59,9 @@ function TaskComponent({ task }) {
   );
 }
 
+
+
+
 function ReportSummaryCard({ report }) {
   console.log("report summary card", report)
   if (!report) return null;
@@ -93,6 +95,46 @@ function ReportSummaryCard({ report }) {
   //   )
   // );
 
+  // temp data for projects chart
+  const chartData = {
+    labels: ['Project 1', 'Project 2', 'Project 3'],
+    datasets: [
+        {
+            data: [1500, 5200, 7800],
+            backgroundColor: [
+              "#42A5F5",
+              "#66BB6A",
+              "#FFA726"
+          ],
+          hoverBackgroundColor: [
+              "#64B5F6",
+              "#81C784",
+              "#FFB74D"
+          ]
+        }
+    ]
+  };
+
+  // temp data for task chart
+  const chartDataTask = {
+    labels: ['Task 1', 'Task 2', 'Task 3', 'Task 4'],
+    datasets: [
+        {
+            data: [1500, 1358, 2500, 350],
+            backgroundColor: [
+              "#42A5F5",
+              "#66BB6A",
+              "#FFA726"
+          ],
+          hoverBackgroundColor: [
+              "#64B5F6",
+              "#81C784",
+              "#FFB74D"
+          ]
+        }
+    ]
+  };
+
   return (
     <div className="card" style={{ width: '100%' }}>
       <div className="flex space-between">
@@ -113,9 +155,11 @@ function ReportSummaryCard({ report }) {
       <div>Requested On: {requestedAt}</div>
 
       <div className='spacer' />
+      
 
       <div className = 'workspaces'>
         {renderWorkspaces()}
+        <Chart type="pie" data={chartData} style={{ position: 'relative', width: '35%' }} />
       </div>
 
       <div className='spacer' />
@@ -130,6 +174,10 @@ function ReportSummaryCard({ report }) {
         <div>Actual Effort: </div>
         <div>Department: </div>
         <div>Created By: </div>
+
+       {/** still working on right alignment of charts, 
+        * also they use dummy data from above rn */}
+        <Chart type="pie" data={chartDataTask} style={{ position: 'right', width: '35%' }} />
       </div>
 
       <div className='spacer' />
