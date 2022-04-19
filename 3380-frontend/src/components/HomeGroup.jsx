@@ -4,13 +4,17 @@ import React, { useState, useEffect } from 'react';
 
 import ApiManager from '../api/ApiManager';
 
+import UserNotLoggedInCard from '../cards/UserNotLoggedInCard';
 import QueryControlCard from '../cards/QueryControlCard';
 import AddControlCard from '../cards/AddControlCard';
 import ReportControlCard from '../cards/ReportControlCard';
 import TableCard from '../cards/TableCard';
 import ReportSummaryCard from '../cards/ReportSummaryCard';
 
+import { useGlobal } from '../util/GlobalContext';
+
 function HomeGroup() {
+  const { user } = useGlobal();
   const [navigation, setNavigation] = useState(0);
   const [tables, setTables] = useState([]); // string[]
   const [table, setTable] = useState(''); // string
@@ -83,6 +87,10 @@ function HomeGroup() {
   };
 
   const renderController = () => {
+    if (!user) {
+      return <UserNotLoggedInCard />
+    }
+
     if (navigation === 0) {
       const controlProps = { table, setTable, tables, fields, results, onQuery };
       return <QueryControlCard {...controlProps} />;

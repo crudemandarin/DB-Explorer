@@ -7,11 +7,13 @@ import { Column } from 'primereact/column';
 import '../styles/TableCard.css';
 import DeleteDialog from '../components/dialogs/DeleteDialog';
 import ModifyDialog from '../components/dialogs/ModifyDialog';
+import ViewSQLDialog from '../components/dialogs/ViewSQLDialog';
 
 function TableCard({ result, onRemove }) {
   const [selectedRows, setSelectedRows] = useState([]);
   const [modifyIsVisible, setModifyIsVisible] = useState(false);
   const [deleteIsVisible, setDeleteIsVisible] = useState(false);
+  const [viewSQLIsVisible, setViewSQLIsVisible] = useState(false);
 
   const dt = useRef(null);
 
@@ -32,6 +34,11 @@ function TableCard({ result, onRemove }) {
     console.log('Delete Clicked. Selected Rows =', selectedRows);
     setDeleteIsVisible(true);
   };
+
+  const handleViewSQLClick = () => {
+    console.log('Handle View SQL Click');
+    setViewSQLIsVisible(true);
+  }
 
   const title = useMemo(() => {
     let output = `Table ${result.table}`;
@@ -59,6 +66,7 @@ function TableCard({ result, onRemove }) {
     fields: result.fields,
     selectedRows,
   };
+
   const deleteDialogProps = {
     isVisible: deleteIsVisible,
     setIsVisible: setDeleteIsVisible,
@@ -66,6 +74,13 @@ function TableCard({ result, onRemove }) {
     fields: result.fields,
     selectedRows,
   };
+
+  const viewSQLDialogProps = {
+    isVisible: viewSQLIsVisible,
+    setIsVisible: setViewSQLIsVisible,
+    desc: title,
+    SQL: result.SQL
+  }
 
   return (
     <div className="card" style={{ width: '100%', maxHeight: '500px', marginTop: '1rem' }}>
@@ -84,6 +99,11 @@ function TableCard({ result, onRemove }) {
         />
       </div>
 
+      <div className='p400'>Requested by {result.requestedBy}</div>
+      <div className='p400'>{result.rows.length} results found</div>
+
+      <div className="spacer" />
+
       <div>
         <Button
           onClick={handleModifyOnClick}
@@ -99,6 +119,12 @@ function TableCard({ result, onRemove }) {
           className="p-button-secondary"
           style={{ marginRight: '10px' }}
         />
+        <Button
+          onClick={handleViewSQLClick}
+          label="View SQL"
+          className="p-button-secondary"
+          style={{ marginRight: '10px' }}
+        />
         <Button onClick={onExportClick} label="Export" />
       </div>
 
@@ -110,6 +136,7 @@ function TableCard({ result, onRemove }) {
         responsiveLayout="scroll"
         selection={selectedRows}
         onSelectionChange={(e) => setSelectedRows(e.value)}
+        emptyMessage="No records found."
       >
         <Column selectionMode="multiple" headerStyle={{ width: '2rem' }} />
         {renderedColumns}
@@ -117,6 +144,7 @@ function TableCard({ result, onRemove }) {
 
       <ModifyDialog {...modifyDialogProps} />
       <DeleteDialog {...deleteDialogProps} />
+      <ViewSQLDialog {...viewSQLDialogProps} />
     </div>
   );
 }

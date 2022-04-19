@@ -2,17 +2,18 @@ const express = require('express');
 
 const router = express.Router();
 
-const SQLManager = require('../SQLManager');
+const SQLService = require('../services/SQLService');
+const UserService = require('../services/UserService');
 
 /* GET /interface/tables */
 router.get('/tables', async (req, res) => {
     console.log('GET /interface/tables');
 
     try {
-        const tables = await SQLManager.getTables();
+        const tables = await SQLService.getTables();
         return res.status(200).json({ tables });
     } catch (err) {
-        console.error('SQLManager.getTables failed. err =', err);
+        console.error('SQLService.getTables failed. err =', err);
         if ('code' in err && 'sqlMessage' in err && 'sql' in err) {
             return res.status(400).json({ code: err.code, message: err.sqlMessage, sql: err.sql });
         }
@@ -29,10 +30,10 @@ router.get('/fields', async (req, res) => {
     if (!table) return res.status(400).json({ message: 'Missing `table` in query parameters' });
 
     try {
-        const fields = await SQLManager.getTableFields(table);
+        const fields = await SQLService.getTableFields(table);
         return res.status(200).json({ fields });
     } catch (err) {
-        console.error('SQLManager.getTableFields failed. err =', err);
+        console.error('SQLService.getTableFields failed. err =', err);
         if ('code' in err && 'sqlMessage' in err && 'sql' in err) {
             return res.status(400).json({ code: err.code, message: err.sqlMessage, sql: err.sql });
         }
@@ -45,14 +46,18 @@ router.get('/fields', async (req, res) => {
 router.post('/query', async (req, res) => {
     console.log('POST /interface/query');
 
-    const { table, select, where } = req.body;
+    const { userId, table, select, where } = req.body;
     if (!table) return res.status(400).json({ message: 'Missing `table` in body' });
 
     try {
-        const [rows, SQL] = await SQLManager.select(table, select, where);
+        if (userId) {
+            const [rows, SQL] = await UserService.select(userId, table, select, where);
+            return res.status(200).json({ rows, SQL });
+        }
+        const [rows, SQL] = await SQLService.select(table, select, where);
         return res.status(200).json({ rows, SQL });
     } catch (err) {
-        console.error('SQLManager.select failed. err =', err);
+        console.error('SQLService.select failed. err =', err);
         if ('code' in err && 'sqlMessage' in err && 'sql' in err) {
             return res.status(400).json({ code: err.code, message: err.sqlMessage, sql: err.sql });
         }
@@ -74,10 +79,10 @@ router.post('/query/data', async (req, res) => {
     if (fields.length === 0) return res.status(400).json({ message: '`fields` is empty' });
 
     try {
-        const [result, SQL] = await SQLManager.insert(table, fields);
+        const [result, SQL] = await SQLService.insert(table, fields);
         return res.status(200).json({ result, SQL });
     } catch (err) {
-        console.error('SQLManager.insert failed. err =', err);
+        console.error('SQLService.insert failed. err =', err);
         if ('code' in err && 'sqlMessage' in err && 'sql' in err) {
             return res.status(400).json({ code: err.code, message: err.sqlMessage, sql: err.sql });
         }
@@ -96,10 +101,10 @@ router.delete('/query/data', async (req, res) => {
     if (!table) return res.status(400).json({ message: 'Missing `table` in body' });
 
     try {
-        const [results, SQL] = await SQLManager.delete(table, fieldsObj);
+        const [results, SQL] = await SQLService.delete(table, fieldsObj);
         return res.status(200).json({ results, SQL });
     } catch (err) {
-        console.error('SQLManager.delete failed. err =', err);
+        console.error('SQLService.delete failed. err =', err);
         if ('code' in err && 'sqlMessage' in err && 'sql' in err) {
             return res.status(400).json({ code: err.code, message: err.sqlMessage, sql: err.sql });
         }
@@ -124,10 +129,10 @@ router.put('/query/data', async (req, res) => {
     if (where.length === 0) return res.status(400).json({ message: '`where` is empty' });
 
     try {
-        const [results, SQL] = await SQLManager.update(table, fields, where);
+        const [results, SQL] = await SQLService.update(table, fields, where);
         return res.status(200).json({ results, SQL });
     } catch (err) {
-        console.error('SQLManager.update failed. err =', err);
+        console.error('SQLService.update failed. err =', err);
         if ('code' in err && 'sqlMessage' in err && 'sql' in err) {
             return res.status(400).json({ code: err.code, message: err.sqlMessage, sql: err.sql });
         }

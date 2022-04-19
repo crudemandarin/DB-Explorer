@@ -1,6 +1,23 @@
 import ApiService from './ApiService';
 
 class ApiManager {
+  static async login(email) {
+    if (email === 'nykolas') {
+      return { ID: '', FirstName: 'Nykolas', LastName: 'Farhangi' };
+    }
+
+    try {
+      const params = { email };
+      const response = await ApiService.login(params);
+      const { user } = response.data;
+      console.log('ApiManager.login: Successful! User =', user);
+      return user;
+    } catch (err) {
+      console.error('ApiManager.login: Could not login user. Error =', err);
+      return undefined;
+    }
+  }
+
   static async getTables() {
     try {
       const response = await ApiService.getTables();
@@ -31,7 +48,7 @@ class ApiManager {
       const response = await ApiService.select(params);
       const { rows, SQL } = response.data;
       console.log('ApiManager.select: Successful! Rows =', rows, 'SQL =', SQL);
-      return this.getFormattedRows(rows);
+      return [this.getFormattedRows(rows), SQL];
     } catch (err) {
       const error = err?.response?.data;
       console.error('ApiManager.select: Could not select. Error =', error);

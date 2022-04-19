@@ -48,11 +48,11 @@ VALUES
   (45,"Imelda","Bryant","integer.vulputate@google.com");
 
 /*Inserting workspace test data 3 total*/
-Insert Into Workspace (ID,CreatedAt,CreatedBy,LastUpdated,UpdatedBy)
+Insert Into Workspace (ID,CreatedAt,CreatedBy,LastUpdated,UpdatedBy, Title)
   VALUES
-	(1, 20160428, 1, 20220322, 2),
-    (2, 20160428, 16, 20220322, 17),
-    (3, 20160428, 31, 20220322, 32);
+	(1, 20160428, 1, 20220322, 2,"GLaDOS Personal Projects"),
+    (2, 20160428, 16, 20220322, 17, "Aperture Science"),
+    (3, 20160428, 31, 20220322, 32, "Black Mesa Research Facility");
 
 /*Assigning users to workspaces*/
 INSERT INTO UserWorkspaceRelation (UserID,WorkspaceID)

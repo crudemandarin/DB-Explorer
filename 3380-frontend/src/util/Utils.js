@@ -1,3 +1,5 @@
+import { format } from 'sql-formatter';
+
 const integerRG = /^$|^[+-]?\d+$/;
 const floatRG = /^$|^[+-]?\d+(\.\d+)?$/;
 
@@ -17,6 +19,10 @@ class Utils {
 
   static getNewQueryID() {
     return crypto.randomUUID().substring(0, 6);
+  }
+
+  static getFormattedSQL(SQL) {
+    return format(SQL, { language: 'mysql' });
   }
 
   static getEmptyForm(fields, opt) {
