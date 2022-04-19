@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 const SQLService = require('../services/SQLService');
+const UserService = require('../services/UserService');
 
 /* GET /interface/tables */
 router.get('/tables', async (req, res) => {
@@ -45,10 +46,14 @@ router.get('/fields', async (req, res) => {
 router.post('/query', async (req, res) => {
     console.log('POST /interface/query');
 
-    const { table, select, where } = req.body;
+    const { userId, table, select, where } = req.body;
     if (!table) return res.status(400).json({ message: 'Missing `table` in body' });
 
     try {
+        if (userId) {
+            const [rows, SQL] = await UserService.select(userId, table, select, where);
+            return res.status(200).json({ rows, SQL });
+        }
         const [rows, SQL] = await SQLService.select(table, select, where);
         return res.status(200).json({ rows, SQL });
     } catch (err) {
