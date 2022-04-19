@@ -25,48 +25,48 @@ class UserService {
 
         let FROM = '';
 
-        switch (table) {
-            case 'Department': {
+        switch (table.toLowerCase()) {
+            case 'department': {
                 console.log('Department');
                 FROM = `SELECT * FROM ${table} WHERE WorkspaceID in (${selectCurrentUserWorkspaceIds})`;
                 break;
             }
-            case 'Project': {
+            case 'project': {
                 console.log('Project');
                 FROM = `SELECT * FROM ${table} WHERE ID in (${selectL0ProjectIdsSQL})`;
                 break;
             }
-            case 'Tag': {
+            case 'tag': {
                 console.log('Tag');
                 FROM = `SELECT * FROM ${table} WHERE ProjectID in (${selectL0ProjectIdsSQL}) OR WorkspaceID in (${selectCurrentUserWorkspaceIds})`;
                 break;
             }
-            case 'Task': {
+            case 'task': {
                 console.log('Task');
                 FROM = `SELECT * FROM ${table} WHERE ProjectID in (${selectL0ProjectIdsSQL})`;
                 break;
             }
-            case 'User': {
+            case 'user': {
                 console.log('User');
                 FROM = `SELECT * FROM ${table} WHERE ID in (${selectL0UserIds})`;
                 break;
             }
-            case 'UserWorkspaceRelation': {
+            case 'userworkspacerelation': {
                 console.log('UserWorkspaceRelation');
                 FROM = `SELECT * FROM ${table} WHERE UserID='${userId}'`;
                 break;
             }
-            case 'Workspace': {
+            case 'workspace': {
                 console.log('Workspace');
                 FROM = `SELECT * FROM ${table} WHERE ID in (${selectCurrentUserWorkspaceIds})`;
                 break;
             }
-            case 'WorkspaceUser': {
+            case 'workspaceuser': {
                 console.log('WorkspaceUser');
                 FROM = `SELECT * FROM ${table} WHERE WorkspaceID in (${selectCurrentUserWorkspaceIds})`;
                 break;
             }
-            case 'WorkspaceUserProjectRelation': {
+            case 'workspaceuserprojectrelation': {
                 console.log('WorkspaceUserProjectRelation');
                 FROM = `SELECT * FROM ${table} WHERE WorkspaceUserID in (${selectCurrentUserWorkspaceUserIds})`;
                 break;

@@ -22,7 +22,7 @@ class SQLService {
         const SQL = 'SHOW TABLES';
         const output = await SQLService.query(SQL);
         const tables = output.map((row) => row[`Tables_in_${process.env.DB_NAME}`]);
-        console.log('SQLService.getTables: Tables = ', tables);
+        // console.log('SQLService.getTables: Tables = ', tables);
         return tables;
     }
 
@@ -38,7 +38,7 @@ class SQLService {
             isForeignKey: row.Key === 'MUL',
             default: row.Default ? row.Default : '',
         }));
-        console.log('SQLService.getTableFields: Fields = ', fields);
+        // console.log('SQLService.getTableFields: Fields = ', fields);
         return fields;
     }
 
@@ -60,7 +60,7 @@ class SQLService {
         const from = fromSql || table;
         const SQL = `SELECT ${selectParams} FROM ${from}${whereParams};`;
         const rows = await SQLService.query(SQL);
-        console.log('SQLService.select: rows =', rows);
+        // console.log('SQLService.select: rows =', rows);
         return [rows, SQL];
     }
 
@@ -75,7 +75,7 @@ class SQLService {
 
         const SQL = `INSERT INTO ${table} (${keys}) VALUES (${values})`;
         const result = await SQLService.query(SQL);
-        console.log('SQLService.insert: result =', result);
+        // console.log('SQLService.insert: result =', result);
         return [result, SQL];
     }
 
@@ -84,7 +84,7 @@ class SQLService {
         const updateParams = SQLService.nameValueArrToString(fields).join(',');
         const SQL = `UPDATE ${table} SET ${updateParams} WHERE ${whereParams}`;
         const result = await SQLService.query(SQL);
-        console.log('SQLService.update: result =', result);
+        // console.log('SQLService.update: result =', result);
         return [result, SQL];
     }
 
@@ -92,7 +92,7 @@ class SQLService {
         const whereParams = Utils.nameValueArrToString(fields).join(' OR ');
         const SQL = `DELETE FROM ${table} WHERE ${whereParams}`;
         const result = await SQLService.query(SQL);
-        console.log('SQLService.delete: result =', result);
+        // console.log('SQLService.delete: result =', result);
         return [result, SQL];
     }
 }
