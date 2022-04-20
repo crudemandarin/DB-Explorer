@@ -115,7 +115,7 @@ function ReportSummaryCard({ result, onRemove }) {
       </div>
       {renderDescription()}
       <div className='spacer' />
-      <div style={{ height: '600px', overflow: 'scroll'}}>
+      <div style={{ maxHeight: '600px', overflow: 'auto'}}>
         {workspaces.map(workspace => <WorkspaceComponent key={`workspace-row-${workspace.ID}`} workspace={workspace} taskFields={taskFields} />)}
       </div>
     </div>
