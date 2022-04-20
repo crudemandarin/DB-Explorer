@@ -46,7 +46,7 @@ router.get('/fields', async (req, res) => {
 router.post('/query', async (req, res) => {
     console.log('POST /interface/query');
 
-    const { userId, table, select, where } = req.body;
+    const { userId, table, select = [], where = [] } = req.body;
     if (!table) return res.status(400).json({ message: 'Missing `table` in body' });
 
     try {

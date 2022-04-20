@@ -9,6 +9,7 @@ import QueryControlCard from '../cards/QueryControlCard';
 import AddControlCard from '../cards/AddControlCard';
 import ReportControlCard from '../cards/ReportControlCard';
 import TableCard from '../cards/TableCard';
+import ReportSummaryCard from '../cards/ReportSummaryCard';
 
 import { useGlobal } from '../util/GlobalContext';
 
@@ -50,11 +51,11 @@ function HomeGroup() {
     if (table) getFields();
   }, [table]);
 
-  const onQuery = (result) => {
+  const onNewResult = (result) => {
     setResults([result, ...results]);
   };
 
-  const onTableCardRemove = (id) => {
+  const onResultCardRemove = (id) => {
     const temp = results.filter((el) => el.id !== id);
     setResults(temp);
   };
@@ -83,7 +84,7 @@ function HomeGroup() {
     }
 
     if (navigation === 0) {
-      const controlProps = { table, setTable, tables, fields, results, onQuery };
+      const controlProps = { table, setTable, tables, fields, results, onNewResult };
       return <QueryControlCard {...controlProps} />;
     }
 
@@ -92,15 +93,18 @@ function HomeGroup() {
       return <AddControlCard {...controlProps} />;
     }
 
-    const controlProps = {};
+    const controlProps = { onNewResult };
     return <ReportControlCard {...controlProps} />;
   };
 
   const renderResults = () => {
     if (!Array.isArray(results)) return null;
-    return results.map((result) => (
-      <TableCard key={result.id} result={result} onRemove={onTableCardRemove} />
-    ));
+    return results.map((result) => {
+      if (result.type === 'table') return <TableCard key={result.id} result={result} onRemove={onResultCardRemove} />;
+      if (result.type === 'report') return <ReportSummaryCard key={result.id} result={result} onRemove={onResultCardRemove} />;
+      console.error('HomeGroup.renderResults: result.type not recognized. result.type =', result.type)
+      return null;
+    });
   };
 
   return (
