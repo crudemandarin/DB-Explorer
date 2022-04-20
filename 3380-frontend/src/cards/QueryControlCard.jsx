@@ -30,7 +30,7 @@ function QueryControlCard({ table, setTable, tables, fields, onNewResult }) {
     console.log('HomeGroup.query invoked. Form Params =', formParams);
     const params = { userId: user.ID, table, select: [], where: formParams };
     const [rows, SQL] = await ApiManager.select(params);
-    const id = Utils.getNewQueryID();
+    const id = Utils.getNewID();
     const requestedBy = `${user.FirstName} ${user.LastName}`;
     const result = { id, table, formParams, fields, rows, SQL, requestedBy, type: 'table' };
     onNewResult(result);

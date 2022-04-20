@@ -101,7 +101,8 @@ class ApiManager {
   static async getReport(params) {
     console.log('ApiManager.getReport invoked! params =', params);
     try {
-      const report = await ApiService.getReport(params);
+      const response = await ApiService.getReport(params);
+      const { report } = response.data;
       console.log('ApiManager.getReport: Successful! Report =', report);
       return report;
     } catch (err) {

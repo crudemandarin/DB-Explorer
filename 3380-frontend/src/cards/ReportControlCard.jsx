@@ -5,6 +5,7 @@ import { Calendar } from 'primereact/calendar'
 
 import ApiManager from '../api/ApiManager';
 import { useGlobal } from '../util/GlobalContext';
+import Utils from '../util/Utils';
 
 import '../styles/Report.css';
 
@@ -25,12 +26,18 @@ function ReportControlCard({ onNewResult }) {
   }, [user]);
 
   const getReport = async () => {
-    const workspaceIds = form.workspaces.map(obj => obj.ID);
-    const projectIds = form.projects.map(obj => obj.ID);
+    const workspaceIds = JSON.stringify(form.workspaces.map(obj => obj.ID));
+    const projectIds = JSON.stringify(form.projects.map(obj => obj.ID));
     const lowerBound = form.lowerBound ? form.lowerBound.toISOString() : '';
     const upperBound = form.upperBound ? form.upperBound.toISOString() : '';
-    const params = { workspaceIds, projectIds, lowerBound, upperBound };
-    const result = await ApiManager.getReport(params);
+
+    const params = { userId: user.ID, workspaceIds, projectIds, lowerBound, upperBound };
+    const report = await ApiManager.getReport(params);
+
+    const id = Utils.getNewID();
+    const workspaceTitles = form.workspaces.map(obj => obj.Title);
+    const projectTitles = form.projects.map(obj => obj.Title);
+    const result = { id, report, params: { workspaceTitles, projectTitles }, type: 'report' }
     onNewResult(result);
   }
 

@@ -15,7 +15,7 @@ class Utils {
     ];
   }
 
-  static getNewQueryID() {
+  static getNewID() {
     return crypto.randomUUID().substring(0, 6);
   }
 
