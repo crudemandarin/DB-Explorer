@@ -14,6 +14,7 @@ function ReportControlCard({ onNewResult }) {
   const [workspaces, setWorkspaces] = useState([]);
   const [projects, setProjects] = useState([]);
   const [form, setForm] = useState({ workspaces: [], projects: [], lowerBound: '', upperBound: '' });
+  const [resetFlag, setResetFlag] = useState(false);
 
   useEffect(() => {
     const getData = async () => {
@@ -46,6 +47,7 @@ function ReportControlCard({ onNewResult }) {
     const formData = {...form};
     formData.workspaces = value;
     setForm(formData);
+    setResetFlag(true);
   }
 
   const onProjectSelectChange = (e) => {
@@ -53,6 +55,7 @@ function ReportControlCard({ onNewResult }) {
     const formData = {...form};
     formData.projects = value;
     setForm(formData);
+    setResetFlag(true);
   }
 
   const onLowerDateChange = (e) => {
@@ -60,6 +63,7 @@ function ReportControlCard({ onNewResult }) {
     const formData = {...form};
     formData.lowerBound = value;
     setForm(formData);
+    setResetFlag(true);
   }
 
   const onUpperDateChange = (e) => {
@@ -67,10 +71,12 @@ function ReportControlCard({ onNewResult }) {
     const formData = {...form};
     formData.upperBound = value;
     setForm(formData);
+    setResetFlag(true);
   }
 
   const handleReset = () => {
     setForm({ workspaces: [], projects: [], lowerBound: '', upperBound: '' });
+    setResetFlag(false);
   }
 
   const handleSubmit = (e) => {
@@ -148,7 +154,7 @@ function ReportControlCard({ onNewResult }) {
             onClick={handleReset}
             className="p-button-secondary"
             style={{ marginRight: '10px' }}
-            // disabled={!resetFlag}
+            disabled={!resetFlag}
           />
       </div>
     </div>
