@@ -78,7 +78,7 @@ function ReportSummaryCard({ result, onRemove }) {
   if (!result) return null;
 
   const { params, report } = result;
-  const { workspaces, taskFields, requestedBy, requestedAt } = report;
+  const { workspaces, taskFields, numWorkspaces, numProjects, numTasks, requestedBy, requestedAt } = report;
 
   const handleExportClick = () => {};
 
@@ -113,8 +113,17 @@ function ReportSummaryCard({ result, onRemove }) {
           />
         </div>
       </div>
+
       {renderDescription()}
+
       <div className='spacer' />
+
+      <div>Number of Workspaces: {numWorkspaces}</div>
+      <div>Number of Projects: {numProjects}</div>
+      <div>Number of Tasks: {numTasks}</div>
+
+      <div className='spacer' />
+      
       <div style={{ maxHeight: '600px', overflow: 'auto'}}>
         {workspaces.map(workspace => <WorkspaceComponent key={`workspace-row-${workspace.ID}`} workspace={workspace} taskFields={taskFields} />)}
       </div>

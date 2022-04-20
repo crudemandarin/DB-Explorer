@@ -50,13 +50,25 @@ class ReportService {
             return updated;
         });
 
+        const numWorkspaces = workspaces.length;
+        const numProjects = projects.length;
+        const numTasks = tasks.length;
         const requestedAt = Date.now();
-        return { workspaces, taskFields, requestedBy, requestedAt };
+
+        return {
+            workspaces,
+            taskFields,
+            numWorkspaces,
+            numProjects,
+            numTasks,
+            requestedBy,
+            requestedAt,
+        };
     }
 
     static getWorkspaces(userId, workspaceIds) {
         if (!workspaceIds.length) return UserService.select(userId, 'Workspace', [], []);
-        const where = [{ name: 'WorkspaceID', value: workspaceIds }];
+        const where = [{ name: 'ID', value: workspaceIds }];
         return UserService.select(userId, 'Workspace', [], where);
     }
 
