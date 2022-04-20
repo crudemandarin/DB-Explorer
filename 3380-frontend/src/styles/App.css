@@ -13,6 +13,18 @@
   justify-content: space-between;
 }
 
+.align-center {
+  align-items: center;
+}
+
+.my-3 {
+  margin: 1rem 0;
+}
+
+.mr-3 {
+  margin-right: 1rem;
+}
+
 /* Building Blocks */
 
 .spacer {
@@ -30,7 +42,7 @@
   padding: 1rem 20px;
   background-color: white;
   border-radius: 15px;
-  box-shadow: 2px 2px 4px rgb(83, 83, 83);
+  box-shadow: 0 0 6px rgb(101, 101, 101);
 }
 
 .nav {
@@ -88,4 +100,8 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.bold {
+  font-weight: 600;
 }

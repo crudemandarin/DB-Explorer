@@ -34,6 +34,10 @@ class ApiService {
   static async update(params) {
     return axios.put(`${SERVICE_URL}/interface/query/data`, params);
   }
+
+  static async getReport(params) {
+    return axios.get(`${SERVICE_URL}/report`, { params });
+  }
 }
 
 export default ApiService;

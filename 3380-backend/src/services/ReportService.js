@@ -1,41 +1,35 @@
+const UserService = require('./UserService');
 const SQLService = require('./SQLService');
 
 class ReportService {
-    static async getReport(userId, workspaceIds, projectIds, date) {
+    static async getReport(userId, workspaceIds, projectIds, lowerBound, upperBound) {
         /* LOAD DATA */
-
-        const WorkspacesSQL = ReportService.getWorkspacesSQL(workspaceIds);
-        const ProjectsSQL = ReportService.getProjectsSQL(projectIds, workspaceIds);
-        const TasksSQL = ReportService.getTasksSQL(projectIds, workspaceIds);
-
-        let workspaces = await SQLService.query(WorkspacesSQL);
-        let projects = await SQLService.query(ProjectsSQL);
-        let tasks = await SQLService.query(TasksSQL);
+        let [workspaces] = await ReportService.getWorkspaces(userId, workspaceIds);
+        let [projects] = await ReportService.getProjects(userId, projectIds, workspaceIds);
+        let [tasks] = await ReportService.getTasks(userId, projectIds, workspaceIds);
+        const taskFields = await SQLService.getTableFields('Task');
+        const requestedBy = (await SQLService.query(`SELECT * FROM User WHERE ID='${userId}'`))[0];
 
         /* FILTER BY DATE INTERVAL */
+        if (lowerBound) {
+            const lower = new Date(lowerBound);
+            tasks = tasks.filter((task) => {
+                const createdAt = new Date(task.CreatedAt);
+                return createdAt >= lower;
+            });
+        }
 
-        if (Object.keys(date).length) {
-            if ('lower' in date) {
-                const lowerBound = new Date(date.lower);
-                tasks = tasks.filter((task) => {
-                    const createdAt = new Date(task.CreatedAt);
-                    return createdAt >= lowerBound;
-                });
-            }
-
-            if ('upper' in date) {
-                const upperBound = new Date(date.upper);
-                tasks = tasks.filter((task) => {
-                    const closedAt = new Date(task.TimeClosed);
-                    return closedAt <= upperBound;
-                });
-            }
+        if (upperBound) {
+            const upper = new Date(upperBound);
+            tasks = tasks.filter((task) => {
+                const closedAt = new Date(task.TimeClosed);
+                return closedAt <= upper;
+            });
         }
 
         /* REPLACE FKS WITH REAL VALUES */
 
         /* EMBED ARRAYS */
-
         projects = projects.map((project) => {
             const updated = { ...project };
             const tempTasks = tasks.filter((task) => task.ProjectID === project.ID);
@@ -56,29 +50,42 @@ class ReportService {
             return updated;
         });
 
-        const requestedBy = userId;
         const requestedAt = Date.now();
-        return { workspaces, requestedBy, requestedAt };
+        return { workspaces, taskFields, requestedBy, requestedAt };
     }
 
-    static getWorkspacesSQL(workspaceIds) {
-        if (!workspaceIds.length) return 'SELECT * FROM workspace';
-        return `SELECT * FROM workspace WHERE ID in (${workspaceIds.join(',')})`;
+    static getWorkspaces(userId, workspaceIds) {
+        if (!workspaceIds.length) return UserService.select(userId, 'Workspace', [], []);
+        const where = [{ name: 'WorkspaceID', value: workspaceIds }];
+        return UserService.select(userId, 'Workspace', [], where);
     }
 
-    static getProjectsSQL(projectIds, workspaceIds) {
-        if (projectIds.length) return `SELECT * FROM project WHERE ID in (${projectIds.join(',')})`;
-        if (workspaceIds.length)
-            return `SELECT * FROM project WHERE WorkspaceID in (${workspaceIds.join(',')})`;
-        return 'SELECT * FROM project';
+    static getProjects(userId, projectIds, workspaceIds) {
+        if (projectIds.length) {
+            const where = [{ name: 'ID', value: projectIds }];
+            return UserService.select(userId, 'Project', [], where);
+        }
+
+        if (workspaceIds.length) {
+            const where = [{ name: 'WorkspaceID', value: workspaceIds }];
+            return UserService.select(userId, 'Project', [], where);
+        }
+
+        return UserService.select(userId, 'Project', [], []);
     }
 
-    static getTasksSQL(projectIds, workspaceIds) {
-        if (projectIds.length)
-            return `SELECT * FROM task WHERE ProjectID in (${projectIds.join(',')})`;
-        if (workspaceIds.length)
-            return `SELECT * FROM task WHERE WorkspaceID in (${workspaceIds.join(',')})`;
-        return 'SELECT * FROM task';
+    static async getTasks(userId, projectIds, workspaceIds) {
+        if (projectIds.length) {
+            const where = [{ name: 'ProjectID', value: projectIds }];
+            return UserService.select(userId, 'Task', [], where);
+        }
+
+        if (workspaceIds.length) {
+            const where = [{ name: 'WorkspaceID', value: workspaceIds }];
+            return UserService.select(userId, 'Task', [], where);
+        }
+
+        return UserService.select(userId, 'Task', [], []);
     }
 }
 

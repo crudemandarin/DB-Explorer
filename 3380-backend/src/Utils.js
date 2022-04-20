@@ -20,8 +20,8 @@ class Utils {
 
     static nameValueArrToString(arr) {
         return arr.map((field) => {
-            if (Array.isArray(field.value)) return `${field.name} IN (${field.value.join()})`;
-            if (typeof field.value === 'string') return `${field.name} LIKE '%${field.value}%'`;
+            if (typeof field.value === 'string') return `${field.name}='${field.value}'`;
+            if (Array.isArray(field.value)) return `${field.name} IN (${field.value.join(',')})`;
             return `${field.name}=${field.value}`;
         });
     }
