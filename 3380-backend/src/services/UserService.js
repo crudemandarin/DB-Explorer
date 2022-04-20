@@ -2,10 +2,8 @@ const SQLService = require('./SQLService');
 
 class UserService {
     static async login(email) {
-        const table = 'User';
-        const select = '*';
         const where = [{ name: 'Email', value: email }];
-        const [users] = await SQLService.select(table, select, where);
+        const [users] = await SQLService.select('User', [], where);
         console.log(users);
         if (users.length) return users[0];
         return undefined;
@@ -20,55 +18,46 @@ class UserService {
         const selectCurrentUserWorkspaceUserIds = `SELECT ID FROM WorkspaceUser WHERE UserID='${userId}'`;
         const selectCurrentUserWorkspaceIds = `SELECT WorkspaceID FROM WorkspaceUser WHERE UserID='${userId}'`;
 
-        const selectL0ProjectIdsSQL = `SELECT ProjectID FROM WorkspaceUserProjectRelation WHERE WorkspaceUserID in (${selectCurrentUserWorkspaceUserIds})`;
-        const selectL0UserIds = `SELECT UserID FROM WorkspaceUser WHERE WorkspaceID in (${selectCurrentUserWorkspaceIds})`;
+        const selectL0ProjectIdsSQL = `SELECT ProjectID FROM WorkspaceUserProjectRelation WHERE WorkspaceUserID IN (${selectCurrentUserWorkspaceUserIds})`;
+        const selectL0UserIds = `SELECT UserID FROM WorkspaceUser WHERE WorkspaceID IN (${selectCurrentUserWorkspaceIds})`;
 
         let FROM = '';
 
         switch (table.toLowerCase()) {
             case 'department': {
-                console.log('Department');
-                FROM = `SELECT * FROM ${table} WHERE WorkspaceID in (${selectCurrentUserWorkspaceIds})`;
+                FROM = `SELECT * FROM ${table} WHERE WorkspaceID IN (${selectCurrentUserWorkspaceIds})`;
                 break;
             }
             case 'project': {
-                console.log('Project');
-                FROM = `SELECT * FROM ${table} WHERE ID in (${selectL0ProjectIdsSQL})`;
+                FROM = `SELECT * FROM ${table} WHERE ID IN (${selectL0ProjectIdsSQL})`;
                 break;
             }
             case 'tag': {
-                console.log('Tag');
-                FROM = `SELECT * FROM ${table} WHERE ProjectID in (${selectL0ProjectIdsSQL}) OR WorkspaceID in (${selectCurrentUserWorkspaceIds})`;
+                FROM = `SELECT * FROM ${table} WHERE ProjectID IN (${selectL0ProjectIdsSQL}) OR WorkspaceID IN (${selectCurrentUserWorkspaceIds})`;
                 break;
             }
             case 'task': {
-                console.log('Task');
-                FROM = `SELECT * FROM ${table} WHERE ProjectID in (${selectL0ProjectIdsSQL})`;
+                FROM = `SELECT * FROM ${table} WHERE ProjectID IN (${selectL0ProjectIdsSQL})`;
                 break;
             }
             case 'user': {
-                console.log('User');
-                FROM = `SELECT * FROM ${table} WHERE ID in (${selectL0UserIds})`;
+                FROM = `SELECT * FROM ${table} WHERE ID IN (${selectL0UserIds})`;
                 break;
             }
             case 'userworkspacerelation': {
-                console.log('UserWorkspaceRelation');
                 FROM = `SELECT * FROM ${table} WHERE UserID='${userId}'`;
                 break;
             }
             case 'workspace': {
-                console.log('Workspace');
-                FROM = `SELECT * FROM ${table} WHERE ID in (${selectCurrentUserWorkspaceIds})`;
+                FROM = `SELECT * FROM ${table} WHERE ID IN (${selectCurrentUserWorkspaceIds})`;
                 break;
             }
             case 'workspaceuser': {
-                console.log('WorkspaceUser');
-                FROM = `SELECT * FROM ${table} WHERE WorkspaceID in (${selectCurrentUserWorkspaceIds})`;
+                FROM = `SELECT * FROM ${table} WHERE WorkspaceID IN (${selectCurrentUserWorkspaceIds})`;
                 break;
             }
             case 'workspaceuserprojectrelation': {
-                console.log('WorkspaceUserProjectRelation');
-                FROM = `SELECT * FROM ${table} WHERE WorkspaceUserID in (${selectCurrentUserWorkspaceUserIds})`;
+                FROM = `SELECT * FROM ${table} WHERE WorkspaceUserID IN (${selectCurrentUserWorkspaceUserIds})`;
                 break;
             }
             default: {
@@ -76,7 +65,7 @@ class UserService {
             }
         }
 
-        const fromSql = FROM ? `(${FROM}) AS sub` : undefined;
+        const fromSql = FROM ? `(${FROM}) AS AccessibleSubset` : undefined;
         return SQLService.select(table, select, where, fromSql);
     }
 }
