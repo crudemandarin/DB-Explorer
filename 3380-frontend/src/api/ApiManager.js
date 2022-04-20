@@ -106,8 +106,8 @@ class ApiManager {
       return report;
     } catch (err) {
       const error = err?.response?.data;
-      console.error('ApiManager.update: Could not update. Error =', error);
-      return { result: error, SQL: error.sql };
+      console.error('ApiManager.update: Could not get report. Error =', error);
+      return { result: error };
     }
   }
 

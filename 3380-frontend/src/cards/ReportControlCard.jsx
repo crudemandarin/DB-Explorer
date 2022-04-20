@@ -8,7 +8,7 @@ import { useGlobal } from '../util/GlobalContext';
 
 import '../styles/Report.css';
 
-function ReportControlCard() {
+function ReportControlCard({ onNewResult }) {
   const { user } = useGlobal();
   const [workspaces, setWorkspaces] = useState([]);
   const [projects, setProjects] = useState([]);
@@ -23,6 +23,16 @@ function ReportControlCard() {
     }
     getData();
   }, [user]);
+
+  const getReport = async () => {
+    const workspaceIds = form.workspaces.map(obj => obj.ID);
+    const projectIds = form.projects.map(obj => obj.ID);
+    const lowerBound = form.lowerBound ? form.lowerBound.toISOString() : '';
+    const upperBound = form.upperBound ? form.upperBound.toISOString() : '';
+    const params = { workspaceIds, projectIds, lowerBound, upperBound };
+    const result = await ApiManager.getReport(params);
+    onNewResult(result);
+  }
 
   const onWorkspaceSelectChange = (e) => {
     const { value } = e;
@@ -58,13 +68,7 @@ function ReportControlCard() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const workspaceIds = form.workspaces.map(obj => obj.ID);
-    const projectIds = form.projects.map(obj => obj.ID);
-    const lowerBound = form.lowerBound ? form.lowerBound.toISOString() : '';
-    const upperBound = form.upperBound ? form.upperBound.toISOString() : '';
-    const date = { lowerBound, upperBound };
-    const params = { workspaceIds, projectIds, date };
-    console.log(params);
+    getReport();
   }
   
   return (

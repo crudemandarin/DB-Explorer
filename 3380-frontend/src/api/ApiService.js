@@ -36,7 +36,7 @@ class ApiService {
   }
 
   static async getReport(params) {
-    return axios.get(`${SERVICE_URL}/report`, params);
+    return axios.get(`${SERVICE_URL}/report`, { params });
   }
 }
 
