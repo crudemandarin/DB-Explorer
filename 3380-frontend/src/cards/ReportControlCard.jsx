@@ -6,28 +6,23 @@ import { Calendar } from 'primereact/calendar'
 import ApiManager from '../api/ApiManager';
 import { useGlobal } from '../util/GlobalContext';
 
+import '../styles/Report.css';
+
 function ReportControlCard() {
   const { user } = useGlobal();
   const [workspaces, setWorkspaces] = useState([]);
   const [projects, setProjects] = useState([]);
   const [form, setForm] = useState({ workspaces: [], projects: [], lowerBound: '', upperBound: '' });
-  const [workspaceOpts, setWorkspaceOpts] = useState([]);
-  const [projectOpts, setProjectOpts] = useState([]);
 
   useEffect(() => {
     const getData = async () => {
       const [workspaceData] = await ApiManager.select({ userId: user.ID, table: 'Workspace' });
-      setWorkspaces(workspaceData);
       const [projectData] = await ApiManager.select({ userId: user.ID, table: 'Project' });
+      setWorkspaces(workspaceData);
       setProjects(projectData);
     }
     getData();
   }, [user]);
-
-  useEffect(() => {
-    setWorkspaceOpts( workspaces.map(name => ({ name })) );
-    setProjectOpts( projects.map(name => ({ name })) );
-  }, [workspaces, projects]);
 
   const onWorkspaceSelectChange = (e) => {
     const { value } = e;
@@ -63,51 +58,72 @@ function ReportControlCard() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('handleSubmit')
+    const workspaceIds = form.workspaces.map(obj => obj.ID);
+    const projectIds = form.projects.map(obj => obj.ID);
+    const lowerBound = form.lowerBound ? form.lowerBound.toISOString() : '';
+    const upperBound = form.upperBound ? form.upperBound.toISOString() : '';
+    const date = { lowerBound, upperBound };
+    const params = { workspaceIds, projectIds, date };
+    console.log(params);
   }
   
   return (
     <div className="card" style={{ width: '100%' }}>
-      <div className="h600">Report Request:</div>
+      <div className="h600">Request Report</div>
 
-      <MultiSelect
-        value={form.workspaces}
-        options={workspaceOpts}
-        onChange={onWorkspaceSelectChange}
-        placeholder='Workspaces'
-        />  
+      <div className='flex align-center my-3'>
+        <div className="p400 mr-3"> Workspace Scope </div>
 
-      <div className='spacer'/>
-
-      <MultiSelect
-        value={form.projects}
-        options={projectOpts}
-        optionLabel="name"
-        onChange={onProjectSelectChange}
-        placeholder='Projects'
-        /> 
-
-      <div>
-          <Calendar
-            placeholder='Lower Bound'
-            value={form.lowerBound}
-            onChange={onLowerDateChange}
-            className='p-inputtext-sm'
-            style={{width: '175px', height: '45px'}}
-            showIcon 
-          />
-        -
-          <Calendar
-            placeholder='Upper Bound'
-            value={form.upperBound}
-            onChange={onUpperDateChange}
-            className='p-inputtext-sm'
-            style={{width: '175px', height: '45px'}}
-            showIcon 
+        <MultiSelect
+          value={form.workspaces}
+          options={workspaces}
+          optionLabel="Title"
+          onChange={onWorkspaceSelectChange}
+          placeholder='Workspaces'
+          className='report-multiselect'
+          display="chip" 
           />
       </div>
 
-      <div className='spacer'/>
+      <div className='flex align-center my-3'>
+        <div className="p400 mr-3"> Project Scope </div>
+
+        <MultiSelect
+          value={form.projects}
+          options={projects}
+          optionLabel="Title"
+          onChange={onProjectSelectChange}
+          placeholder='Projects'
+          className='report-multiselect'
+          display="chip" 
+          />
+      </div>
+
+      <div className='flex align-center my-3'>
+        <div className="p400 mr-3"> Date Interval </div>
+
+        <div className='flex align-center'>
+            <Calendar
+              placeholder='Lower Bound'
+              value={form.lowerBound}
+              onChange={onLowerDateChange}
+              className='p-inputtext-sm'
+              style={{width: '175px', height: '45px'}}
+              showIcon 
+            />
+
+            <i className='pi pi-minus' style={{fontSize: '1rem', marginInline: '0.5rem' }}/>
+
+            <Calendar
+              placeholder='Upper Bound'
+              value={form.upperBound}
+              onChange={onUpperDateChange}
+              className='p-inputtext-sm'
+              style={{width: '175px', height: '45px'}}
+              showIcon 
+            />
+        </div>
+      </div>
 
       <div>
         <Button
