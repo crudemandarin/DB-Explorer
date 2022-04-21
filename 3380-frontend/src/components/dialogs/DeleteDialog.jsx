@@ -69,7 +69,7 @@ function DeleteDialog({ isVisible, setIsVisible, table, fields, selectedRows }) 
   return (
     <>
       <Dialog
-        header={`Delete from ${table} table`}
+        header={`Delete from "${table}" table`}
         footer={footer}
         visible={isVisible}
         style={{ width: '50vw' }}
