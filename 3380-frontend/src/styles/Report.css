@@ -28,3 +28,19 @@
     border: 1px solid black;
     background-color: lightblue;
 }
+
+.above-estimated {
+        width: 'fit-content';
+        padding: 2px 3px;
+        color: white;
+        background-color: rgb(255, 50, 50);
+        border-radius: 10px;
+        font-weight: 600;
+}
+    
+.below-estimated {
+        width: 'fit-content';
+        padding: 2px 3px;
+        color: white;
+        background-color: green;
+}
