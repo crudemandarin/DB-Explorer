@@ -21,8 +21,8 @@ class ModifyDialogForm {
             if (!Utils.getProtectedRows().includes(key)) {
               fields.push({
                 key,
-                value: row[key],
-                prevValue: row[key]
+                value: row[key] || '',
+                prevValue: row[key] || '',
               })
             };
           }
@@ -35,44 +35,54 @@ class ModifyDialogForm {
 
 function ModifyDialog({ isVisible, setIsVisible, table, fields, selectedRows }) {
   const [form, setForm] = useState({});
-  const [results, setResults] = useState(undefined);
-  const [resultsIsVisible, setResultsIsVisible] = useState(false);
+  const [result, setResult] = useState(undefined);
+  const [resultIsVisible, setResultIsVisible] = useState(false);
 
   useEffect(() => {
     console.log('form reset')
     setForm(ModifyDialogForm.getEmptyForm(selectedRows));
   }, [selectedRows]);
 
-  const modifyRows = (formParams) => {
-    console.log('ModifyDialog.modifyRows invoked! formParams =', formParams);
-    const params = { table, fields: formParams };
+  const modifyRows = (rowParams) => {
+    console.log('ModifyDialog.modifyRows invoked! rowParams =', rowParams);
+    const params = { table, rowParams };
     return ApiManager.update(params);
   };
 
   const onHide = () => {
     setIsVisible(false);
-    setResults(undefined);
-    setResultsIsVisible(false);
+    setResult(undefined);
+    setResultIsVisible(false);
   };
 
   const handleModifyClick = async () => {
-    console.log('Modify Clicked!');
-    const rowParams = Object.keys(form).map(
-      rowIndex => {
-        const update = form[rowIndex].map(field => ({ name: field.key, value: field.value }));
-        const where = form[rowIndex].map(field => ({ name: field.key, value: field.oldValue }));
-        return { update, where };
-      }
-    )
-    const params = { rowParams };
-    const data = await modifyRows(params);
-    modifyRows(params);
-    setResults(data);
-    setResultsIsVisible(true);
+    console.log('Modify Clicked! form =', form);
+    const rowParams = Object.keys(form).reduce(
+      (prevParam, rowIndex) => {
+        const update = form[rowIndex].reduce(
+          (prev, field) => {
+            if (field.prevValue === field.value) return prev;
+            return [...prev, { name: field.key, value: field.value }];
+          }, []
+        );
+
+        const where = Utils.getWhereParams([selectedRows[rowIndex]], fields)[0];
+
+        if (!update.length || !where.length) return prevParam;
+
+        return [...prevParam, { update, where }];
+      }, []
+    );
+
+    if (rowParams.length) {
+      const data = await modifyRows(rowParams);
+      console.log(data)
+      setResult(data);
+      setResultIsVisible(true);
+    } else onHide();
   };
 
   const onFormTextChange = (rowIndex, fieldIndex, value) => {
-    console.log(value, form[rowIndex]);
     const formData = {...form};
     formData[rowIndex][fieldIndex].value = value;
     setForm(formData);
@@ -136,10 +146,10 @@ function ModifyDialog({ isVisible, setIsVisible, table, fields, selectedRows }) 
   );
 
   const resultsDialogProps = {
-    isVisible: resultsIsVisible,
-    setIsVisible: setResultsIsVisible,
+    isVisible: resultIsVisible,
+    setIsVisible: setResultIsVisible,
     setParentIsVisible: setIsVisible,
-    results,
+    data: result,
     table,
   };
 
