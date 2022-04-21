@@ -1,7 +1,8 @@
 /*Inserting User test data to User table 45 total*/
 INSERT INTO `User` (`ID`,`FirstName`,`LastName`,`Email`)
 VALUES
-  (01,"Lacey","Clayton","sed.molestie.sed@aol.couk"),
+  (00,"Nykolas","Farhangi","Nykolas@gmail.com"),
+  (01,"Lacey","Clayton","Lacey@gmail.com"),
   (02,"Baxter","Greer","eu.sem@outlook.edu"),
   (03,"Caryn","Montoya","turpis.nulla@icloud.couk"),
   (04,"Porter","Rodriguez","porttitor.interdum@icloud.ca"),
@@ -45,18 +46,29 @@ VALUES
   (42,"Yen","Mcclain","mollis.phasellus.libero@hotmail.org"),
   (43,"Denton","Kinney","enim.condimentum@outlook.net"),
   (44,"Rhoda","Robertson","aliquet@aol.ca"),
-  (45,"Imelda","Bryant","integer.vulputate@google.com");
+  (45,"Imelda","Bryant","integer.vulputate@google.com"),
+  (46,"Jairo","Pedroza","Jairo@gmail.com"),
+  (47,"Courtney","Berry","Courtney@gmail.com"),
+  (48,"Anil","Shanker","Anil@gmail.com");
+Update `User`
+Set SuperUser = 1
+WHERE `FirstName` IN ("Nykolas", "Jairo");
 
 /*Inserting workspace test data 3 total*/
 Insert Into Workspace (ID,CreatedAt,CreatedBy,LastUpdated,UpdatedBy, Title)
   VALUES
 	(1, 20160428, 1, 20220322, 2,"GLaDOS Personal Projects"),
     (2, 20160428, 16, 20220322, 17, "Aperture Science"),
-    (3, 20160428, 31, 20220322, 32, "Black Mesa Research Facility");
+    (3, 20160428, 31, 20220322, 32, "Black Mesa Research Facility"),
+    (4, 20210615, 00, 20220419, 47, "Cool Startup");
 
 /*Assigning users to workspaces*/
 INSERT INTO UserWorkspaceRelation (UserID,WorkspaceID)
 VALUES
+  (0,1),
+  (0,2),
+  (0,3),
+  (0,4),
   (1,1),
   (2,1),
   (3,1),
@@ -105,7 +117,14 @@ VALUES
   (42,3),
   (43,3),
   (44,3),
-  (45,3);
+  (45,3),
+  (46,4),
+  (46,2),
+  (46,1),
+  (47,4),
+  (47,3),
+  (48,4),
+  (48,2);
 
 /*creatign workspaceUsers and giving them roles. All role 100. Note: roles
 can be changed to job titles but I thought we could assign a job title to a number if needed*/
@@ -160,7 +179,19 @@ VALUES
   (42,42,2,3),
   (43,43,2,3),
   (44,44,2,3),
-  (45,45,2,3);
+  (45,45,2,3),
+  (50,46,1,4),
+  (51,46,1,2),
+  (52,46,2,1),
+  (53,47,1,4),
+  (54,47,2,3),
+  (55,48,2,4),
+  (56,48,1,2),
+  (59,0,1,1),
+  (58,0,1,2),
+  (57,0,1,3),  
+  (60,0,0,4);
+  
 /*Creating departments 3 for workspace 1 | 2 for workspace 2  | 2 for workspace 3*/
 INSERT INTO Department (ID,WorkspaceID,CreatedAt,CreatedBy,LastUpdated,UpdatedBy,Title,Description)
 VALUES
@@ -170,7 +201,11 @@ VALUES
     (4,2,"2022-01-07 05:27:16",16,"2022-03-15 18:59:04",17,"Sales","Lorem ipsum"),
     (5,2,"2022-01-07 05:27:16",16,"2022-04-02 08:52:05",18,"Human Resources","Lorem ipsum"),
     (6,3,"2022-01-11 07:31:07",31,"2022-04-03 16:09:40",32,"Purchase","Lorem ipsum"),
-    (7,3,"2022-01-11 07:31:07",31,"2022-04-06 19:25:39",33,"Operations","Lorem ipsum");
+    (7,3,"2022-01-11 07:31:07",31,"2022-04-06 19:25:39",33,"Operations","Lorem ipsum"),
+    (8,4,"2021-06-15 05:32:05",60,"2022-04-19 04:25:39",60,"Operations","Running the startup"),
+    (9,4,"2021-06-15 05:33:01",60,"2022-04-19 17:45:06",50,"R&D","Developing new technology"),
+    (10,4,"2021-06-15 05:35:07",60,"2022-04-18 16:54:49",53,"Marketing","Increasing startup's visibility to investors and users"),
+    (11,4,"2021-06-15 05:39:21",60,"2022-04-18 13:52:39",55,"Sales","Selling startup's software services to businesses");
     
     /*Assigning workspace users to departments*/
 	Update WorkspaceUser SET DepartmentID = 1
@@ -187,7 +222,14 @@ VALUES
 	WHERE UserID BETWEEN 31 AND 40;
 	Update WorkspaceUser SET DepartmentID = 7
 	WHERE UserID BETWEEN 41 AND 45;
-
+	Update WorkspaceUser Set DepartmentID = 8
+    WHERE UserID = 0;
+    Update WorkspaceUser Set DepartmentID = 9
+    WHERE UserID = 46;
+    Update WorkspaceUser Set DepartmentID = 10
+    WHERE UserID = 47;
+    Update WorkspaceUser Set DepartmentID = 11
+    WHERE UserID = 48;
 /*Creating projects 3 for workspace 1 | 2 for workspace 2  | 2 for workspace 3*/
 INSERT INTO Project (ID,WorkspaceID,CreatedAt,CreatedBy,LastUpdated,UpdatedBy,Title, EstimatedCost,EstimatedEffort)
 Values 
@@ -197,7 +239,12 @@ Values
     (4,2,"2022-01-07 05:27:16",16,"2022-01-16 23:39:23",17,"Project4",1250,25),
     (5,2,"2022-01-07 05:27:16",16,"2022-01-21 19:15:07",18,"Project5",2500,45),
     (6,3,"2022-01-11 07:31:07",31,"2022-02-03 00:59:39",32,"Project6",10000,120),
-    (7,3,"2022-01-11 07:31:07",31,"2022-02-07 03:21:47",33,"Project7",9000,90);
+    (7,3,"2022-01-11 07:31:07",31,"2022-04-07 03:21:47",33,"Project7",9000,90),
+    (8,4,"2022-03-11 07:31:07",60,"2022-03-07 03:21:47",60,"Server Maintenance",5000,10),
+    (9,4,"2022-02-12 07:31:07",60,"2022-04-07 03:21:47",60,"HQ Improvements",10000,120),
+    (10,4,"2022-03-25 07:31:07",46,"2022-03-27 03:21:47",46,"Fast Food App",7500,240),
+    (11,4,"2022-02-09 07:31:07",47,"2022-03-07 03:21:47",47,"Marketing Campaign",15000,100),
+    (12,4,"2022-03-10 07:31:07",48,"2022-04-07 03:21:47",48,"Sales Program",4500,120);
 
 /*Loading workspace user IDs and Assigning workspace users to Projects*/
 INSERT INTO WorkspaceUserProjectRelation (WorkspaceUserID,ProjectID)
@@ -205,7 +252,8 @@ VALUES
   (1,1),(2,1),(3,1),(4,1),(5,1),(6,2),(7,2),
   (8,2),(9,2),(10,2),(11,3),(12,3),(13,3),(14,3),(15,3),(16,4),(17,4),(18,4),(19,4),(20,4),(21,4),(22,4),(23,4),(24,4),(25,5),(26,5),
   (27,5),(28,5),(29,5),(30,5),(31,6),(32,6),(33,6),(34,6),(35,6),(36,6),(37,6),(38,6),(39,6),(40,6),(41,7),(42,7),(43,7),(44,7),(45,7),
-  (46,4),(47,5),(48,6),(49,7);
+  (46,4),(47,5),(48,6),(49,7),(59,1),(59,2),(58,4),(57,6),(57,7),(60,8),(60,9),(52,1),(51,4),(51,5),(50,10),(50,8),(50,9),(54,6),(54,7),(53,11),(56,4),
+  (56,5),(55,12);
 
 /*Creating tasks: 2 tasks for project 2 and 1 each for the rest*/
 INSERT INTO `Task` (`ID`,`ProjectID`,`WorkspaceID`,`CreatedAt`,`CreatedBy`,`LastUpdated`,`UpdatedBy`,`Title`,`Status`)
@@ -217,7 +265,53 @@ VALUES
   (5,5,2,"2022-01-12 12:01:23",16,"2022-03-13 06:27:59",17,"Task5",1),
   (6,6,3,"2022-01-15 02:11:05",31,"2022-03-24 06:03:29",32,"Task6",1),
   (7,7,3,"2022-01-15 02:11:05",31,"2022-04-01 07:21:05",32,"Task7",2),
-  (8,2,1,"2022-02-05 21:08:51",1,"2022-04-07 01:45:02",2,"Task8",1);
+  (8,2,1,"2022-02-05 21:08:51",1,"2022-04-07 01:45:02",2,"Task8",1),
+  (9,8,4,"2022-01-15 02:11:05",60,"2022-04-01 07:21:05",60,"Patch Server",2),
+  (10,9,4,"2022-01-15 02:11:05",60,"2022-04-01 07:21:05",60,"Build new PCs",2),
+  (11,10,4,"2022-01-15 02:11:05",60,"2022-04-01 07:21:05",46,"Front-end",2),
+  (12,10,4,"2022-01-15 02:11:05",60,"2022-04-01 07:21:05",46,"Back-end",2),
+  (13,11,4,"2022-01-15 02:11:05",60,"2022-04-01 07:21:05",47,"Prepare Social Media Campaign",2),
+  (14,11,4,"2022-01-15 02:11:05",60,"2022-04-01 07:21:05",47,"Create Investor Presentation",2),
+  (15,12,4,"2022-01-15 02:11:05",60,"2022-04-01 07:21:05",48,"Create Sales pitch",2),
+  (16,8,4,"2022-01-15 02:11:05",60,"2022-04-01 07:21:05",60,"Check ports",2),
+  (17,8,4,"2022-01-15 02:11:05",60,"2022-04-01 07:21:05",60,"Cable management",2),
+  (18,10,4,"2022-04-15 02:11:05",60,"2022-04-03 09:01:05",46,"Optimization",2),
+  (19,10,4,"2022-03-21 08:01:05",60,"2022-04-07 12:19:05",46,"Security",2),
+  (20,10,4,"2022-03-29 05:10:05",60,"2022-04-10 17:21:45",46,"Database Design",2),
+  (21,9,4,"2022-03-19 05:10:05",60,"2022-04-10 08:11:54",60,"Open Space Layout",2);
+  
+  Update Task Set ActualCost = 595 WHERE ID =1;
+  Update Task Set ActualCost = 500 WHERE ID =4;
+  Update Task Set ActualCost = 1500 WHERE ID =5;
+  Update Task Set ActualCost = 500 WHERE ID =9;
+  Update Task Set ActualCost = 6000 WHERE ID =10;
+  Update Task Set ActualCost = 1500 WHERE ID =11;
+  Update Task Set ActualCost = 1500 WHERE ID =12;
+  Update Task Set ActualCost = 500 WHERE ID =13;
+  Update Task Set ActualCost = 500 WHERE ID =14;
+  Update Task Set ActualCost = 500 WHERE ID =15;
+  Update Task Set ActualCost = 1500 WHERE ID =16;
+  Update Task Set ActualCost = 900 WHERE ID =17;
+  Update Task Set ActualCost = 3000 WHERE ID =18;
+  Update Task Set ActualCost = 1400 WHERE ID =19;
+  Update Task Set ActualCost = 100 WHERE ID =20;
+  Update Task Set ActualCost = 5000 WHERE ID =21;
+  Update Task Set ActualEffort = 61 WHERE ID = 1;
+  Update Task Set ActualEffort = 45 WHERE ID =4;
+  Update Task Set ActualEffort = 10 WHERE ID =5;
+  Update Task Set ActualEffort = 49 WHERE ID =9;
+  Update Task Set ActualEffort = 50 WHERE ID =10;
+  Update Task Set ActualEffort = 80 WHERE ID =11;
+  Update Task Set ActualEffort = 56 WHERE ID =12;
+  Update Task Set ActualEffort = 67 WHERE ID =13;
+  Update Task Set ActualEffort = 110 WHERE ID =14;
+  Update Task Set ActualEffort = 9 WHERE ID =15;
+  Update Task Set ActualEffort = 10 WHERE ID =16;
+  Update Task Set ActualEffort = 15 WHERE ID =17;
+  Update Task Set ActualEffort = 75 WHERE ID =18;
+  Update Task Set ActualEffort = 46 WHERE ID =19;
+  Update Task Set ActualEffort = 54 WHERE ID =20;
+  Update Task Set ActualEffort = 60 WHERE ID =21;
 
 /*Creating tags for projects. There are 3 tags per task*/
 INSERT INTO Tag (ID, WorkspaceID, ProjectID, Message)
