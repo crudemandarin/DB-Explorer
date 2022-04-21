@@ -7,9 +7,11 @@ class ReportService {
         let [workspaces] = await ReportService.getWorkspaces(userId, workspaceIds);
         let [projects] = await ReportService.getProjects(userId, projectIds, workspaceIds);
         let [tasks] = await ReportService.getTasks(userId, projectIds, workspaceIds);
+        let [users] = await SQLService.select('User', [], []);
+        let [workspaceUsers] = await SQLService.select('WorkspaceUser', [], []);
         const taskFields = await SQLService.getTableFields('Task');
         const requestedBy = (await SQLService.query(`SELECT * FROM User WHERE ID='${userId}'`))[0];
-
+        
         /* FILTER BY DATE INTERVAL */
         if (lowerBound) {
             const lower = new Date(lowerBound);
@@ -28,11 +30,56 @@ class ReportService {
         }
 
         /* REPLACE FKS WITH REAL VALUES */
+        projects = projects.map((project) => {
+            const updated = { ...project };
+            workspaceUsers.forEach((workspaceUser) => {
+                users.forEach((user) => {
+                    if (user.ID == workspaceUser.UserID && workspaceUser.ID == updated.CreatedBy) {
+                        updated.CreatedBy = `${user.FirstName} ${user.LastName}`;
+                    }
+                    if (user.ID == workspaceUser.UserID && workspaceUser.ID == updated.UpdatedBy) {
+                        updated.UpdatedBy = `${user.FirstName} ${user.LastName}`;
+                    }
+                })
+            });
+            return updated;
+        });
+
+        workspaces = workspaces.map((workspace) => {
+            const updated = { ...workspace };
+            users.forEach((user) => {
+                if (user.ID === workspace.CreatedBy) {
+                    updated.CreatedBy = `${user.FirstName} ${user.LastName}`;
+                }
+                if (user.ID === updated.UpdatedBy) {
+                    updated.UpdatedBy = `${user.FirstName} ${user.LastName}`;
+                }
+            });
+            return updated;
+        });
 
         /* EMBED ARRAYS */
         projects = projects.map((project) => {
             const updated = { ...project };
             const tempTasks = tasks.filter((task) => task.ProjectID === project.ID);
+            
+            /* COMPUTE TASKS CLOSED/CREATED IN PROJECT */
+            updated.tasksClosed = 0;
+            updated.tasksCreated = 0;
+            tempTasks.forEach((task) => {
+                const timeClosed = new Date(task.TimeClosed);
+                const createdAt = new Date(task.CreatedAt);
+                const lower = new Date(lowerBound);
+                const upper = new Date(upperBound);
+
+                if (timeClosed >= lower && timeClosed <= upper) {
+                    updated.tasksClosed += 1;
+                }
+                if (createdAt >= lower && createdAt <= upper) {
+                    updated.tasksCreated += 1;
+                }
+            });
+
             updated.tasks = tempTasks;
             updated.numTasks = tempTasks.length;
             return updated;
@@ -41,6 +88,15 @@ class ReportService {
         workspaces = workspaces.map((workspace) => {
             const updated = { ...workspace };
             const tempProjects = projects.filter((project) => project.WorkspaceID === workspace.ID);
+            
+            /* COMPUTE TASKS CLOSED/CREATED IN WORKSPACE */
+            updated.tasksClosed = 0;
+            updated.tasksCreated = 0;
+            projects.forEach((project) => {
+                updated.tasksClosed += project.tasksClosed;
+                updated.tasksCreated += project.tasksCreated;
+            });
+
             updated.projects = tempProjects;
             updated.numProjects = tempProjects.length;
             updated.numTasks = tempProjects.reduce(
@@ -54,7 +110,6 @@ class ReportService {
         const numProjects = projects.length;
         const numTasks = tasks.length;
         const requestedAt = Date.now();
-
         return {
             workspaces,
             taskFields,
