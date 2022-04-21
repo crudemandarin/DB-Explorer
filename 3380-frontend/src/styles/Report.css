@@ -19,7 +19,10 @@
 }
 
 .chart-container {
-    height: 100%;
+    width: 300px;
+    height: fit-content;
+    background-color: white;
+    border: 1px solid black;
 }
 
 .fake-chart {
@@ -30,17 +33,21 @@
 }
 
 .above-estimated {
-        width: 'fit-content';
-        padding: 2px 3px;
-        color: white;
-        background-color: rgb(255, 50, 50);
-        border-radius: 10px;
-        font-weight: 600;
+    margin-left: 5px;
+    width: 'fit-content';
+    padding: 0 8px;
+    color: white;
+    background-color: rgb(255, 50, 50);
+    border-radius: 10px;
+    font-weight: bold;
 }
     
 .below-estimated {
-        width: 'fit-content';
-        padding: 2px 3px;
-        color: white;
-        background-color: green;
+    margin-left: 5px;
+    width: 'fit-content';
+    padding: 0 8px;
+    color: white;
+    background-color: green;
+    border-radius: 10px;
+    font-weight: bold;
 }
