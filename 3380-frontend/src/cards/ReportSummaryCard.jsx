@@ -60,7 +60,7 @@ function WorkspaceComponent({ workspace, taskFields }) {
           <div className='bold'>{workspace.Title}</div>
           <div>ID: {workspace.ID}</div>
           <div>Actual Cost: ${workspace.ActualCost}</div>
-          <div>Actual Effort: ${workspace.ActualEffort}</div>
+          <div>Actual Effort: {workspace.ActualEffort}</div>
           <div>Created By: {workspace.CreatedBy}</div>
           <div className='spacer'/>
           <div className='bold'>Projects ({workspace.projects.length}):</div>
