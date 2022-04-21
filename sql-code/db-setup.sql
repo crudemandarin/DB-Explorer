@@ -1,16 +1,17 @@
-DROP DATABASE PMS;
+DROP DATABASE pms;
 
-CREATE DATABASE PMS;
+CREATE DATABASE pms;
 
-USE PMS;
+USE pms;
 
 CREATE TABLE `User` ( 
     ID varchar(64) NOT NULL PRIMARY KEY, 
     FirstName varchar(64) NOT NULL,
     LastName varchar(64) NOT NULL,
-    Email varchar(128)
+    Email varchar(128),
+    SuperUser smallint NOT NULL Default 0
 ) ENGINE=INNODB;
-
+Alter TABLE `User` AUTO_INCREMENT = 1000;
 CREATE TABLE Workspace (
     ID varchar(64) NOT NULL PRIMARY KEY,
     Title varchar(128) NOT NULL,
@@ -36,7 +37,7 @@ CREATE TABLE UserWorkspaceRelation (
 CREATE TABLE WorkspaceUser (
     ID varchar(64) NOT NULL PRIMARY KEY,
     UserID varchar(64) NOT NULL,
-    `Role` smallint NOT NULL DEFAULT 0,
+    `Role` smallint NOT NULL,
     WorkspaceID varchar(64) NOT NULL,
     DepartmentID varchar(64),
     FOREIGN KEY (UserID) REFERENCES `User`(ID) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -100,7 +101,7 @@ CREATE TABLE Task (
     UpdatedBy varchar(64) NOT NULL,
     Title varchar(128) NOT NULL,
     `Description` varchar(512),
-    `Status` smallint NOT NULL DEFAULT 0,
+    `Status` smallint NOT NULL, -- '0: Not started, 1: In progress, 2: Needs Review, 3: Completed'
     AssignedTo varchar(64),
     TimeClosed DATETIME(6),
     EstimatedCost float,
@@ -129,11 +130,12 @@ CREATE TABLE Tag (
     FOREIGN KEY (ProjectID) REFERENCES Project(ID) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (WorkspaceID) REFERENCES Workspace(ID) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=INNODB;
+/**************************************************************************************************************/
 
 /*Triggers*/
 
 /* Project Cost and Effort calculations*/
-
+/**************************************************************************************************************/
 /*Trigger activated on row insert on Task Table: updates project total cost*/
 delimiter |
 Create Trigger bef_insert_ProjCost_update BEFORE INSERT ON Task
@@ -173,8 +175,11 @@ Create Trigger bef_update_ProjEffort_update BEFORE Update ON Task
 	END;
 |
 delimiter ;
+/**************************************************************************************************************/
 
 /*Workspace Cost and Effort Triggers*/
+/**************************************************************************************************************/
+
 /*Activate on update to Project table and keep a running total of the actual costs and efforts of every project in a workspace*/
 delimiter |
 Create Trigger bef_update_WorkCost_update BEFORE UPDATE ON Project
@@ -211,8 +216,10 @@ Create Trigger bef_insert_WorkEffort_update BEFORE INSERT ON Project
 	END;
 |
 delimiter ;
+/**************************************************************************************************************/
 
 /*Task TimeClosed trigger*/
+/**************************************************************************************************************/
 
 /*When status of task is set to 3 (Complete), TimeClosed field will be updated to NOW()*/
 delimiter |
@@ -225,8 +232,10 @@ Create Trigger bef_update_TimeClosed BEFORE Update ON Task
 	END;
 |
 delimiter ;
+/**************************************************************************************************************/
 
 /*LastUpdated triggers */
+/**************************************************************************************************************/
 
 /*When Task table is updated set new LastUpdated to NOW()*/
 delimiter |
@@ -267,8 +276,9 @@ Create Trigger bef_update_LastUpdated_Workspace BEFORE Update ON Workspace
 	END;
 |
 delimiter ;
+/**************************************************************************************************************/
 
-
+/*Potential demonstration queries*/
 /*
 show triggers;
 show tables;
@@ -292,7 +302,7 @@ WHERE ID IN (4,5);
 select * from task;
 
 Update Task
-Set UpdatedBy = 3
+Set UpdatedBy = 4
 WHERE ID = 2;
 
 Update Task
@@ -308,4 +318,6 @@ select * from Department
 UPDATE Department
 SET UpdatedBy = 1
 WHERE ID = 1
+
+delete from User WHERE ID = 1 OR ID =10
 */
