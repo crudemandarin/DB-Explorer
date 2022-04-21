@@ -15,6 +15,8 @@ class UserService {
             where
         );
 
+        if (!userId) return SQLService.select(table, select, where);
+
         const selectCurrentUserWorkspaceUserIds = `SELECT ID FROM WorkspaceUser WHERE UserID='${userId}'`;
         const selectCurrentUserWorkspaceIds = `SELECT WorkspaceID FROM WorkspaceUser WHERE UserID='${userId}'`;
 

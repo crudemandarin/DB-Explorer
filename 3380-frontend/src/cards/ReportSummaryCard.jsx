@@ -168,6 +168,7 @@ function ReportSummaryCard({ result, onRemove }) {
   };
 
   const renderDescription = () => {
+    const requestedByText = requestedBy ? `${requestedBy.FirstName} ${requestedBy.LastName}` : 'Nykolas';
     const workspacesSelected = params.workspaceTitles.join(',') || 'All workspaces';
     const projectsSelected = params.projectTitles.join(',') || 'All projects';
     const requestedAtText = new Date(requestedAt).toISOString();
@@ -175,7 +176,7 @@ function ReportSummaryCard({ result, onRemove }) {
       <>
         <div>Workspaces Selected: {workspacesSelected}</div>
         <div>Projects Selected: {projectsSelected}</div>
-        <div>Requested by {requestedBy.FirstName} {requestedBy.LastName}</div>
+        <div>Requested by {requestedByText}</div>
         <div>Requested at {requestedAtText}</div>
       </>
     );
