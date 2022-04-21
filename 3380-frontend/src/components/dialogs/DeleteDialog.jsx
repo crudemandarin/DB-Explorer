@@ -11,18 +11,18 @@ import Utils from '../../util/Utils';
 import ResultsDialog from './ResultsDialog';
 
 function DeleteDialog({ isVisible, setIsVisible, table, fields, selectedRows }) {
-  const [results, setResults] = useState(undefined);
-  const [resultsIsVisible, setResultsIsVisible] = useState(false);
+  const [result, setResult] = useState(undefined);
+  const [resultIsVisible, setResultIsVisible] = useState(false);
 
   const deleteRows = (rowParams) => {
-    const params = { table, rowParams };
+    const params = { table, rowParams: JSON.stringify(rowParams) };
     return ApiManager.delete(params);
   };
 
   const onHide = () => {
     setIsVisible(false);
-    setResults(undefined);
-    setResultsIsVisible(false);
+    setResult(undefined);
+    setResultIsVisible(false);
   };
 
   const handleDeleteClick = async () => {
@@ -30,8 +30,8 @@ function DeleteDialog({ isVisible, setIsVisible, table, fields, selectedRows }) 
     const whereParams = Utils.getWhereParams(selectedRows, fields);
     const data = await deleteRows(whereParams);
     console.log(data);
-    setResults(data);
-    setResultsIsVisible(true);
+    setResult(data);
+    setResultIsVisible(true);
   };
 
   const renderedTable = useMemo(() => {
@@ -59,17 +59,17 @@ function DeleteDialog({ isVisible, setIsVisible, table, fields, selectedRows }) 
   );
 
   const resultsDialogProps = {
-    isVisible: resultsIsVisible,
-    setIsVisible: setResultsIsVisible,
+    isVisible: resultIsVisible,
+    setIsVisible: setResultIsVisible,
     setParentIsVisible: setIsVisible,
-    results,
+    data: result,
     table,
   };
 
   return (
     <>
       <Dialog
-        header={`Delete from ${table} table`}
+        header={`Delete from "${table}" table`}
         footer={footer}
         visible={isVisible}
         style={{ width: '50vw' }}

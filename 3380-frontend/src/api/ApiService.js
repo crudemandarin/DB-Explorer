@@ -28,7 +28,7 @@ class ApiService {
   }
 
   static async delete(params) {
-    return axios.delete(`${SERVICE_URL}/interface/query/data`, params);
+    return axios.delete(`${SERVICE_URL}/interface/query/data`, { params });
   }
 
   static async update(params) {

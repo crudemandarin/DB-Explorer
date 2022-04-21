@@ -1,4 +1,6 @@
-import React, { useMemo } from 'react';
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+import React, { useMemo, useState } from 'react';
 
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
@@ -33,14 +35,26 @@ function TasksComponent({ tasks, taskFields }) {
 }
 
 function ProjectComponent({ project, taskFields }) {
+  const [display, setDisplay] = useState(true);
   if (!project) return null;
+  
+  const onDivClick = () => {
+    setDisplay(!display);
+  }
+
+  const renderTasks = (tasks) => {
+    if (!display) return null;
+    return <TasksComponent tasks={tasks} taskFields={taskFields} />;
+  }
+
   const { tasks } = project;
   const data = tasks.map(task => ({ id: task.ID, label: task.Title, value: task.ActualCost }));
   const tasksText = tasks.length ? `Tasks (${tasks.length}):` : 'No tasks in project';
   const departmentText = project.Department || 'Not assigned';
+
   return (
     <>
-      <div className='project-row'>
+      <div className='project-row' onClick={onDivClick}>
         <div style={{ width: 'fit-content' }}>
           <div className='bold'>{project.Title}</div>
           <div>ID: {project.ID}</div>
@@ -52,14 +66,13 @@ function ProjectComponent({ project, taskFields }) {
           <div className='spacer'/>
           <div className='bold'>{tasksText}</div>
         </div>
-        <div className='chart-container'>
+        <div className='chart-container' style={{ height: '175px' }}>
           <ResponsivePie
             data={data}
             colors={{ scheme: 'nivo' }}
             borderWidth={1}
             margin={{ top: 10, right: 10, bottom: 10, left: 160 }}
             enableArcLinkLabels={false}
-            height={175}
             legends={[
               {
                   anchor: 'left',
@@ -78,17 +91,29 @@ function ProjectComponent({ project, taskFields }) {
           />
         </div>
       </div>
-      <TasksComponent tasks={tasks} taskFields={taskFields} />
+      {renderTasks(tasks)}
     </>
   );
 }
 
 function WorkspaceComponent({ workspace, taskFields }) {
+  const [display, setDisplay] = useState(true);
   if (!workspace) return null;
+
+  const onDivClick = () => {
+    setDisplay(!display);
+  }
+
+  const renderWorkspaces = () => {
+    if (!display) return null;
+    return workspace.projects.map(project => <ProjectComponent key={`project-row-${project.ID}`} project={project} taskFields={taskFields} />);
+  }
+  
   const data = workspace.projects.map(project => ({ id: project.ID, label: project.Title, value: project.ActualCost }));
+  
   return (
     <>
-      <div className='workspace-row'>
+      <div className='workspace-row' onClick={onDivClick}>
         <div>
           <div className='bold'>{workspace.Title}</div>
           <div>ID: {workspace.ID}</div>
@@ -101,14 +126,12 @@ function WorkspaceComponent({ workspace, taskFields }) {
           <div className='spacer'/>
           <div className='bold'>Projects ({workspace.projects.length}):</div>
         </div>
-        <div className='chart-container'>
+        <div className='chart-container' style={{height: '130px'}}>
           <ResponsivePie
             data={data}
-            colors={{ scheme: 'nivo' }}
             borderWidth={1}
             margin={{ top: 10, right: 10, bottom: 10, left: 160 }}
             enableArcLinkLabels={false}
-            height={130}
             legends={[
               {
                   anchor: 'left',
@@ -127,7 +150,7 @@ function WorkspaceComponent({ workspace, taskFields }) {
           />
         </div>
       </div>
-      { workspace.projects.map(project => <ProjectComponent key={`project-row-${project.ID}`} project={project} taskFields={taskFields} />) }
+      {renderWorkspaces()}
     </>
   );
 }

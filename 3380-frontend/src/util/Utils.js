@@ -126,7 +126,7 @@ class Utils {
     const superKeys = Utils.getSuperKeys(fields);
     return rows.reduce((previous1, row) => {
       const superKeysOnly = Object.entries(row).reduce((previous2, pair) => {
-        if (superKeys.includes(pair[0])) return [...previous2, { [pair[0]]: pair[1] }];
+        if (superKeys.includes(pair[0])) return [...previous2, { name: pair[0], value: pair[1] }];
         return previous2;
       }, []);
       return [...previous1, superKeysOnly];

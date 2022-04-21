@@ -97,15 +97,16 @@ router.delete('/query/data', async (req, res) => {
 
     const { table, rowParams } = req.query;
     if (!table) return res.status(400).json({ message: 'Missing `table` in query parameters' });
-    if (!rowParams) return res.status(400).json({ message: 'Missing `rowParams` in query parameters' });
+    if (!rowParams)
+        return res.status(400).json({ message: 'Missing `rowParams` in query parameters' });
     const rowParamsObj = JSON.parse(rowParams);
-    if (!Array.isArray(rowParamsObj)) 
+    if (!Array.isArray(rowParamsObj))
         return res.status(400).json({ message: '`rowParams` is not an array' });
     if (rowParamsObj.length === 0) return res.status(400).json({ message: '`rowParams` is empty' });
 
     try {
-        const [results, SQL] = await SQLService.delete(table, rowParamsObj);
-        return res.status(200).json({ results, SQL });
+        const [result, SQL] = await SQLService.delete(table, rowParamsObj);
+        return res.status(200).json({ result, SQL });
     } catch (err) {
         console.error('SQLService.delete failed. err =', err);
         if ('code' in err && 'sqlMessage' in err && 'sql' in err) {
@@ -124,14 +125,13 @@ router.put('/query/data', async (req, res) => {
 
     if (!table) return res.status(400).json({ message: 'Missing `table` in body' });
     if (!rowParams) return res.status(400).json({ message: 'Missing `rowParams` in body' });
-    if (!Array.isArray(rowParams)) 
+    if (!Array.isArray(rowParams))
         return res.status(400).json({ message: '`rowParams` is not an array' });
     if (rowParams.length === 0) return res.status(400).json({ message: '`rowParams` is empty' });
 
-
     try {
-        const [results, SQL] = await SQLService.update(table, rowParams);
-        return res.status(200).json({ results, SQL });
+        const [result, SQL] = await SQLService.update(table, rowParams);
+        return res.status(200).json({ result, SQL });
     } catch (err) {
         console.error('SQLService.update failed. err =', err);
         if ('code' in err && 'sqlMessage' in err && 'sql' in err) {
