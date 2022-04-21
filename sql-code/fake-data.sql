@@ -186,12 +186,8 @@ VALUES
   (53,47,1,4),
   (54,47,2,3),
   (55,48,2,4),
-  (56,48,1,2),
-  (59,0,1,1),
-  (58,0,1,2),
-  (57,0,1,3),  
-  (60,0,0,4);
-  
+  (56,48,1,2);
+
 /*Creating departments 3 for workspace 1 | 2 for workspace 2  | 2 for workspace 3*/
 INSERT INTO Department (ID,WorkspaceID,CreatedAt,CreatedBy,LastUpdated,UpdatedBy,Title,Description)
 VALUES
@@ -202,10 +198,10 @@ VALUES
     (5,2,"2022-01-07 05:27:16",16,"2022-04-02 08:52:05",18,"Human Resources","Lorem ipsum"),
     (6,3,"2022-01-11 07:31:07",31,"2022-04-03 16:09:40",32,"Purchase","Lorem ipsum"),
     (7,3,"2022-01-11 07:31:07",31,"2022-04-06 19:25:39",33,"Operations","Lorem ipsum"),
-    (8,4,"2021-06-15 05:32:05",60,"2022-04-19 04:25:39",60,"Operations","Running the startup"),
-    (9,4,"2021-06-15 05:33:01",60,"2022-04-19 17:45:06",50,"R&D","Developing new technology"),
-    (10,4,"2021-06-15 05:35:07",60,"2022-04-18 16:54:49",53,"Marketing","Increasing startup's visibility to investors and users"),
-    (11,4,"2021-06-15 05:39:21",60,"2022-04-18 13:52:39",55,"Sales","Selling startup's software services to businesses");
+    (8,4,"2021-06-15 05:32:05",46,"2022-04-19 04:25:39",46,"Operations","Running the startup"),
+    (9,4,"2021-06-15 05:33:01",46,"2022-04-19 17:45:06",50,"R&D","Developing new technology"),
+    (10,4,"2021-06-15 05:35:07",46,"2022-04-18 16:54:49",53,"Marketing","Increasing startup's visibility to investors and users"),
+    (11,4,"2021-06-15 05:39:21",46,"2022-04-18 13:52:39",55,"Sales","Selling startup's software services to businesses");
     
     /*Assigning workspace users to departments*/
 	Update WorkspaceUser SET DepartmentID = 1
@@ -240,11 +236,12 @@ Values
     (5,2,"2022-01-07 05:27:16",16,"2022-01-21 19:15:07",18,"Project5",2500,45),
     (6,3,"2022-01-11 07:31:07",31,"2022-02-03 00:59:39",32,"Project6",10000,120),
     (7,3,"2022-01-11 07:31:07",31,"2022-04-07 03:21:47",33,"Project7",9000,90),
-    (8,4,"2022-03-11 07:31:07",60,"2022-03-07 03:21:47",60,"Server Maintenance",5000,10),
-    (9,4,"2022-02-12 07:31:07",60,"2022-04-07 03:21:47",60,"HQ Improvements",10000,120),
+    (8,4,"2022-03-11 07:31:07",46,"2022-03-07 03:21:47",46,"Server Maintenance",5000,10),
+    (9,4,"2022-02-12 07:31:07",46,"2022-04-07 03:21:47",46,"HQ Improvements",10000,120),
     (10,4,"2022-03-25 07:31:07",46,"2022-03-27 03:21:47",46,"Fast Food App",7500,240),
     (11,4,"2022-02-09 07:31:07",47,"2022-03-07 03:21:47",47,"Marketing Campaign",15000,100),
-    (12,4,"2022-03-10 07:31:07",48,"2022-04-07 03:21:47",48,"Sales Program",4500,120);
+    (12,4,"2022-03-10 07:31:07",48,"2022-04-07 03:21:47",48,"Sales Program",4500,120),
+    (13,2,"2022-01-08 09:28:07",4,"2022-03-07 03:21:47",4,"Another Project",750,100);
 
 /*Loading workspace user IDs and Assigning workspace users to Projects*/
 INSERT INTO WorkspaceUserProjectRelation (WorkspaceUserID,ProjectID)
@@ -252,7 +249,7 @@ VALUES
   (1,1),(2,1),(3,1),(4,1),(5,1),(6,2),(7,2),
   (8,2),(9,2),(10,2),(11,3),(12,3),(13,3),(14,3),(15,3),(16,4),(17,4),(18,4),(19,4),(20,4),(21,4),(22,4),(23,4),(24,4),(25,5),(26,5),
   (27,5),(28,5),(29,5),(30,5),(31,6),(32,6),(33,6),(34,6),(35,6),(36,6),(37,6),(38,6),(39,6),(40,6),(41,7),(42,7),(43,7),(44,7),(45,7),
-  (46,4),(47,5),(48,6),(49,7),(59,1),(59,2),(58,4),(57,6),(57,7),(60,8),(60,9),(52,1),(51,4),(51,5),(50,10),(50,8),(50,9),(54,6),(54,7),(53,11),(56,4),
+  (46,4),(47,5),(48,6),(49,7),(52,1),(52,2),(51,4),(51,5),(51,13),(50,10),(50,8),(50,9),(54,6),(54,7),(53,11),(56,4),
   (56,5),(55,12);
 
 /*Creating tasks: 2 tasks for project 2 and 1 each for the rest*/
@@ -266,19 +263,26 @@ VALUES
   (6,6,3,"2022-01-15 02:11:05",31,"2022-03-24 06:03:29",32,"Task6",1),
   (7,7,3,"2022-01-15 02:11:05",31,"2022-04-01 07:21:05",32,"Task7",2),
   (8,2,1,"2022-02-05 21:08:51",1,"2022-04-07 01:45:02",2,"Task8",1),
-  (9,8,4,"2022-01-15 02:11:05",60,"2022-04-01 07:21:05",60,"Patch Server",2),
-  (10,9,4,"2022-01-15 02:11:05",60,"2022-04-01 07:21:05",60,"Build new PCs",2),
-  (11,10,4,"2022-01-15 02:11:05",60,"2022-04-01 07:21:05",46,"Front-end",2),
-  (12,10,4,"2022-01-15 02:11:05",60,"2022-04-01 07:21:05",46,"Back-end",2),
-  (13,11,4,"2022-01-15 02:11:05",60,"2022-04-01 07:21:05",47,"Prepare Social Media Campaign",2),
-  (14,11,4,"2022-01-15 02:11:05",60,"2022-04-01 07:21:05",47,"Create Investor Presentation",2),
-  (15,12,4,"2022-01-15 02:11:05",60,"2022-04-01 07:21:05",48,"Create Sales pitch",2),
-  (16,8,4,"2022-01-15 02:11:05",60,"2022-04-01 07:21:05",60,"Check ports",2),
-  (17,8,4,"2022-01-15 02:11:05",60,"2022-04-01 07:21:05",60,"Cable management",2),
-  (18,10,4,"2022-04-15 02:11:05",60,"2022-04-03 09:01:05",46,"Optimization",2),
-  (19,10,4,"2022-03-21 08:01:05",60,"2022-04-07 12:19:05",46,"Security",2),
-  (20,10,4,"2022-03-29 05:10:05",60,"2022-04-10 17:21:45",46,"Database Design",2),
-  (21,9,4,"2022-03-19 05:10:05",60,"2022-04-10 08:11:54",60,"Open Space Layout",2);
+  (9,8,4,"2022-01-15 02:11:05",46,"2022-04-01 07:21:05",46,"Patch Server",2),
+  (10,9,4,"2022-01-15 02:11:05",46,"2022-04-01 07:21:05",46,"Build new PCs",2),
+  (11,10,4,"2022-01-15 02:11:05",46,"2022-04-01 07:21:05",46,"Front-end",2),
+  (12,10,4,"2022-01-15 02:11:05",46,"2022-04-01 07:21:05",46,"Back-end",2),
+  (13,11,4,"2022-01-15 02:11:05",46,"2022-04-01 07:21:05",47,"Prepare Social Media Campaign",2),
+  (14,11,4,"2022-01-15 02:11:05",46,"2022-04-01 07:21:05",47,"Create Investor Presentation",2),
+  (15,12,4,"2022-01-15 02:11:05",46,"2022-04-01 07:21:05",48,"Create Sales pitch",2),
+  (16,8,4,"2022-01-15 02:11:05",46,"2022-04-01 07:21:05",46,"Check ports",2),
+  (17,8,4,"2022-01-15 02:11:05",46,"2022-04-01 07:21:05",46,"Cable management",2),
+  (18,10,4,"2022-04-15 02:11:05",46,"2022-04-03 09:01:05",46,"Optimization",2),
+  (19,10,4,"2022-03-21 08:01:05",46,"2022-04-07 12:19:05",46,"Security",2),
+  (20,10,4,"2022-03-29 05:10:05",46,"2022-04-10 17:21:45",46,"Database Design",2),
+  (21,9,4,"2022-03-19 05:10:05",46,"2022-04-10 08:11:54",46,"Open Space Layout",2),
+  (22,4,2,"2022-01-09 16:13:58",1,"2022-03-08 00:34:14",2,"Task10",0),
+  (23,4,2,"2022-01-09 16:13:58",1,"2022-03-08 00:34:14",2,"Task20",0),
+  (24,5,2,"2022-01-12 12:01:23",16,"2022-03-13 06:27:59",17,"Task25",1),
+  (25,5,2,"2022-01-12 12:01:23",16,"2022-03-13 06:27:59",17,"Task35",1),
+  (26,13,2,"2022-01-12 12:01:23",16,"2022-03-13 06:27:59",17,"Task45",1),
+  (27,13,2,"2022-01-12 12:01:23",16,"2022-03-13 06:27:59",17,"Task55",1),
+  (28,13,2,"2022-01-12 12:01:23",16,"2022-03-13 06:27:59",17,"Task65",1);
   
   Update Task Set ActualCost = 595 WHERE ID =1;
   Update Task Set ActualCost = 500 WHERE ID =4;
@@ -296,6 +300,15 @@ VALUES
   Update Task Set ActualCost = 1400 WHERE ID =19;
   Update Task Set ActualCost = 100 WHERE ID =20;
   Update Task Set ActualCost = 5000 WHERE ID =21;
+  
+  Update Task Set ActualCost = 500 WHERE ID =22;
+  Update Task Set ActualCost = 1500 WHERE ID =23;
+  Update Task Set ActualCost = 900 WHERE ID =24;
+  Update Task Set ActualCost = 3000 WHERE ID =25;
+  Update Task Set ActualCost = 1400 WHERE ID =26;
+  Update Task Set ActualCost = 100 WHERE ID =27;
+  Update Task Set ActualCost = 5000 WHERE ID =28;
+  
   Update Task Set ActualEffort = 61 WHERE ID = 1;
   Update Task Set ActualEffort = 45 WHERE ID =4;
   Update Task Set ActualEffort = 10 WHERE ID =5;
@@ -312,6 +325,14 @@ VALUES
   Update Task Set ActualEffort = 46 WHERE ID =19;
   Update Task Set ActualEffort = 54 WHERE ID =20;
   Update Task Set ActualEffort = 60 WHERE ID =21;
+  
+  Update Task Set ActualEffort = 9 WHERE ID =22;
+  Update Task Set ActualEffort = 10 WHERE ID =23;
+  Update Task Set ActualEffort = 15 WHERE ID =24;
+  Update Task Set ActualEffort = 75 WHERE ID =25;
+  Update Task Set ActualEffort = 46 WHERE ID =26;
+  Update Task Set ActualEffort = 54 WHERE ID =27;
+  Update Task Set ActualEffort = 60 WHERE ID =28;
 
 /*Creating tags for projects. There are 3 tags per task*/
 INSERT INTO Tag (ID, WorkspaceID, ProjectID, Message)
