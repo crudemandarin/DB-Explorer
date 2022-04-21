@@ -8,7 +8,8 @@ CREATE TABLE `User` (
     ID varchar(64) NOT NULL PRIMARY KEY, 
     FirstName varchar(64) NOT NULL,
     LastName varchar(64) NOT NULL,
-    Email varchar(128)
+    Email varchar(128),
+    Role smallint NOT NULL DEFAULT 0,
 ) ENGINE=INNODB;
 
 CREATE TABLE Workspace (
