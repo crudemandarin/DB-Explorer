@@ -7,11 +7,11 @@ class ReportService {
         let [workspaces] = await ReportService.getWorkspaces(userId, workspaceIds);
         let [projects] = await ReportService.getProjects(userId, projectIds, workspaceIds);
         let [tasks] = await ReportService.getTasks(userId, projectIds, workspaceIds);
-        let [users] = await SQLService.select('User', [], []);
-        let [workspaceUsers] = await SQLService.select('WorkspaceUser', [], []);
+        const [users] = await SQLService.select('User', [], []);
+        const [workspaceUsers] = await SQLService.select('WorkspaceUser', [], []);
         const taskFields = await SQLService.getTableFields('Task');
         const requestedBy = (await SQLService.query(`SELECT * FROM User WHERE ID='${userId}'`))[0];
-        
+
         /* FILTER BY DATE INTERVAL */
         if (lowerBound) {
             const lower = new Date(lowerBound);
@@ -34,13 +34,19 @@ class ReportService {
             const updated = { ...project };
             workspaceUsers.forEach((workspaceUser) => {
                 users.forEach((user) => {
-                    if (user.ID == workspaceUser.UserID && workspaceUser.ID == updated.CreatedBy) {
+                    if (
+                        user.ID === workspaceUser.UserID &&
+                        workspaceUser.ID === updated.CreatedBy
+                    ) {
                         updated.CreatedBy = `${user.FirstName} ${user.LastName}`;
                     }
-                    if (user.ID == workspaceUser.UserID && workspaceUser.ID == updated.UpdatedBy) {
+                    if (
+                        user.ID === workspaceUser.UserID &&
+                        workspaceUser.ID === updated.UpdatedBy
+                    ) {
                         updated.UpdatedBy = `${user.FirstName} ${user.LastName}`;
                     }
-                })
+                });
             });
             return updated;
         });
@@ -62,7 +68,7 @@ class ReportService {
         projects = projects.map((project) => {
             const updated = { ...project };
             const tempTasks = tasks.filter((task) => task.ProjectID === project.ID);
-            
+
             /* COMPUTE TASKS CLOSED/CREATED IN PROJECT */
             updated.tasksClosed = 0;
             updated.tasksCreated = 0;
@@ -88,7 +94,7 @@ class ReportService {
         workspaces = workspaces.map((workspace) => {
             const updated = { ...workspace };
             const tempProjects = projects.filter((project) => project.WorkspaceID === workspace.ID);
-            
+
             /* COMPUTE TASKS CLOSED/CREATED IN WORKSPACE */
             updated.tasksClosed = 0;
             updated.tasksCreated = 0;
@@ -132,12 +138,10 @@ class ReportService {
             const where = [{ name: 'ID', value: projectIds }];
             return UserService.select(userId, 'Project', [], where);
         }
-
         if (workspaceIds.length) {
             const where = [{ name: 'WorkspaceID', value: workspaceIds }];
             return UserService.select(userId, 'Project', [], where);
         }
-
         return UserService.select(userId, 'Project', [], []);
     }
 

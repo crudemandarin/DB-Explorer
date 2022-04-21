@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
     const projectsObj = JSON.parse(projectIds);
 
     const messages = [];
-    if (!userId) messages.push('Missing `userId` in query params');
+    // if (!userId) messages.push('Missing `userId` in query params');
     if (workspaceIds && !Array.isArray(workspacesObj))
         messages.push('`workspaceIds` must be an array in query params');
     if (projectIds && !Array.isArray(projectsObj))
