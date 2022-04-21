@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-// import { Chart } from 'primereact/chart';
+import { Chart } from 'primereact/chart';
 
 function TasksComponent({ tasks, taskFields }) {
   const renderedColumns = useMemo(() => {
@@ -34,16 +34,16 @@ function ProjectComponent({ project, taskFields }) {
         <div style={{ width: 'fit-content' }}>
           <div className='bold'>{project.Title}</div>
           <div>ID: {project.ID}</div>
-          <div>Actual Cost: ${project.ActualCost}</div>
+          <div>Actual Cost: <div className={getActualCostStyle()}>${project.ActualCost}</div></div>
           <div>Estimated Cost: ${project.EstimatedCost}</div>
-          <div>Actual Effort: {project.ActualEffort}</div>
+          <div>Actual Effort: <div className={getActualEffortStyle()}>{project.ActualEffort}</div></div>
           <div>Department: {project.Department}</div>
           <div>Created By: {project.CreatedBy}</div>
           <div className='spacer'/>
           <div className='bold'>{tasksText}</div>
         </div>
         <div>
-          <div className='fake-chart' />
+        <Chart type='pie' className='project-chart' style={{ position: 'relative', width: '35%' }} data={project.tasks.ActualCost}/>
         </div>
       </div>
       <TasksComponent tasks={tasks} taskFields={taskFields} />
@@ -59,19 +59,35 @@ function WorkspaceComponent({ workspace, taskFields }) {
         <div>
           <div className='bold'>{workspace.Title}</div>
           <div>ID: {workspace.ID}</div>
-          <div>Actual Cost: ${workspace.ActualCost}</div>
-          <div>Actual Effort: {workspace.ActualEffort}</div>
+          <div>Actual Cost: <div className={getActualCostStyle()}>${workspace.ActualCost}</div></div>
+          <div>Actual Effort: <div className={getActualEffortStyle()}>{workspace.ActualEffort}</div></div>
           <div>Created By: {workspace.CreatedBy}</div>
           <div className='spacer'/>
           <div className='bold'>Projects ({workspace.projects.length}):</div>
         </div>
         <div>
-          <div className='fake-chart'/>
+          <Chart type='pie' className='workspace-chart' style={{ position: 'relative', width: '35%' }} data={workspace.projects.ActualCost}/>
         </div>
       </div>
       { workspace.projects.map(project => <ProjectComponent key={`project-row-${project.ID}`} project={project} taskFields={taskFields} />) }
     </>
   );
+}
+
+// styling for above and below estimated cost
+function getActualCostStyle() {
+  if (project.ActualCost <= project.EstimatedCost) { 
+    return 'below-estimated';
+  }
+  return 'above-estimated';
+}
+
+// styling for above and below estimated effort
+function getActualEffortStyle() {
+  if (project.ActualEffort <= project.EstimatedEffort) {
+    return 'below-estimated';
+  } 
+  return 'above-estimated';
 }
 
 function ReportSummaryCard({ result, onRemove }) {  
