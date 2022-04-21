@@ -51,8 +51,8 @@ VALUES
   (47,"Courtney","Berry","Courtney@gmail.com"),
   (48,"Anil","Shanker","Anil@gmail.com");
 Update `User`
-Set SuperUser = 1
-WHERE `FirstName` IN ("Nykolas", "Jairo");
+Set Role = 1
+WHERE `FirstName` IN ("Nykolas");
 
 /*Inserting workspace test data 3 total*/
 Insert Into Workspace (ID,CreatedAt,CreatedBy,LastUpdated,UpdatedBy, Title)
