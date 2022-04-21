@@ -107,13 +107,13 @@ router.delete('/query/data', async (req, res) => {
         const [results, SQL] = await SQLService.delete(table, rowParamsObj);
         return res.status(200).json({ results, SQL });
     } catch (err) {
-        console.error('SQLService.update failed. err =', err);
+        console.error('SQLService.delete failed. err =', err);
         if ('code' in err && 'sqlMessage' in err && 'sql' in err) {
             return res.status(400).json({ code: err.code, message: err.sqlMessage, sql: err.sql });
         }
     }
 
-    return res.status(500).json({ message: 'Failed to update data' });
+    return res.status(500).json({ message: 'Failed to delete data' });
 });
 
 /* PUT /interface/query/data */
