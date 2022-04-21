@@ -1,3 +1,4 @@
+const res = require('express/lib/response');
 const mysql = require('mysql');
 const util = require('util');
 const Utils = require('../Utils');
@@ -79,17 +80,46 @@ class SQLService {
         return [result, SQL];
     }
 
-    static async update(table, fields, where) {
-        const whereParams = SQLService.nameValueArrToString(where).join(' AND ');
-        const updateParams = SQLService.nameValueArrToString(fields).join(',');
-        const SQL = `UPDATE ${table} SET ${updateParams} WHERE ${whereParams}`;
-        const result = await SQLService.query(SQL);
+    static async update(table, rowParams) {
+        console.log(`SQLService.update invoked! Table = ${table}, RowParams =`, rowParams);
+
+        let arrSQL = [];
+        let arrResults = [];
+        for (const params of rowParams) {
+            const { update, where } = params;
+            const updateParams = Utils.nameValueArrToString(update).join(',');
+            const whereParams = Utils.nameValueArrToString(where).join(' AND ');
+            
+            const SQL = `UPDATE ${table} SET ${updateParams} WHERE ${whereParams};`;
+            const result = await SQLService.query(SQL);
+            arrSQL.push(SQL);
+            arrResults.push(result);
+        }
+
+        const result = arrResults.reduce((total, obj) => {
+            return {
+                fieldCount: total.fieldCount + obj.fieldCount,
+                affectedRows: total.affectedRows + obj.affectedRows,
+                warningCount: total.warningCount + obj.warningCount,
+                changedRows: total.changedRows + obj.changedRows,
+            }
+        });
+
+        const SQL = arrSQL.join('\n');
         // console.log('SQLService.update: result =', result);
         return [result, SQL];
     }
 
-    static async delete(table, fields) {
-        const whereParams = Utils.nameValueArrToString(fields).join(' OR ');
+    static async delete(table, rowParams) {
+        console.log(`SQLService.delete invoked! Table = ${table}, RowParams =`, rowParams);
+
+        let where = [];
+
+        rowParams.forEach(params => {
+            where.push(Utils.nameValueArrToString(params));
+        });
+        
+        const whereParams = where.join(' OR ');
         const SQL = `DELETE FROM ${table} WHERE ${whereParams}`;
         const result = await SQLService.query(SQL);
         // console.log('SQLService.delete: result =', result);
