@@ -3,19 +3,64 @@ const SQLService = require('./SQLService');
 
 class ReportService {
     static async getReport(userId, workspaceIds, projectIds, lowerBound, upperBound) {
-        /* LOAD DATA */
-        let [workspaces] = await ReportService.getWorkspaces(userId, workspaceIds);
-        let [projects] = await ReportService.getProjects(userId, projectIds, workspaceIds);
-        let [tasks] = await ReportService.getTasks(userId, projectIds, workspaceIds);
+        const { workspaces, projects, tasks, users, workspaceUsers, taskFields, requestedBy } =
+            await ReportService.getData(userId, workspaceIds, projectIds);
+
+        const filteredTasks = ReportService.getDateFilteredTasks(tasks, lowerBound, upperBound);
+
+        const { updatedProjects, updatedWorkspaces } = ReportService.getFKTranslatedData(
+            workspaces,
+            projects,
+            users,
+            workspaceUsers
+        );
+
+        const { embeddedWorkspaces, numWorkspaces, numProjects, numTasks, requestedAt } =
+            ReportService.getProcessedData(
+                lowerBound,
+                upperBound,
+                updatedWorkspaces,
+                updatedProjects,
+                filteredTasks
+            );
+
+        return {
+            workspaces: embeddedWorkspaces,
+            taskFields,
+            numWorkspaces,
+            numProjects,
+            numTasks,
+            requestedBy,
+            requestedAt,
+        };
+    }
+
+    static async getData(userId, workspaceIds, projectIds) {
+        const [workspaces] = await ReportService.getWorkspaces(userId, workspaceIds);
+        const [projects] = await ReportService.getProjects(userId, projectIds, workspaceIds);
+        const [tasks] = await ReportService.getTasks(userId, projectIds, workspaceIds);
         const [users] = await SQLService.select('User', [], []);
         const [workspaceUsers] = await SQLService.select('WorkspaceUser', [], []);
         const taskFields = await SQLService.getTableFields('Task');
         const requestedBy = (await SQLService.query(`SELECT * FROM User WHERE ID='${userId}'`))[0];
 
-        /* FILTER BY DATE INTERVAL */
+        return {
+            workspaces,
+            projects,
+            tasks,
+            users,
+            workspaceUsers,
+            taskFields,
+            requestedBy,
+        };
+    }
+
+    static getDateFilteredTasks(tasks, lowerBound, upperBound) {
+        let filteredTasks = tasks;
+
         if (lowerBound) {
             const lower = new Date(lowerBound);
-            tasks = tasks.filter((task) => {
+            filteredTasks = tasks.filter((task) => {
                 const createdAt = new Date(task.CreatedAt);
                 return createdAt >= lower;
             });
@@ -23,14 +68,17 @@ class ReportService {
 
         if (upperBound) {
             const upper = new Date(upperBound);
-            tasks = tasks.filter((task) => {
+            filteredTasks = tasks.filter((task) => {
                 const closedAt = new Date(task.TimeClosed);
                 return closedAt <= upper;
             });
         }
 
-        /* REPLACE FKS WITH REAL VALUES */
-        projects = projects.map((project) => {
+        return filteredTasks;
+    }
+
+    static getFKTranslatedData(workspaces, projects, users, workspaceUsers) {
+        const updatedProjects = projects.map((project) => {
             const updated = { ...project };
             workspaceUsers.forEach((workspaceUser) => {
                 users.forEach((user) => {
@@ -51,7 +99,7 @@ class ReportService {
             return updated;
         });
 
-        workspaces = workspaces.map((workspace) => {
+        const updatedWorkspaces = workspaces.map((workspace) => {
             const updated = { ...workspace };
             users.forEach((user) => {
                 if (user.ID === workspace.CreatedBy) {
@@ -64,19 +112,28 @@ class ReportService {
             return updated;
         });
 
-        /* EMBED ARRAYS */
-        projects = projects.map((project) => {
-            const updated = { ...project };
-            const tempTasks = tasks.filter((task) => task.ProjectID === project.ID);
+        return { updatedProjects, updatedWorkspaces };
+    }
 
-            /* COMPUTE TASKS CLOSED/CREATED IN PROJECT */
+    static getProcessedData(
+        lowerBound,
+        upperBound,
+        updatedWorkspaces,
+        updatedProjects,
+        filteredTasks
+    ) {
+        const lower = new Date(lowerBound);
+        const upper = new Date(upperBound);
+
+        const embeddedProjects = updatedProjects.map((project) => {
+            const tempTasks = filteredTasks.filter((task) => task.ProjectID === project.ID);
+            const updated = { ...project };
+
             updated.tasksClosed = 0;
             updated.tasksCreated = 0;
             tempTasks.forEach((task) => {
                 const timeClosed = new Date(task.TimeClosed);
                 const createdAt = new Date(task.CreatedAt);
-                const lower = new Date(lowerBound);
-                const upper = new Date(upperBound);
 
                 if (timeClosed >= lower && timeClosed <= upper) {
                     updated.tasksClosed += 1;
@@ -85,46 +142,40 @@ class ReportService {
                     updated.tasksCreated += 1;
                 }
             });
-
             updated.tasks = tempTasks;
             updated.numTasks = tempTasks.length;
+
             return updated;
         });
 
-        workspaces = workspaces.map((workspace) => {
+        const embeddedWorkspaces = updatedWorkspaces.map((workspace) => {
+            const tempProjects = embeddedProjects.filter(
+                (project) => project.WorkspaceID === workspace.ID
+            );
             const updated = { ...workspace };
-            const tempProjects = projects.filter((project) => project.WorkspaceID === workspace.ID);
 
-            /* COMPUTE TASKS CLOSED/CREATED IN WORKSPACE */
             updated.tasksClosed = 0;
             updated.tasksCreated = 0;
-            projects.forEach((project) => {
+            embeddedProjects.forEach((project) => {
                 updated.tasksClosed += project.tasksClosed;
                 updated.tasksCreated += project.tasksCreated;
             });
-
             updated.projects = tempProjects;
             updated.numProjects = tempProjects.length;
             updated.numTasks = tempProjects.reduce(
                 (sumTasks, project) => sumTasks + project.numTasks,
                 0
             );
+
             return updated;
         });
 
-        const numWorkspaces = workspaces.length;
-        const numProjects = projects.length;
-        const numTasks = tasks.length;
+        const numWorkspaces = updatedWorkspaces.length;
+        const numProjects = updatedProjects.length;
+        const numTasks = filteredTasks.length;
         const requestedAt = Date.now();
-        return {
-            workspaces,
-            taskFields,
-            numWorkspaces,
-            numProjects,
-            numTasks,
-            requestedBy,
-            requestedAt,
-        };
+
+        return { embeddedWorkspaces, numWorkspaces, numProjects, numTasks, requestedAt };
     }
 
     static getWorkspaces(userId, workspaceIds) {
@@ -146,17 +197,16 @@ class ReportService {
     }
 
     static async getTasks(userId, projectIds, workspaceIds) {
+        const select = [];
         if (projectIds.length) {
             const where = [{ name: 'ProjectID', value: projectIds }];
-            return UserService.select(userId, 'Task', [], where);
+            return UserService.select(userId, 'Task', select, where);
         }
-
         if (workspaceIds.length) {
             const where = [{ name: 'WorkspaceID', value: workspaceIds }];
-            return UserService.select(userId, 'Task', [], where);
+            return UserService.select(userId, 'Task', select, where);
         }
-
-        return UserService.select(userId, 'Task', [], []);
+        return UserService.select(userId, 'Task', select, []);
     }
 }
 
