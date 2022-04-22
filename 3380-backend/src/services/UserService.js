@@ -11,7 +11,7 @@ class UserService {
 
     static async select(userId, table, select, where) {
         console.log(
-            `UserService.select invoked! UserId = ${userId}, Table = ${table}, Fields = ${select}, Where =`,
+            `UserService.select invoked! UserId = ${userId}, Table = ${table}, Select = ${select}, Where =`,
             where
         );
 

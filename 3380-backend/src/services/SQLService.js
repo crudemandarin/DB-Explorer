@@ -1,6 +1,5 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
-const res = require('express/lib/response');
 const mysql = require('mysql');
 const util = require('util');
 const Utils = require('../Utils');
@@ -47,7 +46,7 @@ class SQLService {
 
     static async select(table, select, where, fromSql) {
         console.log(
-            `SQLService.select invoked! Table = ${table}, Fields = ${select}, Where =`,
+            `SQLService.select invoked! Table = ${table}, Select = ${select}, Where =`,
             where,
             'fromSql =',
             fromSql
@@ -83,7 +82,7 @@ class SQLService {
     }
 
     static async update(table, rowParams) {
-        console.log(`SQLService.update invoked! Table = ${table}, RowParams =`, rowParams);
+        console.log(`SQLService.update invoked! Table = ${table}, rowParams =`, rowParams);
 
         const arrSQL = [];
         const arrResults = [];
