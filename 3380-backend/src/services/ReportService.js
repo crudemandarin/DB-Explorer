@@ -134,7 +134,6 @@ class ReportService {
             tempTasks.forEach((task) => {
                 const timeClosed = new Date(task.TimeClosed);
                 const createdAt = new Date(task.CreatedAt);
-
                 if (timeClosed >= lower && timeClosed <= upper) {
                     updated.tasksClosed += 1;
                 }
@@ -178,13 +177,13 @@ class ReportService {
         return { embeddedWorkspaces, numWorkspaces, numProjects, numTasks, requestedAt };
     }
 
-    static getWorkspaces(userId, workspaceIds) {
+    static async getWorkspaces(userId, workspaceIds) {
         if (!workspaceIds.length) return UserService.select(userId, 'Workspace', [], []);
         const where = [{ name: 'ID', value: workspaceIds }];
         return UserService.select(userId, 'Workspace', [], where);
     }
 
-    static getProjects(userId, projectIds, workspaceIds) {
+    static async getProjects(userId, projectIds, workspaceIds) {
         if (projectIds.length) {
             const where = [{ name: 'ID', value: projectIds }];
             return UserService.select(userId, 'Project', [], where);
@@ -197,16 +196,15 @@ class ReportService {
     }
 
     static async getTasks(userId, projectIds, workspaceIds) {
-        const select = [];
         if (projectIds.length) {
             const where = [{ name: 'ProjectID', value: projectIds }];
-            return UserService.select(userId, 'Task', select, where);
+            return UserService.select(userId, 'Task', [], where);
         }
         if (workspaceIds.length) {
             const where = [{ name: 'WorkspaceID', value: workspaceIds }];
-            return UserService.select(userId, 'Task', select, where);
+            return UserService.select(userId, 'Task', [], where);
         }
-        return UserService.select(userId, 'Task', select, []);
+        return UserService.select(userId, 'Task', [], []);
     }
 }
 
