@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from 'primereact/button';
 import { MultiSelect } from 'primereact/multiselect';
 import { Calendar } from 'primereact/calendar'
@@ -10,21 +10,9 @@ import Utils from '../util/Utils';
 import '../styles/Report.css';
 
 function ReportControlCard({ onNewResult }) {
-  const { user } = useGlobal();
-  const [workspaces, setWorkspaces] = useState([]);
-  const [projects, setProjects] = useState([]);
+  const { user, userWorkspaces, userProjects } = useGlobal();
   const [form, setForm] = useState({ workspaces: [], projects: [], lowerBound: '', upperBound: '' });
   const [resetFlag, setResetFlag] = useState(false);
-
-  useEffect(() => {
-    const getData = async () => {
-      const [workspaceData] = await ApiManager.select({ userId: user.ID, table: 'Workspace' });
-      const [projectData] = await ApiManager.select({ userId: user.ID, table: 'Project' });
-      setWorkspaces(workspaceData);
-      setProjects(projectData);
-    }
-    getData();
-  }, [user]);
 
   const getReport = async () => {
     const workspaceIds = JSON.stringify(form.workspaces.map(obj => obj.ID));
@@ -93,7 +81,7 @@ function ReportControlCard({ onNewResult }) {
 
         <MultiSelect
           value={form.workspaces}
-          options={workspaces}
+          options={userWorkspaces}
           optionLabel="Title"
           onChange={onWorkspaceSelectChange}
           placeholder='Workspaces'
@@ -107,7 +95,7 @@ function ReportControlCard({ onNewResult }) {
 
         <MultiSelect
           value={form.projects}
-          options={projects}
+          options={userProjects}
           optionLabel="Title"
           onChange={onProjectSelectChange}
           placeholder='Projects'

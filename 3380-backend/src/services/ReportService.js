@@ -42,7 +42,7 @@ class ReportService {
         const [users] = await SQLService.select('User', [], []);
         const [workspaceUsers] = await SQLService.select('WorkspaceUser', [], []);
         const taskFields = await SQLService.getTableFields('Task');
-        const requestedBy = (await SQLService.query(`SELECT * FROM User WHERE ID='${userId}'`))[0];
+        const requestedBy = await UserService.getUser({ userId });
 
         return {
             workspaces,

@@ -7,16 +7,18 @@ import { Column } from 'primereact/column';
 
 import ApiManager from '../../api/ApiManager';
 import Utils from '../../util/Utils';
+import { useGlobal } from '../../util/GlobalContext';
 
 import ResultsDialog from './ResultsDialog';
 
 function ConfirmAddDialog({ isVisible, setIsVisible, table, tableForm, fields }) {
+  const { user } = useGlobal();
   const [results, setResults] = useState(undefined);
   const [resultsIsVisible, setResultsIsVisible] = useState(false);
 
   const add = (formParams) => {
     console.log('HomeGroup.add invoked! formParams =', formParams);
-    const params = { table, fields: formParams };
+    const params = { userId: user.ID, table, fields: formParams };
     return ApiManager.insert(params);
   };
 
@@ -27,7 +29,7 @@ function ConfirmAddDialog({ isVisible, setIsVisible, table, tableForm, fields })
   };
 
   const handleAddClick = async () => {
-    const formParams = Utils.getFormParams(tableForm);
+    const formParams = Utils.getFieldsParam(tableForm);
     const data = await add(formParams);
     setResults(data);
     setResultsIsVisible(true);

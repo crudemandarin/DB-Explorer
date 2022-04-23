@@ -8,6 +8,7 @@ import ResultsDialog from './ResultsDialog';
 
 import ApiManager from '../../api/ApiManager';
 import Utils from '../../util/Utils';
+import { useGlobal } from '../../util/GlobalContext';
 
 import '../../styles/ModifyDialog.css';
 
@@ -34,18 +35,18 @@ class ModifyDialogForm {
 }
 
 function ModifyDialog({ isVisible, setIsVisible, table, fields, selectedRows }) {
+  const { user } = useGlobal();
   const [form, setForm] = useState({});
   const [result, setResult] = useState(undefined);
   const [resultIsVisible, setResultIsVisible] = useState(false);
 
   useEffect(() => {
-    console.log('form reset')
     setForm(ModifyDialogForm.getEmptyForm(selectedRows));
   }, [selectedRows]);
 
   const modifyRows = (rowParams) => {
     console.log('ModifyDialog.modifyRows invoked! rowParams =', rowParams);
-    const params = { table, rowParams };
+    const params = { userId: user.ID, table, rowParams };
     return ApiManager.update(params);
   };
 
@@ -59,17 +60,9 @@ function ModifyDialog({ isVisible, setIsVisible, table, fields, selectedRows }) 
     console.log('Modify Clicked! form =', form);
     const rowParams = Object.keys(form).reduce(
       (prevParam, rowIndex) => {
-        const update = form[rowIndex].reduce(
-          (prev, field) => {
-            if (field.prevValue === field.value) return prev;
-            return [...prev, { name: field.key, value: field.value }];
-          }, []
-        );
-
-        const where = Utils.getWhereParams([selectedRows[rowIndex]], fields)[0];
-
+        const update = Utils.getUpdateFieldsRowParam(form[rowIndex]);
+        const where = Utils.getWhereRowParam(selectedRows[rowIndex], fields);
         if (!update.length || !where.length) return prevParam;
-
         return [...prevParam, { update, where }];
       }, []
     );
@@ -95,18 +88,19 @@ function ModifyDialog({ isVisible, setIsVisible, table, fields, selectedRows }) 
 
     const renderHeaderRow = () => (
       <tr>
-        {filteredFields.map(field => <th>{field.name}</th>)}
+        {filteredFields.map((field) => <th key={`modify-header-cell-${field.name}`}>{field.name}</th>)}
       </tr>
     );
 
     const renderRow = (rowIndex) => (
-        <tr>
+        <tr key={`modify-row-${rowIndex}`}>
           {
             form[rowIndex].map(
               (field, fieldIndex) => (
-                <td key={`${field.key}-modify-row`}>
+                <td key={`modify-row-${rowIndex}-cell-${field.key}`}>
                   <InputText
-                    id={`${field.key}-modify-input`}
+                    key={`modify-row-${rowIndex}-input-${field.key}`}
+                    id={`modify-row-${rowIndex}-input-${field.key}`}
                     placeholder={field.key}
                     value={field.value}
                     className='p-inputtext-sm'

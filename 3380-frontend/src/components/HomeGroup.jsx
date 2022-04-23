@@ -1,5 +1,5 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useState, useEffect } from 'react';
 
 import ApiManager from '../api/ApiManager';
@@ -16,38 +16,15 @@ import { useGlobal } from '../util/GlobalContext';
 function HomeGroup() {
   const { user } = useGlobal();
   const [navigation, setNavigation] = useState(0);
-  const [tables, setTables] = useState([]); // string[]
   const [table, setTable] = useState(''); // string
   const [fields, setFields] = useState([]); // Field[]
   const [results, setResults] = useState([]); // Result[]
 
-  // Load Tables
-  useEffect(() => {
-    const getTables = async () => {
-      try {
-        const tablesData = await ApiManager.getTables();
-        setTables(tablesData);
-      } catch (err) {
-        console.error('HomeGroup.getTables() failed! Error =', err);
-        setTables([]);
-      }
-    };
-
-    getTables();
-  }, []);
-
-  // Listen to Table, Load Table Fields
   useEffect(() => {
     const getFields = async () => {
-      try {
-        const fieldsData = await ApiManager.getTableFields(table);
-        setFields(fieldsData);
-      } catch (err) {
-        console.error('HomeGroup.getFields() failed! Error =', err);
-        setFields([]);
-      }
+      const fieldsData = await ApiManager.getTableFields(table);
+      setFields(fieldsData);
     };
-
     if (table) getFields();
   }, [table]);
 
@@ -84,12 +61,12 @@ function HomeGroup() {
     }
 
     if (navigation === 0) {
-      const controlProps = { table, setTable, tables, fields, results, onNewResult };
+      const controlProps = { table, setTable, fields, results, onNewResult };
       return <QueryControlCard {...controlProps} />;
     }
 
     if (navigation === 1) {
-      const controlProps = { table, setTable, tables, fields, results };
+      const controlProps = { table, setTable, fields, results };
       return <AddControlCard {...controlProps} />;
     }
 

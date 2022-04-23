@@ -8,7 +8,10 @@ import Utils from '../util/Utils';
 import ControlFieldInput from '../components/ControlFieldInput';
 import ConfirmAddDialog from '../components/dialogs/ConfirmAddDialog';
 
-function AddControlCard({ table, setTable, tables, fields }) {
+import { useGlobal } from '../util/GlobalContext';
+
+function AddControlCard({ table, setTable, fields }) {
+  const { tables } = useGlobal();
   const [tableOptions, setTableOptions] = useState([]); // Option[]
   const [tableValue, setTableValue] = useState(undefined); // Option
   const [tableForm, setTableForm] = useState({});
@@ -60,7 +63,7 @@ function AddControlCard({ table, setTable, tables, fields }) {
           Showing controls for <span className="p600">{table}</span> table
         </div>
       );
-    return <div className="p400">Welcome. Select a table from above.</div>;
+    return <div className="p400">Welcome. Select a table to modify.</div>;
   };
 
   const renderControlFieldForm = () => {
@@ -101,6 +104,7 @@ function AddControlCard({ table, setTable, tables, fields }) {
           field="name"
           onChange={handleTableInputChange}
           completeMethod={searchTable}
+          placeholder="Search for a table"
         />
 
         <div className="spacer" />

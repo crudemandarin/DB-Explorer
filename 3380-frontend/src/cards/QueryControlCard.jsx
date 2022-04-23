@@ -9,8 +9,8 @@ import Utils from '../util/Utils';
 import ControlFieldInput from '../components/ControlFieldInput';
 import { useGlobal } from '../util/GlobalContext';
 
-function QueryControlCard({ table, setTable, tables, fields, onNewResult }) {
-  const { user } = useGlobal();
+function QueryControlCard({ table, setTable, fields, onNewResult }) {
+  const { user, tables } = useGlobal();
   const [tableOptions, setTableOptions] = useState([]); // Option[]
   const [tableValue, setTableValue] = useState(undefined); // Option
   const [tableForm, setTableForm] = useState({});
@@ -57,7 +57,7 @@ function QueryControlCard({ table, setTable, tables, fields, onNewResult }) {
     const [validatedForm, isValid] = Utils.validateForm(tableForm, 'query');
     setTableForm(validatedForm);
     if (isValid) {
-      const formParams = Utils.getFormParams(tableForm);
+      const formParams = Utils.getFieldsParam(tableForm);
       query(formParams);
     }
   };
@@ -74,7 +74,7 @@ function QueryControlCard({ table, setTable, tables, fields, onNewResult }) {
           Showing controls for <span className="p600">{table}</span> table
         </div>
       );
-    return <div className="p400">Welcome. Select a table from above.</div>;
+    return <div className="p400">Welcome. Select a table to query.</div>;
   };
 
   const renderControlFieldForm = () => {
@@ -107,6 +107,7 @@ function QueryControlCard({ table, setTable, tables, fields, onNewResult }) {
           field="name"
           onChange={handleTableInputChange}
           completeMethod={searchTable}
+          placeholder="Search for a table"
         />
 
         <div className="spacer" />
