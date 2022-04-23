@@ -116,7 +116,7 @@ class Utils {
     return foreignKeyFields.map((field) => field.name);
   }
 
-  static getInsertFieldsParam(form) {
+  static getFieldsParam(form) {
     return Object.keys(form)
       .filter((key) => !!form[key].value)
       .map((key) => ({ name: key, value: form[key].value }));
@@ -131,12 +131,10 @@ class Utils {
   }
 
   static getUpdateFieldsRowParam(rowForm) {
-    return rowForm.reduce(
-      (prev, field) => {
-        if (field.prevValue === field.value) return prev;
-        return [...prev, { name: field.key, value: field.value }];
-      }
-    );
+    return rowForm.reduce((prev, field) => {
+      if (field.prevValue === field.value) return prev;
+      return [...prev, { name: field.key, value: field.value }];
+    }, []);
   }
 }
 
