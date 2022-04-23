@@ -1,12 +1,23 @@
 const SQLService = require('./SQLService');
 
 class UserService {
-    static async login(email) {
-        const where = [{ name: 'Email', value: email }];
+    static async getUser({ userId, email }) {
+        if (!userId && !email) return undefined;
+        const where = userId ?
+            [{ name: 'ID', value: userId }] :
+            [{ name: 'Email', value: email }];
         const [users] = await SQLService.select('User', [], where);
         console.log(users);
         if (users.length) return users[0];
         return undefined;
+    }
+
+    static async login(email) {
+        const user = UserService.getUser({ email });
+
+        // Add password logic here
+        
+        return user;
     }
 
     static async select(userId, table, select, where) {
@@ -70,6 +81,37 @@ class UserService {
         const fromSql = FROM ? `(${FROM}) AS AccessibleSubset` : undefined;
         return SQLService.select(table, select, where, fromSql);
     }
+
+    static async insert(userId, table, fields) {
+        console.log(
+            `UserService.insert invoked! UserId = ${userId}, Table = ${table}, Fields = ${fields}`
+        );
+
+        if (!userId) return SQLService.insert(table, fields);
+
+        // Add insert limitations here
+        // Examples:
+        //  - Verify user has access to Foreign Keys they attempt to insert with
+        //  - Verify user has permission to insert to specific table
+
+        return SQLService.insert(table, fields);
+    }
+
+    static async update(userId, table, rowParams) {
+        console.log(
+            `UserService.update invoked! UserId = ${userId}, Table = ${table}, rowParams = ${rowParams}`
+        );
+
+        if (!userId) return SQLService.update(table, rowParams);
+
+        // Add update limitations here
+        // Examples:
+        //  - Verify user has access to Foreign Keys they attempt to update with
+        //  - Verify user has permission to update to specific table
+
+        return SQLService.update(table, rowParams);
+    }
+
 }
 
 module.exports = UserService;

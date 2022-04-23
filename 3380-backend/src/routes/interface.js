@@ -50,14 +50,10 @@ router.post('/query', async (req, res) => {
     if (!table) return res.status(400).json({ message: 'Missing `table` in body' });
 
     try {
-        if (userId) {
-            const [rows, SQL] = await UserService.select(userId, table, select, where);
-            return res.status(200).json({ rows, SQL });
-        }
-        const [rows, SQL] = await SQLService.select(table, select, where);
+        const [rows, SQL] = await UserService.select(userId, table, select, where);
         return res.status(200).json({ rows, SQL });
     } catch (err) {
-        console.error('SQLService.select failed. err =', err);
+        console.error('UserService.select failed. err =', err);
         if ('code' in err && 'sqlMessage' in err && 'sql' in err) {
             return res.status(400).json({ code: err.code, message: err.sqlMessage, sql: err.sql });
         }
@@ -70,7 +66,7 @@ router.post('/query', async (req, res) => {
 router.post('/query/data', async (req, res) => {
     console.log('POST /interface/query/data');
 
-    const { table, fields } = req.body;
+    const { userId, table, fields } = req.body;
 
     if (!table) return res.status(400).json({ message: 'Missing `table` in body' });
     if (!fields) return res.status(400).json({ message: 'Missing `fields` in body' });
@@ -79,10 +75,10 @@ router.post('/query/data', async (req, res) => {
     if (fields.length === 0) return res.status(400).json({ message: '`fields` is empty' });
 
     try {
-        const [result, SQL] = await SQLService.insert(table, fields);
+        const [result, SQL] = await UserService.insert(userId, table, fields);
         return res.status(200).json({ result, SQL });
     } catch (err) {
-        console.error('SQLService.insert failed. err =', err);
+        console.error('UserService.insert failed. err =', err);
         if ('code' in err && 'sqlMessage' in err && 'sql' in err) {
             return res.status(400).json({ code: err.code, message: err.sqlMessage, sql: err.sql });
         }
@@ -95,7 +91,7 @@ router.post('/query/data', async (req, res) => {
 router.delete('/query/data', async (req, res) => {
     console.log('DELETE /interface/query/data');
 
-    const { table, rowParams } = req.query;
+    const { userId, table, rowParams } = req.query;
     if (!table) return res.status(400).json({ message: 'Missing `table` in query parameters' });
     if (!rowParams)
         return res.status(400).json({ message: 'Missing `rowParams` in query parameters' });
@@ -105,10 +101,10 @@ router.delete('/query/data', async (req, res) => {
     if (rowParamsObj.length === 0) return res.status(400).json({ message: '`rowParams` is empty' });
 
     try {
-        const [result, SQL] = await SQLService.delete(table, rowParamsObj);
+        const [result, SQL] = await UserService.delete(userId, table, rowParamsObj);
         return res.status(200).json({ result, SQL });
     } catch (err) {
-        console.error('SQLService.delete failed. err =', err);
+        console.error('UserService.delete failed. err =', err);
         if ('code' in err && 'sqlMessage' in err && 'sql' in err) {
             return res.status(400).json({ code: err.code, message: err.sqlMessage, sql: err.sql });
         }
@@ -121,7 +117,7 @@ router.delete('/query/data', async (req, res) => {
 router.put('/query/data', async (req, res) => {
     console.log('PUT /interface/query/data');
 
-    const { table, rowParams } = req.body;
+    const { userId, table, rowParams } = req.body;
 
     if (!table) return res.status(400).json({ message: 'Missing `table` in body' });
     if (!rowParams) return res.status(400).json({ message: 'Missing `rowParams` in body' });
@@ -130,10 +126,10 @@ router.put('/query/data', async (req, res) => {
     if (rowParams.length === 0) return res.status(400).json({ message: '`rowParams` is empty' });
 
     try {
-        const [result, SQL] = await SQLService.update(table, rowParams);
+        const [result, SQL] = await UserService.update(userId, table, rowParams);
         return res.status(200).json({ result, SQL });
     } catch (err) {
-        console.error('SQLService.update failed. err =', err);
+        console.error('UserService.update failed. err =', err);
         if ('code' in err && 'sqlMessage' in err && 'sql' in err) {
             return res.status(400).json({ code: err.code, message: err.sqlMessage, sql: err.sql });
         }
