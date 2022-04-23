@@ -72,6 +72,8 @@ class Utils {
     } else if (type.includes('float')) {
       isValid = floatRG.test(value);
       if (!isValid) error = `Must be float`;
+    } else if (type.includes('datetime')) {
+      isValid = true;
     } else {
       console.warn('Utils.validate: Unrecognized type. type =', type);
     }

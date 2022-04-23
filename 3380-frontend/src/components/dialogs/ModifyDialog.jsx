@@ -88,16 +88,16 @@ function ModifyDialog({ isVisible, setIsVisible, table, fields, selectedRows }) 
 
     const renderHeaderRow = () => (
       <tr>
-        {filteredFields.map(field => <th>{field.name}</th>)}
+        {filteredFields.map((field) => <th key={`modify-header-cell-${field.name}`}>{field.name}</th>)}
       </tr>
     );
 
     const renderRow = (rowIndex) => (
-        <tr>
+        <tr key={`modify-row-${rowIndex}`}>
           {
             form[rowIndex].map(
               (field, fieldIndex) => (
-                <td>
+                <td key={`modify-row-${rowIndex}-cell-${field.key}`}>
                   <InputText
                     key={`modify-row-${rowIndex}-input-${field.key}`}
                     id={`modify-row-${rowIndex}-input-${field.key}`}
