@@ -1,17 +1,6 @@
 const SQLService = require('./SQLService');
 
 class UserService {
-    static async getUser({ userId, email }) {
-        if (!userId && !email) return undefined;
-        const where = userId ?
-            [{ name: 'ID', value: userId }] :
-            [{ name: 'Email', value: email }];
-        const [users] = await SQLService.select('User', [], where);
-        console.log(users);
-        if (users.length) return users[0];
-        return undefined;
-    }
-
     static async login(email) {
         const user = UserService.getUser({ email });
 
@@ -97,6 +86,20 @@ class UserService {
         return SQLService.insert(table, fields);
     }
 
+    static async delete(userId, table, rowParams) {
+        console.log(
+            `UserService.delete invoked! UserId = ${userId}, Table = ${table}, rowParams = ${rowParams}`
+        );
+
+        if (!userId) return SQLService.delete(table, rowParams);
+
+        // Add delete limitations here
+        // Examples:
+        //  - Verify user has permission to delete the specific rows in this specific table
+
+        return SQLService.delete(table, rowParams);
+    }
+
     static async update(userId, table, rowParams) {
         console.log(
             `UserService.update invoked! UserId = ${userId}, Table = ${table}, rowParams = ${rowParams}`
@@ -112,6 +115,16 @@ class UserService {
         return SQLService.update(table, rowParams);
     }
 
+    static async getUser({ userId, email }) {
+        if (!userId && !email) return undefined;
+        const where = userId ?
+            [{ name: 'ID', value: userId }] :
+            [{ name: 'Email', value: email }];
+        const [users] = await SQLService.select('User', [], where);
+        console.log(users);
+        if (users.length) return users[0];
+        return undefined;
+    }
 }
 
 module.exports = UserService;
