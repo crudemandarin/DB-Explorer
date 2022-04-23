@@ -29,7 +29,7 @@ function ConfirmAddDialog({ isVisible, setIsVisible, table, tableForm, fields })
   };
 
   const handleAddClick = async () => {
-    const formParams = Utils.getInsertFieldsParam(tableForm);
+    const formParams = Utils.getFieldsParam(tableForm);
     const data = await add(formParams);
     setResults(data);
     setResultsIsVisible(true);

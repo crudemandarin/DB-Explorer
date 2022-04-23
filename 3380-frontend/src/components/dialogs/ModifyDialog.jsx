@@ -11,6 +11,7 @@ import Utils from '../../util/Utils';
 import { useGlobal } from '../../util/GlobalContext';
 
 import '../../styles/ModifyDialog.css';
+
 class ModifyDialogForm {
   static getEmptyForm(selectedRows) {
     return selectedRows.reduce(
@@ -96,9 +97,10 @@ function ModifyDialog({ isVisible, setIsVisible, table, fields, selectedRows }) 
           {
             form[rowIndex].map(
               (field, fieldIndex) => (
-                <td key={`${field.key}-modify-row`}>
+                <td>
                   <InputText
-                    id={`${field.key}-modify-input`}
+                    key={`modify-row-${rowIndex}-input-${field.key}`}
+                    id={`modify-row-${rowIndex}-input-${field.key}`}
                     placeholder={field.key}
                     value={field.value}
                     className='p-inputtext-sm'

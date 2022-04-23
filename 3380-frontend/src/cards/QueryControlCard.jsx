@@ -57,7 +57,7 @@ function QueryControlCard({ table, setTable, tables, fields, onNewResult }) {
     const [validatedForm, isValid] = Utils.validateForm(tableForm, 'query');
     setTableForm(validatedForm);
     if (isValid) {
-      const formParams = Utils.getFormParams(tableForm);
+      const formParams = Utils.getFieldsParam(tableForm);
       query(formParams);
     }
   };
