@@ -7,15 +7,17 @@ import { Column } from 'primereact/column';
 
 import ApiManager from '../../api/ApiManager';
 import Utils from '../../util/Utils';
+import { useGlobal } from '../../util/GlobalContext';
 
 import ResultsDialog from './ResultsDialog';
 
 function DeleteDialog({ isVisible, setIsVisible, table, fields, selectedRows }) {
+  const { user } = useGlobal();
   const [result, setResult] = useState(undefined);
   const [resultIsVisible, setResultIsVisible] = useState(false);
 
   const deleteRows = (rowParams) => {
-    const params = { table, rowParams: JSON.stringify(rowParams) };
+    const params = { userId: user.ID, table, rowParams: JSON.stringify(rowParams) };
     return ApiManager.delete(params);
   };
 

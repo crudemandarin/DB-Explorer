@@ -8,9 +8,9 @@ import ResultsDialog from './ResultsDialog';
 
 import ApiManager from '../../api/ApiManager';
 import Utils from '../../util/Utils';
+import { useGlobal } from '../../util/GlobalContext';
 
 import '../../styles/ModifyDialog.css';
-
 class ModifyDialogForm {
   static getEmptyForm(selectedRows) {
     return selectedRows.reduce(
@@ -34,18 +34,18 @@ class ModifyDialogForm {
 }
 
 function ModifyDialog({ isVisible, setIsVisible, table, fields, selectedRows }) {
+  const { user } = useGlobal();
   const [form, setForm] = useState({});
   const [result, setResult] = useState(undefined);
   const [resultIsVisible, setResultIsVisible] = useState(false);
 
   useEffect(() => {
-    console.log('form reset')
     setForm(ModifyDialogForm.getEmptyForm(selectedRows));
   }, [selectedRows]);
 
   const modifyRows = (rowParams) => {
     console.log('ModifyDialog.modifyRows invoked! rowParams =', rowParams);
-    const params = { table, rowParams };
+    const params = { userId: user.ID, table, rowParams };
     return ApiManager.update(params);
   };
 
