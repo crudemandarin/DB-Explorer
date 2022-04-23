@@ -59,17 +59,9 @@ function ModifyDialog({ isVisible, setIsVisible, table, fields, selectedRows }) 
     console.log('Modify Clicked! form =', form);
     const rowParams = Object.keys(form).reduce(
       (prevParam, rowIndex) => {
-        const update = form[rowIndex].reduce(
-          (prev, field) => {
-            if (field.prevValue === field.value) return prev;
-            return [...prev, { name: field.key, value: field.value }];
-          }, []
-        );
-
-        const where = Utils.getWhereParams([selectedRows[rowIndex]], fields)[0];
-
+        const update = Utils.getUpdateFieldsRowParam(form[rowIndex]);
+        const where = Utils.getWhereRowParam(selectedRows[rowIndex], fields);
         if (!update.length || !where.length) return prevParam;
-
         return [...prevParam, { update, where }];
       }, []
     );

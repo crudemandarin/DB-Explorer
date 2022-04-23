@@ -42,12 +42,6 @@ class Utils {
     }, {});
   }
 
-  static getFormParams(tableForm) {
-    return Object.keys(tableForm)
-      .map((key) => ({ name: key, value: tableForm[key].value }))
-      .filter((el) => !!el.value);
-  }
-
   static validateForm(tableForm, option) {
     const form = { ...tableForm };
     let formIsValid = true;
@@ -122,15 +116,27 @@ class Utils {
     return foreignKeyFields.map((field) => field.name);
   }
 
-  static getWhereParams(rows, fields) {
+  static getInsertFieldsParam(form) {
+    return Object.keys(form)
+      .filter((key) => !!form[key].value)
+      .map((key) => ({ name: key, value: form[key].value }));
+  }
+
+  static getWhereRowParam(row, fields) {
     const superKeys = Utils.getSuperKeys(fields);
-    return rows.reduce((previous1, row) => {
-      const superKeysOnly = Object.entries(row).reduce((previous2, pair) => {
-        if (superKeys.includes(pair[0])) return [...previous2, { name: pair[0], value: pair[1] }];
-        return previous2;
-      }, []);
-      return [...previous1, superKeysOnly];
+    return Object.entries(row).reduce((prev, pair) => {
+      if (superKeys.includes(pair[0])) return [...prev, { name: pair[0], value: pair[1] }];
+      return prev;
     }, []);
+  }
+
+  static getUpdateFieldsRowParam(rowForm) {
+    return rowForm.reduce(
+      (prev, field) => {
+        if (field.prevValue === field.value) return prev;
+        return [...prev, { name: field.key, value: field.value }];
+      }
+    );
   }
 }
 

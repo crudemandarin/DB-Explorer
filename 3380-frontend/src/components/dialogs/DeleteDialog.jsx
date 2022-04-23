@@ -29,8 +29,8 @@ function DeleteDialog({ isVisible, setIsVisible, table, fields, selectedRows }) 
 
   const handleDeleteClick = async () => {
     console.log('Delete Clicked!');
-    const whereParams = Utils.getWhereParams(selectedRows, fields);
-    const data = await deleteRows(whereParams);
+    const rowParams = selectedRows.map(row => Utils.getWhereRowParam(row, fields));
+    const data = await deleteRows(rowParams);
     console.log(data);
     setResult(data);
     setResultIsVisible(true);
