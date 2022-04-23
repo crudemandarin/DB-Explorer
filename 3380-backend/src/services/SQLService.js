@@ -61,8 +61,10 @@ class SQLService {
 
     static async insert(table, fields) {
         console.log(`SQLService.insert invoked! Table = ${table}, Fields =`, fields);
-        const keys = fields.map((field) => field.name).join(',');
-        const values = fields
+        const tableFields = await SQLService.getTableFields(table);
+        const updatedFields = Utils.getInsertFields(tableFields, fields);
+        const keys = updatedFields.map((field) => field.name).join(',');
+        const values = updatedFields
             .map((field) => field.value)
             .map((value) => (typeof value === 'string' ? `'${value}'` : value))
             .join(',');
