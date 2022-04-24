@@ -63,12 +63,12 @@ class SQLService {
 
     static async insert(table, fields) {
         console.log(`SQLService.insert invoked! Table = ${table}, Fields =`, fields);
-        const tableFields = await SQLService.getTableFields(table);
-        const updatedFields = Utils.getInsertFields(tableFields, fields);
-        const keys = updatedFields.map((field) => field.name).join(',');
-        const values = updatedFields
+        const keys = fields.map((field) => field.name).join(',');
+        const values = fields
             .map((field) => field.value)
-            .map((value) => (typeof value === 'string' ? `'${value}'` : value))
+            .map((value) =>
+                typeof value === 'string' ? `'${Utils.getSQLFormattedString(value)}'` : value
+            )
             .join(',');
         const SQL = `INSERT INTO ${table} (${keys}) VALUES (${values})`;
         const result = await SQLService.query(SQL);
