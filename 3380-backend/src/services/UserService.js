@@ -97,10 +97,10 @@ class UserService {
 
         switch (table.toLowerCase()) {
             case 'workspaceuser': {
-                const workspaceId = fields.find((field) => field.name === 'WorkspaceID');
-                if (!workspaceId) throw { code: 400, message: 'Missing WorkspaceID' };
+                const workspaceIdField = fields.find((field) => field.name === 'WorkspaceID');
+                if (!workspaceIdField) throw { code: 400, message: 'Missing WorkspaceID' };
                 const workspaceUser = workspaceUsers.find(
-                    (temp) => temp.WorkspaceID === workspaceId
+                    (temp) => temp.WorkspaceID === workspaceIdField.value
                 );
                 if (!workspaceUser)
                     throw { code: 403, message: 'User does not have access to resource' };
@@ -109,10 +109,10 @@ class UserService {
                 break;
             }
             case 'department': {
-                const workspaceId = fields.find((field) => field.name === 'WorkspaceID');
-                if (!workspaceId) throw { code: 400, message: 'Missing WorkspaceID' };
+                const workspaceIdField = fields.find((field) => field.name === 'WorkspaceID');
+                if (!workspaceIdField) throw { code: 400, message: 'Missing WorkspaceID' };
                 const workspaceUser = workspaceUsers.find(
-                    (temp) => temp.WorkspaceID === workspaceId
+                    (temp) => temp.WorkspaceID === workspaceIdField.value
                 );
                 if (!workspaceUser)
                     throw { code: 403, message: 'User does not have access to resource' };
@@ -121,10 +121,10 @@ class UserService {
                 break;
             }
             case 'project': {
-                const workspaceId = fields.find((field) => field.name === 'WorkspaceID');
-                if (!workspaceId) throw { code: 400, message: 'Missing WorkspaceID' };
+                const workspaceIdField = fields.find((field) => field.name === 'WorkspaceID');
+                if (!workspaceIdField) throw { code: 400, message: 'Missing WorkspaceID' };
                 const workspaceUser = workspaceUsers.find(
-                    (temp) => temp.WorkspaceID === workspaceId
+                    (temp) => temp.WorkspaceID === workspaceIdField.value
                 );
                 if (!workspaceUser)
                     throw { code: 403, message: 'User does not have access to resource' };
@@ -133,28 +133,46 @@ class UserService {
                 break;
             }
             case 'workspaceuserprojectrelation': {
-                const workspaceUserId = fields.find((field) => field.name === 'WorkspaceUserID');
-                if (!workspaceUserId) throw { code: 400, message: 'Missing WorkspaceUserID' };
+                const workspaceUserIdField = fields.find(
+                    (field) => field.name === 'WorkspaceUserID'
+                );
+                if (!workspaceUserIdField) throw { code: 400, message: 'Missing WorkspaceUserID' };
 
-                const projectId = fields.find((field) => field.name === 'ProjectID');
-                if (!projectId) throw { code: 400, message: 'Missing ProjectID' };
+                const projectIdField = fields.find((field) => field.name === 'ProjectID');
+                if (!projectIdField) throw { code: 400, message: 'Missing ProjectID' };
 
-                const [workspaceId] = await SQLService.query(
+                const [workspaceUserWorkspaceIds] = await SQLService.select(
                     'WorkspaceUser',
                     ['WorkspaceID'],
-                    [{ name: 'ID', value: workspaceUserId }]
+                    [{ name: 'ID', value: workspaceUserIdField.value }]
                 );
-                if (!workspaceId.length) throw 'Invalid workspace user ID';
+                if (!workspaceUserWorkspaceIds.length)
+                    throw {
+                        code: 400,
+                        message: `WorkspaceUser with ID ${workspaceUserIdField.value} does not exist`,
+                    };
+                const workspaceUserWorkspaceId = workspaceUserWorkspaceIds[0].WorkspaceID;
 
-                const [projectWorkspaceId] = await SQLService.query(
-                    'WorkspaceUser',
+                const [projectWorkspaceIds] = await SQLService.select(
+                    'Project',
                     ['WorkspaceID'],
-                    [{ name: 'ID', value: projectId }]
+                    [{ name: 'ID', value: projectIdField.value }]
                 );
-                if (!projectWorkspaceId.length) throw 'Invalid project ID';
+                if (!projectWorkspaceIds.length)
+                    throw {
+                        code: 400,
+                        message: `Project with ID ${projectIdField.value} does not exist`,
+                    };
+                const projectWorkspaceId = projectWorkspaceIds[0].WorkspaceID;
+
+                if (workspaceUserWorkspaceId !== projectWorkspaceId)
+                    throw {
+                        code: 400,
+                        message: `WorkspaceUser and Project belong to different workspaces`,
+                    };
 
                 const workspaceUser = workspaceUsers.find(
-                    (temp) => temp.WorkspaceID === workspaceId
+                    (temp) => temp.WorkspaceID === workspaceUserWorkspaceId
                 );
 
                 if (!workspaceUser)
@@ -165,24 +183,24 @@ class UserService {
                 break;
             }
             case 'task': {
-                const workspaceId = fields.find((field) => field.name === 'WorkspaceID');
-                if (!workspaceId) throw { code: 400, message: 'Missing WorkspaceID' };
+                const workspaceIdField = fields.find((field) => field.name === 'WorkspaceID');
+                if (!workspaceIdField) throw { code: 400, message: 'Missing WorkspaceID' };
 
-                const projectId = fields.find((field) => field.name === 'ProjectID');
-                if (!projectId) throw { code: 400, message: 'Missing ProjectID' };
+                const projectIdField = fields.find((field) => field.name === 'ProjectID');
+                if (!projectIdField) throw { code: 400, message: 'Missing ProjectID' };
 
                 const workspaceUser = workspaceUsers.find(
-                    (temp) => temp.WorkspaceID === workspaceId
+                    (temp) => temp.WorkspaceID === workspaceIdField.value
                 );
 
                 if (!workspaceUser)
                     throw { code: 403, message: 'User does not have access to resource' };
                 if (workspaceUser.Role === 0) {
-                    const [relations] = await SQLService.query(
+                    const [relations] = await SQLService.select(
                         'WorkspaceUserProjectRelation',
                         [],
                         [
-                            { name: 'ProjectID', value: projectId },
+                            { name: 'ProjectID', value: projectIdField.value },
                             { name: 'WorkspaceUserID', value: workspaceUser.ID },
                         ]
                     );
@@ -350,7 +368,6 @@ class UserService {
         if (!userId && !email) return undefined;
         const where = userId ? [{ name: 'ID', value: userId }] : [{ name: 'Email', value: email }];
         const [users] = await SQLService.select('User', [], where);
-        console.log(users);
         if (users.length) return users[0];
         return undefined;
     }
