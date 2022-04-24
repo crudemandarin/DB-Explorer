@@ -24,6 +24,19 @@ function ResultsDialog({ isVisible, setIsVisible, setParentIsVisible, data, tabl
     let headerText = '';
     let bodyJsx = null;
 
+    const renderSQL = () => {
+      if (!SQL) return null;
+      return (
+        <>
+          <div className="p400" style={{ marginBottom: '0.5rem' }}>
+            SQL
+          </div>
+          <div className="textbox">{Utils.getFormattedSQL(SQL)}</div>
+          <div className="spacer" />
+        </>
+      )
+    }
+
     if ('code' in result) {
       headerText = 'Action Failed';
       bodyJsx = (
@@ -33,11 +46,7 @@ function ResultsDialog({ isVisible, setIsVisible, setParentIsVisible, data, tabl
           </div>
           <div className="textbox">{result.message}</div>
           <div className="spacer" />
-          <div className="p400" style={{ marginBottom: '0.5rem' }}>
-            SQL
-          </div>
-          <div className="textbox">{Utils.getFormattedSQL(SQL)}</div>
-          <div className="spacer" />
+          {renderSQL()}
           <div className="p400">Code {result.code}</div>
         </>
       );
