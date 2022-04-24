@@ -3,7 +3,6 @@ import { Button } from 'primereact/button';
 import { MultiSelect } from 'primereact/multiselect';
 import { Calendar } from 'primereact/calendar'
 
-import ApiManager from '../api/ApiManager';
 import { useGlobal } from '../util/GlobalContext';
 import Utils from '../util/Utils';
 
@@ -19,14 +18,11 @@ function ReportControlCard({ onNewResult }) {
     const projectIds = JSON.stringify(form.projects.map(obj => obj.ID));
     const lowerBound = form.lowerBound ? form.lowerBound.toISOString() : '';
     const upperBound = form.upperBound ? form.upperBound.toISOString() : '';
-
-    const params = { userId: user.ID, workspaceIds, projectIds, lowerBound, upperBound };
-    const report = await ApiManager.getReport(params);
-
     const id = Utils.getNewID();
+    const params = { userId: user.ID, workspaceIds, projectIds, lowerBound, upperBound };
     const workspaceTitles = form.workspaces.map(obj => obj.Title);
     const projectTitles = form.projects.map(obj => obj.Title);
-    const result = { id, report, params: { workspaceTitles, projectTitles }, type: 'report' }
+    const result = { id, params, workspaceTitles, projectTitles, type: 'report' }
     onNewResult(result);
   }
 
