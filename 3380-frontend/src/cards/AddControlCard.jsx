@@ -91,10 +91,6 @@ function AddControlCard({ table, setTable, fields }) {
 
   return (
     <div className="card" style={{ width: '100%' }}>
-      <div className="h600">Data Entry Control</div>
-
-      <div className="spacer" />
-
       <div className="flex-wrap" style={{ alignItems: 'center' }}>
         <AutoComplete
           dropdown

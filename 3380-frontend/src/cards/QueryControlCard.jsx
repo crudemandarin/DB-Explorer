@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { AutoComplete } from 'primereact/autocomplete';
 import { Button } from 'primereact/button';
 
-import ApiManager from '../api/ApiManager';
 import Utils from '../util/Utils';
 
 import ControlFieldInput from '../components/ControlFieldInput';
@@ -28,11 +27,10 @@ function QueryControlCard({ table, setTable, fields, onNewResult }) {
 
   const query = async (formParams) => {
     console.log('HomeGroup.query invoked. Form Params =', formParams);
-    const params = { userId: user.ID, table, select: [], where: formParams };
-    const [rows, SQL] = await ApiManager.select(params);
     const id = Utils.getNewID();
     const requestedBy = `${user.FirstName} ${user.LastName}`;
-    const result = { id, table, formParams, fields, rows, SQL, requestedBy, type: 'table' };
+    const params = { userId: user.ID, table, select: [], where: formParams };
+    const result = { id, requestedBy, table, params, fields, type: 'table' };
     onNewResult(result);
   };
 
@@ -94,10 +92,6 @@ function QueryControlCard({ table, setTable, fields, onNewResult }) {
 
   return (
     <div className="card" style={{ width: '100%' }}>
-      <div className="h600">Query Control</div>
-
-      <div className="spacer" />
-
       <div className="flex-wrap" style={{ alignItems: 'center' }}>
         <AutoComplete
           dropdown
