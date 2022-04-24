@@ -1,11 +1,17 @@
+const bcrypt = require('bcrypt');
 const SQLService = require('./SQLService');
 
 class UserService {
-    static async login(email) {
-        const user = UserService.getUser({ email });
+    static async login(email, passwordHash) {
+        console.log(
+            `UserService.login invoked! Email = ${email}, passwordHash = ${passwordHash}`
+        );
 
-        // Add password logic here
+        let user = await UserService.getUser({ email });
+
+        if (passwordHash != user.PasswordHash) return undefined;
         
+        delete user.PasswordHash;
         return user;
     }
 
@@ -121,7 +127,7 @@ class UserService {
             [{ name: 'ID', value: userId }] :
             [{ name: 'Email', value: email }];
         const [users] = await SQLService.select('User', [], where);
-        console.log(users);
+        // console.log(users);
         if (users.length) return users[0];
         return undefined;
     }
