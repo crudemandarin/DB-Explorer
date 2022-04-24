@@ -34,7 +34,7 @@ class ModifyDialogForm {
   }
 }
 
-function ModifyDialog({ isVisible, setIsVisible, table, fields, selectedRows }) {
+function ModifyDialog({ isVisible, setIsVisible, table, fields, selectedRows, onComplete }) {
   const { user } = useGlobal();
   const [form, setForm] = useState({});
   const [result, setResult] = useState(undefined);
@@ -72,6 +72,7 @@ function ModifyDialog({ isVisible, setIsVisible, table, fields, selectedRows }) 
       console.log(data)
       setResult(data);
       setResultIsVisible(true);
+      onComplete();
     } else onHide();
   };
 

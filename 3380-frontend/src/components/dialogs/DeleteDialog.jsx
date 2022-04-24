@@ -11,7 +11,7 @@ import { useGlobal } from '../../util/GlobalContext';
 
 import ResultsDialog from './ResultsDialog';
 
-function DeleteDialog({ isVisible, setIsVisible, table, fields, selectedRows }) {
+function DeleteDialog({ isVisible, setIsVisible, table, fields, selectedRows, onComplete }) {
   const { user } = useGlobal();
   const [result, setResult] = useState(undefined);
   const [resultIsVisible, setResultIsVisible] = useState(false);
@@ -31,9 +31,9 @@ function DeleteDialog({ isVisible, setIsVisible, table, fields, selectedRows }) 
     console.log('Delete Clicked!');
     const rowParams = selectedRows.map(row => Utils.getWhereRowParam(row, fields));
     const data = await deleteRows(rowParams);
-    console.log(data);
     setResult(data);
     setResultIsVisible(true);
+    onComplete();
   };
 
   const renderedTable = useMemo(() => {

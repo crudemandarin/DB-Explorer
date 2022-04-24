@@ -32,6 +32,11 @@ function TableCard({ result, onRemove }) {
     getData();
   }, [getData]);
 
+  const onDialogComplete = () => {
+    getData();
+    setSelectedRows([]);
+  }
+
   const onRemoveClick = () => {
     onRemove(result.id);
   };
@@ -80,6 +85,7 @@ function TableCard({ result, onRemove }) {
     table: result.table,
     fields: result.fields,
     selectedRows,
+    onComplete: onDialogComplete,
   };
 
   const deleteDialogProps = {
@@ -88,6 +94,7 @@ function TableCard({ result, onRemove }) {
     table: result.table,
     fields: result.fields,
     selectedRows,
+    onComplete: onDialogComplete,
   };
 
   const viewSQLDialogProps = {
