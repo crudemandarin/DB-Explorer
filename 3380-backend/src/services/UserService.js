@@ -5,7 +5,7 @@ class UserService {
         const user = UserService.getUser({ email });
 
         // Add password logic here
-        
+
         return user;
     }
 
@@ -15,7 +15,8 @@ class UserService {
             where
         );
 
-        if (!userId) return SQLService.select(table, select, where);
+        const user = await UserService.getUser({ userId });
+        if (user.Role === 1) return SQLService.select(table, select, where);
 
         const selectCurrentUserWorkspaceUserIds = `SELECT ID FROM WorkspaceUser WHERE UserID='${userId}'`;
         const selectCurrentUserWorkspaceIds = `SELECT WorkspaceID FROM WorkspaceUser WHERE UserID='${userId}'`;
@@ -76,7 +77,8 @@ class UserService {
             `UserService.insert invoked! UserId = ${userId}, Table = ${table}, Fields = ${fields}`
         );
 
-        if (!userId) return SQLService.insert(table, fields);
+        const user = await UserService.getUser({ userId });
+        if (user.Role === 1) return SQLService.insert(table, fields);
 
         // Add insert limitations here
         // Examples:
@@ -91,7 +93,8 @@ class UserService {
             `UserService.delete invoked! UserId = ${userId}, Table = ${table}, rowParams = ${rowParams}`
         );
 
-        if (!userId) return SQLService.delete(table, rowParams);
+        const user = await UserService.getUser({ userId });
+        if (user.Role === 1) return SQLService.delete(table, rowParams);
 
         // Add delete limitations here
         // Examples:
@@ -105,7 +108,8 @@ class UserService {
             `UserService.update invoked! UserId = ${userId}, Table = ${table}, rowParams = ${rowParams}`
         );
 
-        if (!userId) return SQLService.update(table, rowParams);
+        const user = await UserService.getUser({ userId });
+        if (user.Role === 1) return SQLService.update(table, rowParams);
 
         // Add update limitations here
         // Examples:
@@ -117,9 +121,7 @@ class UserService {
 
     static async getUser({ userId, email }) {
         if (!userId && !email) return undefined;
-        const where = userId ?
-            [{ name: 'ID', value: userId }] :
-            [{ name: 'Email', value: email }];
+        const where = userId ? [{ name: 'ID', value: userId }] : [{ name: 'Email', value: email }];
         const [users] = await SQLService.select('User', [], where);
         console.log(users);
         if (users.length) return users[0];

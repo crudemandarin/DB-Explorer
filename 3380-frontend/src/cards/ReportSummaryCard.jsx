@@ -150,8 +150,9 @@ function ReportSummaryCard({ result, onRemove }) {
 
   const getData = useCallback(
     async () => {
-      const reportData = await ApiManager.getReport(params);
-      setReport(reportData);
+      ApiManager.getReport(params)
+      .then(reportData => { setReport(reportData); })
+      .catch(() => { console.log('ReportSummaryCard.getData: Failed to load'); });
     }, [params]
   );
 
