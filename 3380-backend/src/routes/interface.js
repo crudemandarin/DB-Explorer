@@ -113,6 +113,9 @@ router.delete('/query/data', async (req, res) => {
         if ('code' in err && 'sqlMessage' in err && 'sql' in err) {
             return res.status(400).json({ code: err.code, message: err.sqlMessage, sql: err.sql });
         }
+        if ('code' in err && 'message' in err) {
+            return res.status(err.code).json(err);
+        }
     }
 
     return res.status(500).json({ message: 'Failed to delete data' });

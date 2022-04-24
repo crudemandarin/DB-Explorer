@@ -238,16 +238,18 @@ class UserService {
             [],
             [{ name: 'UserID', value: userId }]
         );
-        const params = rowParams[0];
 
+        const params = rowParams[0];
         switch (table.toLowerCase()) {
             case 'workspace': {
                 const workspaceId = params[0].value;
                 const workspaceUser = workspaceUsers.find(
                     (temp) => temp.WorkspaceID === workspaceId
                 );
-                if (!workspaceUser) throw 'No access';
-                if (workspaceUser.Role !== 2) throw 'No access';
+                if (!workspaceUser)
+                    throw { code: 403, message: 'User does not have access to resource' };
+                if (workspaceUser.Role !== 2)
+                    throw { code: 403, message: 'User does not have access to resource' };
                 break;
             }
             case 'workspaceuser': {
@@ -261,8 +263,11 @@ class UserService {
                 const workspaceUser = workspaceUsers.find(
                     (temp) => temp.WorkspaceID === workspaceId
                 );
-                if (!workspaceUser) throw 'No access';
-                if (workspaceUser.Role < 1) throw 'No access';
+
+                if (!workspaceUser)
+                    throw { code: 403, message: 'User does not have access to resource' };
+                if (workspaceUser.Role < 1)
+                    throw { code: 403, message: 'User does not have access to resource' };
                 break;
             }
             case 'department': {
@@ -276,8 +281,11 @@ class UserService {
                 const workspaceUser = workspaceUsers.find(
                     (temp) => temp.WorkspaceID === workspaceId
                 );
-                if (!workspaceUser) throw 'No access';
-                if (workspaceUser.Role < 1) throw 'No access';
+
+                if (!workspaceUser)
+                    throw { code: 403, message: 'User does not have access to resource' };
+                if (workspaceUser.Role < 1)
+                    throw { code: 403, message: 'User does not have access to resource' };
                 break;
             }
             case 'project': {
@@ -291,8 +299,11 @@ class UserService {
                 const workspaceUser = workspaceUsers.find(
                     (temp) => temp.WorkspaceID === workspaceId
                 );
-                if (!workspaceUser) throw 'No access';
-                if (workspaceUser.Role < 1) throw 'No access';
+
+                if (!workspaceUser)
+                    throw { code: 403, message: 'User does not have access to resource' };
+                if (workspaceUser.Role < 1)
+                    throw { code: 403, message: 'User does not have access to resource' };
                 break;
             }
             case 'workspaceuserprojectrelation': {
@@ -306,8 +317,10 @@ class UserService {
                 const workspaceUser = workspaceUsers.find(
                     (temp) => temp.WorkspaceID === workspaceId
                 );
-                if (!workspaceUser) throw 'No access';
-                if (workspaceUser.Role < 1) throw 'No access';
+                if (!workspaceUser)
+                    throw { code: 403, message: 'User does not have access to resource' };
+                if (workspaceUser.Role < 1)
+                    throw { code: 403, message: 'User does not have access to resource' };
                 break;
             }
             case 'task': {
@@ -320,10 +333,13 @@ class UserService {
                 const task = tasks[0];
                 const workspaceId = task.WorkspaceID;
                 const projectId = task.ProjectID;
+
                 const workspaceUser = workspaceUsers.find(
                     (temp) => temp.WorkspaceID === workspaceId
                 );
-                if (!workspaceUser) throw 'No access';
+
+                if (!workspaceUser)
+                    throw { code: 403, message: 'User does not have access to resource' };
                 if (workspaceUser.Role === 0) {
                     const [relations] = await SQLService.select(
                         'WorkspaceUserProjectRelation',
@@ -333,7 +349,23 @@ class UserService {
                             { name: 'WorkspaceUserID', value: workspaceUser.ID },
                         ]
                     );
-                    if (relations.length === 0) throw 'No access';
+                    if (relations.length === 0)
+                        throw { code: 403, message: 'User does not have access to resource' };
+                }
+
+                if (!workspaceUser)
+                    throw { code: 403, message: 'User does not have access to resource' };
+                if (workspaceUser.Role === 0) {
+                    const [relations] = await SQLService.select(
+                        'WorkspaceUserProjectRelation',
+                        [],
+                        [
+                            { name: 'ProjectID', value: projectId },
+                            { name: 'WorkspaceUserID', value: workspaceUser.ID },
+                        ]
+                    );
+                    if (relations.length === 0)
+                        throw { code: 403, message: 'User does not have access to resource' };
                 }
                 break;
             }
