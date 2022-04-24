@@ -1,3 +1,4 @@
+/* eslint-disable no-throw-literal */
 const SQLService = require('./SQLService');
 
 class UserService {
@@ -84,57 +85,114 @@ class UserService {
         // Examples:
         //  - Verify user has access to Foreign Keys they attempt to insert with
         //  - Verify user has permission to insert to specific table
-        
-        const [workspaceUsers] = await SQLService.select('WorkspaceUser', [], [ { name: "UserID", value: userId } ]);
-        const params = rowParams[0];
+
+        const [workspaceUsers] = await SQLService.select(
+            'WorkspaceUser',
+            [],
+            [{ name: 'UserID', value: userId }]
+        );
 
         switch (table.toLowerCase()) {
             case 'workspaceuser': {
-                const workspaceId = fields.find(field => field.name === 'WorkspaceID');
-                if (!workspaceId) throw 'Invalid request';
-                const workspaceUser = workspaceUsers.find((temp) => temp.WorkspaceID === workspaceId);
-                if (!workspaceUser) throw 'No access';
-                if (workspaceUser.Role < 1) throw 'No access';
+                const workspaceId = fields.find((field) => field.name === 'WorkspaceID');
+                if (!workspaceId) throw { code: 400, message: 'Missing WorkspaceID' };
+                const workspaceUser = workspaceUsers.find(
+                    (temp) => temp.WorkspaceID === workspaceId
+                );
+                if (!workspaceUser)
+                    throw { code: 403, message: 'User does not have access to resource' };
+                if (workspaceUser.Role < 1)
+                    throw { code: 403, message: 'User does not have access to resource' };
+                break;
             }
             case 'department': {
-                const workspaceId = fields.find(field => field.name === 'WorkspaceID');
-                if (!workspaceId) throw 'Invalid request';
-                const workspaceUser = workspaceUsers.find((temp) => temp.WorkspaceID === workspaceId);
-                if (!workspaceUser) throw 'No access';
-                if (workspaceUser.Role < 1) throw 'No access';
+                const workspaceId = fields.find((field) => field.name === 'WorkspaceID');
+                if (!workspaceId) throw { code: 400, message: 'Missing WorkspaceID' };
+                const workspaceUser = workspaceUsers.find(
+                    (temp) => temp.WorkspaceID === workspaceId
+                );
+                if (!workspaceUser)
+                    throw { code: 403, message: 'User does not have access to resource' };
+                if (workspaceUser.Role < 1)
+                    throw { code: 403, message: 'User does not have access to resource' };
+                break;
             }
             case 'project': {
-                const workspaceId = fields.find(field => field.name === 'WorkspaceID');
-                if (!workspaceId) throw 'Invalid request';
-                const workspaceUser = workspaceUsers.find((temp) => temp.WorkspaceID === workspaceId);
-                if (!workspaceUser) throw 'No access';
-                if (workspaceUser.Role < 1) throw 'No access';
+                const workspaceId = fields.find((field) => field.name === 'WorkspaceID');
+                if (!workspaceId) throw { code: 400, message: 'Missing WorkspaceID' };
+                const workspaceUser = workspaceUsers.find(
+                    (temp) => temp.WorkspaceID === workspaceId
+                );
+                if (!workspaceUser)
+                    throw { code: 403, message: 'User does not have access to resource' };
+                if (workspaceUser.Role < 1)
+                    throw { code: 403, message: 'User does not have access to resource' };
+                break;
             }
             case 'workspaceuserprojectrelation': {
-                const workspaceUserId = fields.find(field => field.name === "WorkspaceUserID");
-                const projectId = fields.find(field => field.name === "ProjectID");
-                const [workspaceId] = await SQLService.query('WorkspaceUser', ['WorkspaceID'], [{ name: 'ID', value: workspaceUserId }]);
+                const workspaceUserId = fields.find((field) => field.name === 'WorkspaceUserID');
+                if (!workspaceUserId) throw { code: 400, message: 'Missing WorkspaceUserID' };
+
+                const projectId = fields.find((field) => field.name === 'ProjectID');
+                if (!projectId) throw { code: 400, message: 'Missing ProjectID' };
+
+                const [workspaceId] = await SQLService.query(
+                    'WorkspaceUser',
+                    ['WorkspaceID'],
+                    [{ name: 'ID', value: workspaceUserId }]
+                );
                 if (!workspaceId.length) throw 'Invalid workspace user ID';
-                const [projectWorkspaceId] = await SQLService.query('WorkspaceUser', ['WorkspaceID'], [{ name: 'ID', value: projectId }]);
+
+                const [projectWorkspaceId] = await SQLService.query(
+                    'WorkspaceUser',
+                    ['WorkspaceID'],
+                    [{ name: 'ID', value: projectId }]
+                );
                 if (!projectWorkspaceId.length) throw 'Invalid project ID';
 
-                const workspaceUser = workspaceUsers.find((temp) => temp.WorkspaceID === workspaceId);
-                if (!workspaceUser) throw 'No access';
-                if (workspaceUser.Role < 1) throw 'No access';
+                const workspaceUser = workspaceUsers.find(
+                    (temp) => temp.WorkspaceID === workspaceId
+                );
+
+                if (!workspaceUser)
+                    throw { code: 403, message: 'User does not have access to resource' };
+                if (workspaceUser.Role < 1)
+                    throw { code: 403, message: 'User does not have access to resource' };
+
+                break;
             }
             case 'task': {
-                const workspaceId = params[0].value;
-                const projectId = params[0].value;
+                const workspaceId = fields.find((field) => field.name === 'WorkspaceID');
+                if (!workspaceId) throw { code: 400, message: 'Missing WorkspaceID' };
 
-                const workspaceUser = workspaceUsers.find((temp) => temp.WorkspaceID === workspaceId);
-                if (!workspaceUser) throw 'No access';
+                const projectId = fields.find((field) => field.name === 'ProjectID');
+                if (!projectId) throw { code: 400, message: 'Missing ProjectID' };
+
+                const workspaceUser = workspaceUsers.find(
+                    (temp) => temp.WorkspaceID === workspaceId
+                );
+
+                if (!workspaceUser)
+                    throw { code: 403, message: 'User does not have access to resource' };
                 if (workspaceUser.Role === 0) {
-                    const [relations] = await SQLService.query('WorkspaceUserProjectRelation', [], [{ name: 'ProjectID', value: projectId }, { name: 'WorkspaceUserID', value: workspaceUser.ID }]);
-                    if (relations.length === 0) throw 'No access';
+                    const [relations] = await SQLService.query(
+                        'WorkspaceUserProjectRelation',
+                        [],
+                        [
+                            { name: 'ProjectID', value: projectId },
+                            { name: 'WorkspaceUserID', value: workspaceUser.ID },
+                        ]
+                    );
+                    if (relations.length === 0)
+                        throw { code: 403, message: 'User does not have access to resource' };
                 }
+                break;
             }
             case 'tag': {
-                
+                break;
+            }
+            default: {
+                break;
             }
         }
 
@@ -154,63 +212,115 @@ class UserService {
         //  - Verify user has permission to delete the specific rows in this specific table
 
         // const selectCurrentUserWorkspaceUsers = `SELECT * FROM WorkspaceUser WHERE UserID='${userId}'`;
-        const [workspaceUsers] = await SQLService.select('WorkspaceUser', [], [ { name: "UserID", value: userId } ]);
+        const [workspaceUsers] = await SQLService.select(
+            'WorkspaceUser',
+            [],
+            [{ name: 'UserID', value: userId }]
+        );
         const params = rowParams[0];
-        
+
         switch (table.toLowerCase()) {
             case 'workspace': {
                 const workspaceId = params[0].value;
-                const workspaceUser = workspaceUsers.find((temp) => temp.WorkspaceID === workspaceId);
+                const workspaceUser = workspaceUsers.find(
+                    (temp) => temp.WorkspaceID === workspaceId
+                );
                 if (!workspaceUser) throw 'No access';
                 if (workspaceUser.Role !== 2) throw 'No access';
+                break;
             }
             case 'workspaceuser': {
                 const workspaceUserId = params[0].value;
-                const [workspaceIds] = await SQLService.select('WorkspaceUser', ['WorkspaceID'], [{ name: 'ID', value: workspaceUserId }]);
+                const [workspaceIds] = await SQLService.select(
+                    'WorkspaceUser',
+                    ['WorkspaceID'],
+                    [{ name: 'ID', value: workspaceUserId }]
+                );
                 const workspaceId = workspaceIds[0];
-                const workspaceUser = workspaceUsers.find((temp) => temp.WorkspaceID === workspaceId);
+                const workspaceUser = workspaceUsers.find(
+                    (temp) => temp.WorkspaceID === workspaceId
+                );
                 if (!workspaceUser) throw 'No access';
                 if (workspaceUser.Role < 1) throw 'No access';
+                break;
             }
             case 'department': {
                 const departmentId = params[0].value;
-                const [workspaceIds] = await SQLService.select('Department', ['WorkspaceID'], [{ name: 'ID', value: departmentId }]);
+                const [workspaceIds] = await SQLService.select(
+                    'Department',
+                    ['WorkspaceID'],
+                    [{ name: 'ID', value: departmentId }]
+                );
                 const workspaceId = workspaceIds[0];
-                const workspaceUser = workspaceUsers.find((temp) => temp.WorkspaceID === workspaceId);
+                const workspaceUser = workspaceUsers.find(
+                    (temp) => temp.WorkspaceID === workspaceId
+                );
                 if (!workspaceUser) throw 'No access';
                 if (workspaceUser.Role < 1) throw 'No access';
+                break;
             }
             case 'project': {
                 const projectId = params[0].value;
-                const [workspaceIds] = await SQLService.select('Project', ['WorkspaceID'], [{ name: 'ID', value: projectId }]);
+                const [workspaceIds] = await SQLService.select(
+                    'Project',
+                    ['WorkspaceID'],
+                    [{ name: 'ID', value: projectId }]
+                );
                 const workspaceId = workspaceIds[0];
-                const workspaceUser = workspaceUsers.find((temp) => temp.WorkspaceID === workspaceId);
+                const workspaceUser = workspaceUsers.find(
+                    (temp) => temp.WorkspaceID === workspaceId
+                );
                 if (!workspaceUser) throw 'No access';
                 if (workspaceUser.Role < 1) throw 'No access';
+                break;
             }
             case 'workspaceuserprojectrelation': {
-                const workspaceUserId = params.find((temp) => temp.name === "WorkspaceUserID");
-                const [workspaceIds] = await SQLService.select('WorkspaceUser', ['WorkspaceID'], [{ name: 'ID', value: workspaceUserId }]);
+                const workspaceUserId = params.find((temp) => temp.name === 'WorkspaceUserID');
+                const [workspaceIds] = await SQLService.select(
+                    'WorkspaceUser',
+                    ['WorkspaceID'],
+                    [{ name: 'ID', value: workspaceUserId }]
+                );
                 const workspaceId = workspaceIds[0];
-                const workspaceUser = workspaceUsers.find((temp) => temp.WorkspaceID === workspaceId);
+                const workspaceUser = workspaceUsers.find(
+                    (temp) => temp.WorkspaceID === workspaceId
+                );
                 if (!workspaceUser) throw 'No access';
                 if (workspaceUser.Role < 1) throw 'No access';
+                break;
             }
             case 'task': {
                 const taskId = params[0].value;
-                const [tasks] = await SQLService.select('Task', ['WorkspaceID', 'ProjectID'], [{ name: 'ID', value: taskId }]);
-                const task = tasks[0]
+                const [tasks] = await SQLService.select(
+                    'Task',
+                    ['WorkspaceID', 'ProjectID'],
+                    [{ name: 'ID', value: taskId }]
+                );
+                const task = tasks[0];
                 const workspaceId = task.WorkspaceID;
                 const projectId = task.ProjectID;
-                const workspaceUser = workspaceUsers.find((temp) => temp.WorkspaceID === workspaceId);
+                const workspaceUser = workspaceUsers.find(
+                    (temp) => temp.WorkspaceID === workspaceId
+                );
                 if (!workspaceUser) throw 'No access';
                 if (workspaceUser.Role === 0) {
-                    const [relations] = await SQLService.select('WorkspaceUserProjectRelation', [], [{ name: 'ProjectID', value: projectId }, { name: 'WorkspaceUserID', value: workspaceUser.ID }]);
+                    const [relations] = await SQLService.select(
+                        'WorkspaceUserProjectRelation',
+                        [],
+                        [
+                            { name: 'ProjectID', value: projectId },
+                            { name: 'WorkspaceUserID', value: workspaceUser.ID },
+                        ]
+                    );
                     if (relations.length === 0) throw 'No access';
                 }
+                break;
             }
             case 'tag': {
-                
+                break;
+            }
+            default: {
+                break;
             }
         }
 
