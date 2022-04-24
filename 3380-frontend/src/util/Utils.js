@@ -2,7 +2,10 @@ const integerRG = /^$|^[+-]?\d+$/;
 const floatRG = /^$|^[+-]?\d+(\.\d+)?$/;
 
 class Utils {
-  static getProtectedRows() {
+  static getProtectedFields(table) {
+    if (table.toLowerCase() === 'task')
+      return ['ID', 'CreatedBy', 'UpdatedBy', 'CreatedAt', 'LastUpdated', 'TimeClosed'];
+
     return [
       'ID',
       'CreatedBy',
@@ -23,10 +26,10 @@ class Utils {
     return SQL;
   }
 
-  static getEmptyForm(fields, opt) {
+  static getEmptyForm(table, fields, opt) {
     const addMode = opt === 'add';
     return fields.reduce((obj, item) => {
-      if (addMode && Utils.getProtectedRows().includes(item.name)) return obj;
+      if (addMode && Utils.getProtectedFields(table).includes(item.name)) return obj;
       return {
         ...obj,
         [item.name]: {

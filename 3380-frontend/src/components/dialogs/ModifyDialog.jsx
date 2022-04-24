@@ -13,13 +13,13 @@ import { useGlobal } from '../../util/GlobalContext';
 import '../../styles/ModifyDialog.css';
 
 class ModifyDialogForm {
-  static getEmptyForm(selectedRows) {
+  static getEmptyForm(table, selectedRows) {
     return selectedRows.reduce(
       (prev, row, index) => {
         const fields = [];
         Object.keys(row).forEach(
           key => {
-            if (!Utils.getProtectedRows().includes(key)) {
+            if (!Utils.getProtectedFields(table).includes(key)) {
               fields.push({
                 key,
                 value: row[key] || '',
@@ -41,8 +41,8 @@ function ModifyDialog({ isVisible, setIsVisible, table, fields, selectedRows, on
   const [resultIsVisible, setResultIsVisible] = useState(false);
 
   useEffect(() => {
-    setForm(ModifyDialogForm.getEmptyForm(selectedRows));
-  }, [selectedRows]);
+    setForm(ModifyDialogForm.getEmptyForm(table, selectedRows));
+  }, [table, selectedRows]);
 
   const modifyRows = (rowParams) => {
     console.log('ModifyDialog.modifyRows invoked! rowParams =', rowParams);
@@ -85,7 +85,7 @@ function ModifyDialog({ isVisible, setIsVisible, table, fields, selectedRows, on
   const renderTable = () => {
     if (!isVisible) return null;
 
-    const filteredFields = fields.filter(field => !Utils.getProtectedRows().includes(field.name));
+    const filteredFields = fields.filter(field => !Utils.getProtectedFields(table).includes(field.name));
 
     const renderHeaderRow = () => (
       <tr>
@@ -154,7 +154,7 @@ function ModifyDialog({ isVisible, setIsVisible, table, fields, selectedRows, on
         header={`Modify "${table}" table`}
         footer={footer}
         visible={isVisible}
-        style={{ width: '50vw' }}
+        style={{ width: '75vw' }}
         modal
         onHide={onHide}
       >

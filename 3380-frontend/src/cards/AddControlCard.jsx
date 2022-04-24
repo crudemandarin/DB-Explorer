@@ -24,9 +24,9 @@ function AddControlCard({ table, setTable, fields }) {
   }, [tables]);
 
   useEffect(() => {
-    setTableForm(Utils.getEmptyForm(fields, 'add'));
+    setTableForm(Utils.getEmptyForm(table, fields, 'add'));
     setResetFlag(false);
-  }, [fields, setTableForm, setResetFlag]);
+  }, [table, fields, setTableForm, setResetFlag]);
 
   const searchTable = () => {
     let filteredTables = [...tables];
@@ -52,7 +52,7 @@ function AddControlCard({ table, setTable, fields }) {
   };
 
   const handleResetClick = () => {
-    setTableForm(Utils.getEmptyForm(fields, 'add'));
+    setTableForm(Utils.getEmptyForm(table, fields, 'add'));
     setResetFlag(false);
   };
 

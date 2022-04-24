@@ -21,9 +21,9 @@ function QueryControlCard({ table, setTable, fields, onNewResult }) {
   }, [tables]);
 
   useEffect(() => {
-    setTableForm(Utils.getEmptyForm(fields));
+    setTableForm(Utils.getEmptyForm(table, fields));
     setResetFlag(false);
-  }, [fields, setTableForm, setResetFlag]);
+  }, [table, fields, setTableForm, setResetFlag]);
 
   const query = async (formParams) => {
     console.log('HomeGroup.query invoked. Form Params =', formParams);
@@ -61,7 +61,7 @@ function QueryControlCard({ table, setTable, fields, onNewResult }) {
   };
 
   const handleResetClick = () => {
-    setTableForm(Utils.getEmptyForm(fields));
+    setTableForm(Utils.getEmptyForm(table, fields));
     setResetFlag(false);
   };
 
