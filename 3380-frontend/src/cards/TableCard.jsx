@@ -11,6 +11,8 @@ import ViewSQLDialog from '../components/dialogs/ViewSQLDialog';
 import ApiManager from '../api/ApiManager';
 
 function TableCard({ result, onRemove }) {
+  const { id, table, params, fields, requestedBy } = result;
+
   const [rows, setRows] = useState([]);
   const [SQL, setSQL] = useState('');
   const [selectedRows, setSelectedRows] = useState([]);
@@ -22,10 +24,14 @@ function TableCard({ result, onRemove }) {
 
   const getData = useCallback(
     async () => {
-      const [rowData, SQLData] = await ApiManager.select(result.params);
-      setRows(rowData);
-      setSQL(SQLData);
-    }, [result]
+      ApiManager.select(params)
+      .then(data => {
+        const [rowData, SQLData] = data;
+        setRows(rowData);
+        setSQL(SQLData);
+      })
+      .catch(() => { console.log('TableCard.getData: Failed to load'); });
+    }, [params]
   );
 
   useEffect(() => {
@@ -38,7 +44,7 @@ function TableCard({ result, onRemove }) {
   }
 
   const onRemoveClick = () => {
-    onRemove(result.id);
+    onRemove(id);
   };
 
   const onExportClick = () => {
@@ -46,44 +52,41 @@ function TableCard({ result, onRemove }) {
   };
 
   const handleModifyOnClick = () => {
-    console.log('Modify Clicked. Selected Rows =', selectedRows);
     setModifyIsVisible(true);
   };
 
   const handleDeleteOnClick = () => {
-    console.log('Delete Clicked. Selected Rows =', selectedRows);
     setDeleteIsVisible(true);
   };
 
   const handleViewSQLClick = () => {
-    console.log('Handle View SQL Click');
     setViewSQLIsVisible(true);
   }
 
   const title = useMemo(() => {
-    let output = `Table ${result.table}`;
-    if (Array.isArray(result.params.where) && result.params.where.length > 0) {
+    let output = `Table ${table}`;
+    if (Array.isArray(params.where) && params.where.length > 0) {
       let suffix = '';
-      result.params.where.forEach((param) => {
+      params.where.forEach((param) => {
         suffix += `, ${param.name}=${param.value}`;
       });
       output += suffix;
     }
     return output;
-  }, [result]);
+  }, [table, params]);
 
   const renderedColumns = useMemo(() => {
-    if (!(Array.isArray(result.fields) && result.fields.length !== 0)) return null;
-    return result.fields.map((field) => (
+    if (!(Array.isArray(fields) && fields.length !== 0)) return null;
+    return fields.map((field) => (
       <Column field={field.name} header={field.name} key={field.name} />
     ));
-  }, [result]);
+  }, [fields]);
 
   const modifyDialogProps = {
     isVisible: modifyIsVisible,
     setIsVisible: setModifyIsVisible,
-    table: result.table,
-    fields: result.fields,
+    table,
+    fields,
     selectedRows,
     onComplete: onDialogComplete,
   };
@@ -91,8 +94,8 @@ function TableCard({ result, onRemove }) {
   const deleteDialogProps = {
     isVisible: deleteIsVisible,
     setIsVisible: setDeleteIsVisible,
-    table: result.table,
-    fields: result.fields,
+    table,
+    fields,
     selectedRows,
     onComplete: onDialogComplete,
   };
@@ -109,7 +112,7 @@ function TableCard({ result, onRemove }) {
       <div className="flex space-between">
         <div className="truncated" style={{ maxWidth: '80%' }}>
           <span className="h600">
-            Query {result.id} {' | '}
+            Query {id} {' | '}
           </span>
           <span className="p400">{title}</span>
         </div>
@@ -121,7 +124,7 @@ function TableCard({ result, onRemove }) {
         />
       </div>
 
-      <div className='p400'>Requested by {result.requestedBy}</div>
+      <div className='p400'>Requested by {requestedBy}</div>
       <div className='p400'>{rows.length} results found</div>
 
       <div className="spacer" />

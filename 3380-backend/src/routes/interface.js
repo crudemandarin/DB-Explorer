@@ -47,6 +47,7 @@ router.post('/query', async (req, res) => {
     console.log('POST /interface/query');
 
     const { userId, table, select = [], where = [] } = req.body;
+    if (!userId) return res.status(400).json({ message: 'Missing `userId` in body' });
     if (!table) return res.status(400).json({ message: 'Missing `table` in body' });
 
     try {
@@ -67,7 +68,7 @@ router.post('/query/data', async (req, res) => {
     console.log('POST /interface/query/data');
 
     const { userId, table, fields } = req.body;
-
+    if (!userId) return res.status(400).json({ message: 'Missing `userId` in body' });
     if (!table) return res.status(400).json({ message: 'Missing `table` in body' });
     if (!fields) return res.status(400).json({ message: 'Missing `fields` in body' });
     if (!Array.isArray(fields))
@@ -92,6 +93,7 @@ router.delete('/query/data', async (req, res) => {
     console.log('DELETE /interface/query/data');
 
     const { userId, table, rowParams } = req.query;
+    if (!userId) return res.status(400).json({ message: 'Missing `userId` in query parameters' });
     if (!table) return res.status(400).json({ message: 'Missing `table` in query parameters' });
     if (!rowParams)
         return res.status(400).json({ message: 'Missing `rowParams` in query parameters' });
@@ -118,7 +120,7 @@ router.put('/query/data', async (req, res) => {
     console.log('PUT /interface/query/data');
 
     const { userId, table, rowParams } = req.body;
-
+    if (!userId) return res.status(400).json({ message: 'Missing `userId` in body' });
     if (!table) return res.status(400).json({ message: 'Missing `table` in body' });
     if (!rowParams) return res.status(400).json({ message: 'Missing `rowParams` in body' });
     if (!Array.isArray(rowParams))
