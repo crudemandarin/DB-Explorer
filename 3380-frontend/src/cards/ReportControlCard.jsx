@@ -70,9 +70,7 @@ function ReportControlCard({ onNewResult }) {
   
   return (
     <div className="card" style={{ width: '100%' }}>
-      <div className="h600">Request Report</div>
-
-      <div className='flex align-center my-3'>
+      <div className='flex align-center'>
         <div className="p400 mr-3"> Workspace Scope </div>
 
         <MultiSelect

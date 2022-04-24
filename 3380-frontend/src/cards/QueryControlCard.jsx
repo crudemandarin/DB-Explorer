@@ -92,10 +92,6 @@ function QueryControlCard({ table, setTable, fields, onNewResult }) {
 
   return (
     <div className="card" style={{ width: '100%' }}>
-      <div className="h600">Query Control</div>
-
-      <div className="spacer" />
-
       <div className="flex-wrap" style={{ alignItems: 'center' }}>
         <AutoComplete
           dropdown
