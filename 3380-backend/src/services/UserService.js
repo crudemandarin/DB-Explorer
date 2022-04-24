@@ -1,4 +1,5 @@
 const SQLService = require('./SQLService');
+const Utils = require('../Utils');
 
 class UserService {
     static async login(email) {
@@ -77,15 +78,17 @@ class UserService {
             `UserService.insert invoked! UserId = ${userId}, Table = ${table}, Fields = ${fields}`
         );
 
+        const updatedFields = await UserService.getUpdatedFields(fields, userId, table);
+
         const user = await UserService.getUser({ userId });
-        if (user.Role === 1) return SQLService.insert(table, fields);
+        if (user.Role === 1) return SQLService.insert(table, updatedFields);
 
         // Add insert limitations here
         // Examples:
         //  - Verify user has access to Foreign Keys they attempt to insert with
         //  - Verify user has permission to insert to specific table
 
-        return SQLService.insert(table, fields);
+        return SQLService.insert(table, updatedFields);
     }
 
     static async delete(userId, table, rowParams) {
@@ -126,6 +129,60 @@ class UserService {
         console.log(users);
         if (users.length) return users[0];
         return undefined;
+    }
+
+    static async getUpdatedFields(fields, userId, table) {
+        const tableFields = await SQLService.getTableFields(table);
+
+        let userIdParam = userId;
+
+        const workspaceIdField = fields.find((field) => field.name === 'WorkspaceID');
+
+        if (workspaceIdField && table !== 'Workspace') {
+            const [workspaceUserIds] = await SQLService.select(
+                'WorkspaceUser',
+                ['ID'],
+                [
+                    { name: 'UserID', value: userId },
+                    { name: 'WorkspaceID', value: workspaceIdField.value },
+                ]
+            );
+            if (workspaceUserIds.length) {
+                const workspaceUserId = workspaceUserIds[0].ID;
+                console.log(workspaceUserId);
+                userIdParam = workspaceUserId;
+            }
+        }
+
+        return tableFields.reduce((previous, tableField) => {
+            if (tableField.isPrimaryKey) {
+                return [...previous, { name: tableField.name, value: Utils.getTableID() }];
+            }
+
+            if (['CreatedAt', 'LastUpdated'].includes(tableField.name)) {
+                const value = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                return [
+                    ...previous,
+                    {
+                        name: tableField.name,
+                        value,
+                    },
+                ];
+            }
+
+            if (['CreatedBy', 'UpdatedBy'].includes(tableField.name)) {
+                return [...previous, { name: tableField.name, value: userIdParam }];
+            }
+
+            if (Utils.getProtectedFields(table).includes(tableField.name)) {
+                return previous;
+            }
+
+            const field = fields.find((obj) => obj.name === tableField.name);
+            if (field) return [...previous, field];
+
+            return previous;
+        }, []);
     }
 }
 
