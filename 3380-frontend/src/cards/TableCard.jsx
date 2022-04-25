@@ -30,7 +30,7 @@ function TableCard({ result, onRemove }) {
         setRows(rowData);
         setSQL(SQLData);
       })
-      .catch(() => { console.log('TableCard.getData: Failed to load'); });
+      .catch(() => {});
     }, [params]
   );
 

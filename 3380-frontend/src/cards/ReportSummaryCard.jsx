@@ -152,7 +152,7 @@ function ReportSummaryCard({ result, onRemove }) {
     async () => {
       ApiManager.getReport(params)
       .then(reportData => { setReport(reportData); })
-      .catch(() => { console.log('ReportSummaryCard.getData: Failed to load'); });
+      .catch(() => {});
     }, [params]
   );
 
