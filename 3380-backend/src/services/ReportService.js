@@ -3,7 +3,7 @@ const SQLService = require('./SQLService');
 
 class ReportService {
     static async getReport(userId, workspaceIds, projectIds, lowerBound, upperBound) {
-        const { workspaces, projects, tasks, users, workspaceUsers, taskFields, requestedBy } =
+        const { workspaces, projects, tasks, users, workspaceUsers, taskFields, requestedBy, departments } =
             await ReportService.getData(userId, workspaceIds, projectIds);
 
         const filteredTasks = ReportService.getDateFilteredTasks(tasks, lowerBound, upperBound);
@@ -12,7 +12,8 @@ class ReportService {
             workspaces,
             projects,
             users,
-            workspaceUsers
+            workspaceUsers,
+            departments
         );
 
         const { embeddedWorkspaces, numWorkspaces, numProjects, numTasks, requestedAt } =
@@ -39,6 +40,7 @@ class ReportService {
         const [workspaces] = await ReportService.getWorkspaces(userId, workspaceIds);
         const [projects] = await ReportService.getProjects(userId, projectIds, workspaceIds);
         const [tasks] = await ReportService.getTasks(userId, projectIds, workspaceIds);
+        const [departments] = await ReportService.getDepartments(userId, projectIds, workspaceIds);
         const [users] = await SQLService.select('User', [], []);
         const [workspaceUsers] = await SQLService.select('WorkspaceUser', [], []);
         const taskFields = await SQLService.getTableFields('Task');
@@ -52,6 +54,7 @@ class ReportService {
             workspaceUsers,
             taskFields,
             requestedBy,
+            departments,
         };
     }
 
@@ -77,7 +80,7 @@ class ReportService {
         return filteredTasks;
     }
 
-    static getFKTranslatedData(workspaces, projects, users, workspaceUsers) {
+    static getFKTranslatedData(workspaces, projects, users, workspaceUsers, departments) {
         const updatedProjects = projects.map((project) => {
             const updated = { ...project };
             workspaceUsers.forEach((workspaceUser) => {
@@ -96,6 +99,11 @@ class ReportService {
                     }
                 });
             });
+
+            departments.forEach((department) => {
+                if (department.ID === updated.DepartmentID) { updated.Department = department.Title; }
+            });
+
             return updated;
         });
 
@@ -205,6 +213,18 @@ class ReportService {
             return UserService.select(userId, 'Task', [], where);
         }
         return UserService.select(userId, 'Task', [], []);
+    }
+
+    static async getDepartments(userId, projectIds, workspaceIds) {
+        if (projectIds.length) {
+            const where = [{ name: 'ProjectID', value: projectIds }];
+            return UserService.select(userId, 'Department', [], where);
+        }
+        if (workspaceIds.length) {
+            const where = [{ name: 'WorkspaceID', value: workspaceIds }];
+            return UserService.select(userId, 'Department', [], where);
+        }
+        return UserService.select(userId, 'Department', [], []);
     }
 }
 

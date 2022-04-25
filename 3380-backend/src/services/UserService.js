@@ -264,7 +264,6 @@ class UserService {
         // Examples:
         //  - Verify user has permission to delete the specific rows in this specific table
 
-        // const selectCurrentUserWorkspaceUsers = `SELECT * FROM WorkspaceUser WHERE UserID='${userId}'`;
         const [workspaceUsers] = await SQLService.select(
             'WorkspaceUser',
             [],
@@ -448,6 +447,174 @@ class UserService {
         // Examples:
         //  - Verify user has access to Foreign Keys they attempt to update with
         //  - Verify user has permission to update to specific table
+        
+        const { where } = rowParams;
+        const [workspaceUsers] = await SQLService.select(
+            'WorkspaceUser',
+            [],
+            [{ name: 'UserID', value: userId }]
+        );
+        
+        switch (table.toLowerCase()) {
+            case 'workspace': {
+                const workspaceId = where.value;
+                const workspaceUser = workspaceUsers.find(
+                    (temp) => temp.WorkspaceID === workspaceId
+                );
+                if (!workspaceUser)
+                    throw { code: 403, message: 'User does not have access to resource' };
+                if (workspaceUser.Role !== 2)
+                    throw { code: 403, message: 'User does not have access to resource' };
+                break;
+            }
+            case 'workspaceuser': {
+                const workspaceUserId = where.value;
+                const [workspaceIds] = await SQLService.select(
+                    'WorkspaceUser',
+                    ['WorkspaceID'],
+                    [{ name: 'ID', value: workspaceUserId }]
+                );
+                const workspaceId = workspaceIds[0];
+                const workspaceUser = workspaceUsers.find(
+                    (temp) => temp.WorkspaceID === workspaceId
+                );
+
+                if (!workspaceUser)
+                    throw { code: 403, message: 'User does not have access to resource' };
+                if (workspaceUser.Role < 1)
+                    throw { code: 403, message: 'User does not have access to resource' };
+                break;
+            }
+            case 'department': {
+                const departmentId = where.value;
+                const [workspaceIds] = await SQLService.select(
+                    'Department',
+                    ['WorkspaceID'],
+                    [{ name: 'ID', value: departmentId }]
+                );
+                const workspaceId = workspaceIds[0];
+                const workspaceUser = workspaceUsers.find(
+                    (temp) => temp.WorkspaceID === workspaceId
+                );
+
+                if (!workspaceUser)
+                    throw { code: 403, message: 'User does not have access to resource' };
+                if (workspaceUser.Role < 1)
+                    throw { code: 403, message: 'User does not have access to resource' };
+                break;
+            }
+            case 'project': {
+                const projectId = where.value;
+                const [workspaceIds] = await SQLService.select(
+                    'Project',
+                    ['WorkspaceID'],
+                    [{ name: 'ID', value: projectId }]
+                );
+                const workspaceId = workspaceIds[0];
+                const workspaceUser = workspaceUsers.find(
+                    (temp) => temp.WorkspaceID === workspaceId
+                );
+
+                if (!workspaceUser)
+                    throw { code: 403, message: 'User does not have access to resource' };
+                if (workspaceUser.Role < 1)
+                    throw { code: 403, message: 'User does not have access to resource' };
+                break;
+            }
+            case 'workspaceuserprojectrelation': {
+                const workspaceUserId = where.find((temp) => temp.name === 'WorkspaceUserID');
+                const [workspaceIds] = await SQLService.select(
+                    'WorkspaceUser',
+                    ['WorkspaceID'],
+                    [{ name: 'ID', value: workspaceUserId }]
+                );
+                const workspaceId = workspaceIds[0];
+                const workspaceUser = workspaceUsers.find(
+                    (temp) => temp.WorkspaceID === workspaceId
+                );
+                if (!workspaceUser)
+                    throw { code: 403, message: 'User does not have access to resource' };
+                if (workspaceUser.Role < 1)
+                    throw { code: 403, message: 'User does not have access to resource' };
+                break;
+            }
+            case 'task': {
+                const taskId = where.value;
+                const [tasks] = await SQLService.select(
+                    'Task',
+                    ['WorkspaceID', 'ProjectID'],
+                    [{ name: 'ID', value: taskId }]
+                );
+                const task = tasks[0];
+                const workspaceId = task.WorkspaceID;
+                const projectId = task.ProjectID;
+
+                const workspaceUser = workspaceUsers.find(
+                    (temp) => temp.WorkspaceID === workspaceId
+                );
+
+                if (!workspaceUser)
+                    throw { code: 403, message: 'User does not have access to resource' };
+                if (workspaceUser.Role === 0) {
+                    const [relations] = await SQLService.select(
+                        'WorkspaceUserProjectRelation',
+                        [],
+                        [
+                            { name: 'ProjectID', value: projectId },
+                            { name: 'WorkspaceUserID', value: workspaceUser.ID },
+                        ]
+                    );
+                    if (relations.length === 0)
+                        throw { code: 403, message: 'User does not have access to resource' };
+                }
+
+                if (!workspaceUser)
+                    throw { code: 403, message: 'User does not have access to resource' };
+                if (workspaceUser.Role === 0) {
+                    const [relations] = await SQLService.select(
+                        'WorkspaceUserProjectRelation',
+                        [],
+                        [
+                            { name: 'ProjectID', value: projectId },
+                            { name: 'WorkspaceUserID', value: workspaceUser.ID },
+                        ]
+                    );
+                    if (relations.length === 0)
+                        throw { code: 403, message: 'User does not have access to resource' };
+                }
+                break;
+            }
+            case 'tag': {
+                const workspaceIdField = params.find((field) => field.name === 'WorkspaceID');
+                const projectIdField = params.find((field) => field.name === 'ProjectID');
+                const taskIdField = params.find((field) => field.name === 'TaskID');
+                const workspaceUser = workspaceUsers.find(
+                    (temp) => temp.WorkspaceID === workspaceIdField.value
+                );
+                if (!workspaceUser) {
+                    throw { code: 403, message: 'User does not have access to resource' };
+                }
+                if (!taskIdField && workspaceUser.Role < 1) {
+                    throw { code: 403, message: 'User does not have access to resource' };
+                }
+
+                const [relations] = await SQLService.select(
+                    'WorkspaceUserProjectRelation',
+                    [],
+                    [
+                        { name: 'ProjectID', value: projectIdField },
+                        { name: 'WorkspaceUserID', value: workspaceUser.ID },
+                    ]
+                );
+                if (!relations) {
+                    throw { code: 403, message: 'User does not have access to resource' };
+                }
+                break;
+            }
+            default: {
+                break;
+            }
+        }
 
         return SQLService.update(table, rowParams);
     }
