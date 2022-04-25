@@ -11,7 +11,7 @@ class UserService {
         console.log(`UserService.login invoked! Email = ${email}, password = ${password}`);
         const user = await UserService.getUser({ email });
 
-        const match = bcrypt.compare(password, user.PasswordHash);
+        const match = await bcrypt.compare(password, user.PasswordHash);
         if (!match) return undefined;
 
         delete user.PasswordHash;

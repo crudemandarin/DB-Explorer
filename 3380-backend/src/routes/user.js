@@ -10,7 +10,7 @@ router.post('/login', async (req, res) => {
 
     const { email, password } = req.body;
     if (!email) return res.status(400).json({ message: 'Missing `email` in body' });
-    // if (!password) return res.status(400).json({ message: 'Missing `password` in body' });
+    if (!password) return res.status(400).json({ message: 'Missing `password` in body' });
 
     try {
         const user = await UserService.login(email, password);
