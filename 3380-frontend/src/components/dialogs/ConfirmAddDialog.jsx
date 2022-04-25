@@ -17,7 +17,6 @@ function ConfirmAddDialog({ isVisible, setIsVisible, table, tableForm, fields })
   const [resultsIsVisible, setResultsIsVisible] = useState(false);
 
   const add = (formParams) => {
-    console.log('HomeGroup.add invoked! formParams =', formParams);
     const params = { userId: user.ID, table, fields: formParams };
     return ApiManager.insert(params);
   };

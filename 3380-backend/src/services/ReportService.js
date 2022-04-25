@@ -3,8 +3,16 @@ const SQLService = require('./SQLService');
 
 class ReportService {
     static async getReport(userId, workspaceIds, projectIds, lowerBound, upperBound) {
-        const { workspaces, projects, tasks, users, workspaceUsers, taskFields, requestedBy } =
-            await ReportService.getData(userId, workspaceIds, projectIds);
+        const {
+            workspaces,
+            projects,
+            tasks,
+            users,
+            workspaceUsers,
+            taskFields,
+            requestedBy,
+            departments,
+        } = await ReportService.getData(userId, workspaceIds, projectIds);
 
         const filteredTasks = ReportService.getDateFilteredTasks(tasks, lowerBound, upperBound);
 
@@ -12,7 +20,8 @@ class ReportService {
             workspaces,
             projects,
             users,
-            workspaceUsers
+            workspaceUsers,
+            departments
         );
 
         const { embeddedWorkspaces, numWorkspaces, numProjects, numTasks, requestedAt } =
@@ -39,6 +48,7 @@ class ReportService {
         const [workspaces] = await ReportService.getWorkspaces(userId, workspaceIds);
         const [projects] = await ReportService.getProjects(userId, projectIds, workspaceIds);
         const [tasks] = await ReportService.getTasks(userId, projectIds, workspaceIds);
+        const [departments] = await SQLService.select('Department', ['ID', 'Title'], []);
         const [users] = await SQLService.select('User', [], []);
         const [workspaceUsers] = await SQLService.select('WorkspaceUser', [], []);
         const taskFields = await SQLService.getTableFields('Task');
@@ -52,6 +62,7 @@ class ReportService {
             workspaceUsers,
             taskFields,
             requestedBy,
+            departments,
         };
     }
 
@@ -77,7 +88,7 @@ class ReportService {
         return filteredTasks;
     }
 
-    static getFKTranslatedData(workspaces, projects, users, workspaceUsers) {
+    static getFKTranslatedData(workspaces, projects, users, workspaceUsers, departments) {
         const updatedProjects = projects.map((project) => {
             const updated = { ...project };
             workspaceUsers.forEach((workspaceUser) => {
@@ -96,6 +107,13 @@ class ReportService {
                     }
                 });
             });
+
+            departments.forEach((department) => {
+                if (department.ID === updated.DepartmentID) {
+                    updated.Department = department.Title;
+                }
+            });
+
             return updated;
         });
 

@@ -26,7 +26,6 @@ function QueryControlCard({ table, setTable, fields, onNewResult }) {
   }, [fields, setTableForm, setResetFlag]);
 
   const query = async (formParams) => {
-    console.log('HomeGroup.query invoked. Form Params =', formParams);
     const id = Utils.getNewID();
     const requestedBy = `${user.FirstName} ${user.LastName}`;
     const params = { userId: user.ID, table, select: [], where: formParams };

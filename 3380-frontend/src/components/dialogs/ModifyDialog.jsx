@@ -45,7 +45,6 @@ function ModifyDialog({ isVisible, setIsVisible, table, fields, selectedRows, on
   }, [selectedRows]);
 
   const modifyRows = (rowParams) => {
-    console.log('ModifyDialog.modifyRows invoked! rowParams =', rowParams);
     const params = { userId: user.ID, table, rowParams };
     return ApiManager.update(params);
   };
@@ -57,7 +56,6 @@ function ModifyDialog({ isVisible, setIsVisible, table, fields, selectedRows, on
   };
 
   const handleModifyClick = async () => {
-    console.log('Modify Clicked! form =', form);
     const rowParams = Object.keys(form).reduce(
       (prevParam, rowIndex) => {
         const update = Utils.getUpdateFieldsRowParam(form[rowIndex]);
@@ -69,7 +67,6 @@ function ModifyDialog({ isVisible, setIsVisible, table, fields, selectedRows, on
 
     if (rowParams.length) {
       const data = await modifyRows(rowParams);
-      console.log(data)
       setResult(data);
       setResultIsVisible(true);
       onComplete();
