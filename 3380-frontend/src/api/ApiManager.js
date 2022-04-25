@@ -1,13 +1,8 @@
 import ApiService from './ApiService';
 
 class ApiManager {
-  static async login(email) {
-    if (email === 'nykolas') {
-      return { ID: '', FirstName: 'Nykolas', LastName: 'Farhangi' };
-    }
-
+  static async login(params) {
     try {
-      const params = { email };
       const response = await ApiService.login(params);
       const { user } = response.data;
       console.log('ApiManager.login successful. user =', user);

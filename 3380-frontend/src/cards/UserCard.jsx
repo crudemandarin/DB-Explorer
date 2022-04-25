@@ -8,7 +8,7 @@ import ApiManager from '../api/ApiManager';
 
 function UserCard() {
   const { user, setUser } = useGlobal();
-  const [loginForm, setLoginForm] = useState({ email: '' });
+  const [loginForm, setLoginForm] = useState({ email: '', password: '' });
 
   const emailOnChange = (e) => {
     let { value } = e.target;
@@ -18,10 +18,19 @@ function UserCard() {
     setLoginForm(form);
   };
 
+  const passwordOnChange = (e) => {
+    let { value } = e.target;
+    value = value.toLowerCase().trim();
+    const form = { ...loginForm };
+    form.password = value;
+    setLoginForm(form);
+  };
+
   const handleSignInClick = async (e) => {
     e.preventDefault();
     console.log('UserCard.handleSignInClick invoked');
-    const userData = await ApiManager.login(loginForm.email);
+    const params = { email: loginForm.email, password: loginForm.password };
+    const userData = await ApiManager.login(params);
     if (userData) setUser(userData);
   };
 
@@ -35,13 +44,21 @@ function UserCard() {
     if (!user) return (
       <>
         <InputText
-          placeholder='Email Address'
-          className='p-inputtext-sm'
-          value={loginForm.email}
-          onChange={emailOnChange}
-        />
-        <div className="spacer" />
-        <Button onClick={handleSignInClick}>Sign In</Button>
+            placeholder='Email Address'
+            className='p-inputtext-sm'
+            value={loginForm.email}
+            onChange={emailOnChange}
+          />
+        <div>
+          <InputText
+            placeholder='Password'
+            className='p-inputtext-sm'
+            value={loginForm.password}
+            onChange={passwordOnChange}
+          />
+          <div className="spacer" />
+          <Button onClick={handleSignInClick}>Sign In</Button>
+        </div>
       </>
     );
 
