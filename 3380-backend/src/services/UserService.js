@@ -1,13 +1,14 @@
 /* eslint-disable no-throw-literal */
+const bcrypt = require('bcrypt');
 const SQLService = require('./SQLService');
 const Utils = require('../Utils');
 
 class UserService {
-    static async login(email) {
-        const user = UserService.getUser({ email });
-
-        // Add password logic here
-
+    static async login(email, passwordHash) {
+        console.log(`UserService.login invoked! Email = ${email}, passwordHash = ${passwordHash}`);
+        let user = await UserService.getUser({ email });
+        if (passwordHash !== user.PasswordHash) return undefined;
+        delete user.PasswordHash;
         return user;
     }
 
