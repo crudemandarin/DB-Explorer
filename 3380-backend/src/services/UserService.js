@@ -10,6 +10,7 @@ class UserService {
     static async login(email, password) {
         console.log(`UserService.login invoked! Email = ${email}, password = ${password}`);
         const user = await UserService.getUser({ email });
+        if (!user) return undefined;
 
         const match = await bcrypt.compare(password, user.PasswordHash);
         if (!match) return undefined;
