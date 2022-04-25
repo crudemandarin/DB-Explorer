@@ -7,7 +7,15 @@ class Utils {
 
     static getProtectedFields(table) {
         if (table === 'task') {
-            return ['ID', 'CreatedBy', 'UpdatedBy', 'CreatedAt', 'LastUpdated', 'TimeClosed'];
+            return [
+                'ID',
+                'CreatedBy',
+                'UpdatedBy',
+                'CreatedAt',
+                'LastUpdated',
+                'TimeClosed',
+                'PasswordHash',
+            ];
         }
 
         return [
@@ -19,6 +27,7 @@ class Utils {
             'ActualCost',
             'ActualEffort',
             'TimeClosed',
+            'PasswordHash',
         ];
     }
 

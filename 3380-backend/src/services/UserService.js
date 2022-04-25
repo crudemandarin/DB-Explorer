@@ -1,13 +1,19 @@
 /* eslint-disable no-throw-literal */
 const bcrypt = require('bcrypt');
+
 const SQLService = require('./SQLService');
 const Utils = require('../Utils');
 
+const SALT_ROUNDS = 12;
+
 class UserService {
-    static async login(email, passwordHash) {
-        console.log(`UserService.login invoked! Email = ${email}, passwordHash = ${passwordHash}`);
-        let user = await UserService.getUser({ email });
-        if (passwordHash !== user.PasswordHash) return undefined;
+    static async login(email, password) {
+        console.log(`UserService.login invoked! Email = ${email}, password = ${password}`);
+        const user = await UserService.getUser({ email });
+
+        const match = bcrypt.compare(password, user.PasswordHash);
+        if (!match) return undefined;
+
         delete user.PasswordHash;
         return user;
     }
@@ -457,9 +463,7 @@ class UserService {
         const tableFields = await SQLService.getTableFields(table);
 
         let userIdParam = userId;
-
         const workspaceIdField = fields.find((field) => field.name === 'WorkspaceID');
-
         if (workspaceIdField && table !== 'Workspace') {
             const [workspaceUserIds] = await SQLService.select(
                 'WorkspaceUser',
@@ -471,9 +475,15 @@ class UserService {
             );
             if (workspaceUserIds.length) {
                 const workspaceUserId = workspaceUserIds[0].ID;
-                console.log(workspaceUserId);
                 userIdParam = workspaceUserId;
             }
+        }
+
+        let passwordHashParam = '';
+        const passwordHashField = fields.find((field) => field.name === 'PasswordHash');
+        if (passwordHashField) {
+            const value = await bcrypt.hash(passwordHashField.value, SALT_ROUNDS);
+            passwordHashParam = value;
         }
 
         return tableFields.reduce((previous, tableField) => {
@@ -494,6 +504,10 @@ class UserService {
 
             if (['CreatedBy', 'UpdatedBy'].includes(tableField.name)) {
                 return [...previous, { name: tableField.name, value: userIdParam }];
+            }
+
+            if (tableField.name === 'PasswordHash') {
+                return [...previous, { name: tableField.name, value: passwordHashParam }];
             }
 
             if (Utils.getProtectedFields(table).includes(tableField.name)) {

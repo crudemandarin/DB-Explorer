@@ -8,12 +8,12 @@ const UserService = require('../services/UserService');
 router.post('/login', async (req, res) => {
     console.log('POST /user/login');
 
-    const { email, passwordHash } = req.body;
+    const { email, password } = req.body;
     if (!email) return res.status(400).json({ message: 'Missing `email` in body' });
-    if (!passwordHash) return res.status(400).json({ message: 'Missing `passwordHash` in body' });
+    // if (!password) return res.status(400).json({ message: 'Missing `password` in body' });
 
     try {
-        const user = await UserService.login(email, passwordHash);
+        const user = await UserService.login(email, password);
         if (!user) return res.status(404).json({ message: `User not found` });
         return res.status(200).json({ user });
     } catch (err) {
