@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@vendia/serverless-express": "^4.5.4",
-    "bcrypt": "^5.0.1",
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "eslint-config-airbnb": "^19.0.4",

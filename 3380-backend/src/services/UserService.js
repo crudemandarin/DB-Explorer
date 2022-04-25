@@ -1,5 +1,5 @@
 /* eslint-disable no-throw-literal */
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 const SQLService = require('./SQLService');
 const Utils = require('../Utils');
