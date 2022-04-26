@@ -131,6 +131,10 @@ can be changed to job titles but I thought we could assign a job title to a numb
 /*Roles: 0 Owner | 1 Admin | 2 User*/
 Insert INTO WorkspaceUser(ID,UserID,Role,WorkspaceID)
 VALUES
+  (101,0,0,1),
+  (102,0,0,2),
+  (103,0,0,3),
+  (104,0,0,4),
   (1,1,0,1),
   (2,2,1,1),
   (3,3,1,1),
